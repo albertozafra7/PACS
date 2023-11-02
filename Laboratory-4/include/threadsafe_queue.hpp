@@ -9,7 +9,10 @@ template<typename T>
 class threadsafe_queue
 {
   private:
-      // please complete
+      // We create the mutex
+      mutable std::mutex _m;
+      std::queue<T> _data_queue;	// This is the queue 
+      std::
 
   public:
     threadsafe_queue() {}
