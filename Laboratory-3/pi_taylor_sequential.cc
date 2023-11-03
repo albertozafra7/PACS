@@ -4,7 +4,7 @@
 #include <chrono>
 
 // Allow to change the floating point type
-using my_float = float;
+using my_float = long double;
 
 my_float pi_taylor(size_t steps) {
 	
