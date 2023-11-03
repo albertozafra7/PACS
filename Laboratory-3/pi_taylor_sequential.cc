@@ -4,7 +4,7 @@
 #include <chrono>
 
 // Allow to change the floating point type
-using my_float = long double;
+using my_float = float;
 
 my_float pi_taylor(size_t steps) {
 	
@@ -36,7 +36,7 @@ int main(int argc, const char *argv[]) {
 	auto stop = std::chrono::steady_clock::now();
 
 	std::cout << "For " << steps << ", pi value: "
-				 << std::setprecision(std::numeric_limits<my_float>::digits10 + 1)
+				 << std::setprecision(std::numeric_limits<long double>::digits10 + 1)
 				 << pi << std::endl;
 				
 	std::cout << "It took " << std::chrono::duration_cast<std::chrono::nanoseconds>(stop-start).count()
