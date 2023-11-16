@@ -243,14 +243,32 @@ int main(int argc, char *argv[]){
 
     auto start = std::chrono::steady_clock::now();
 
-    auto *c_ptr = c.get(); // raw pointer to Vector c
-
+    auto* c_ptr = c.get(); // raw pointer to Vector c
+    
     // create a thread pool
+    thread_pool pool(std::thread::hardware_concurrency());
+
+    const auto y_height = h / h_div;
+    const auto x_width = w /w_div;
 
     // launch the tasks
+    for (size_t i = 0; i < h_div; ++i) {
+        for (size_t j = 0; j < w_div; ++j) {
 
+            size_t y0 = i * y_height;
+            size_t y1 = i == h_div - 1 ?h : y0 + y_height;
+
+            size_t x0 = j * x_width;
+            size_t x1 = j == w_div - 1 ? w : x0 + x_width;
+
+            Region reg (x0, x1, y0, y1);
+            pool.submit([=]{render (w, h, samps, cam, cx, cy, c_ptr,reg); });
+        }
+    }
 
     // wait for completion
+    //pool->~thread_pool();
+    pool.~thread_pool();
     auto stop = std::chrono::steady_clock::now();
     std::cout << "Execution time: " <<
       std::chrono::duration_cast<std::chrono::milliseconds>(stop-start).count() << " ms." << std::endl;

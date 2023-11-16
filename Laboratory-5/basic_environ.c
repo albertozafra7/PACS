@@ -58,7 +58,7 @@ int main(int argc, char** argv)
   printf("Number of available platforms: %d\n\n", n_platforms);
 
   for (int i = 0; i < n_platforms; i++ ){
-    err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_NAME, /***???***/);
+    err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_NAME, t_buf, str_buffer, &e_buf);
     cl_error (err, "Error: Failed to get info of the platform\n");
     printf( "\t[%d]-Platform Name: %s\n", i, str_buffer);
   }
@@ -67,12 +67,12 @@ int main(int argc, char** argv)
 	
   // 2. Scan for devices in each platform
   for (int i = 0; i < n_platforms; i++ ){
-    err = clGetDeviceIDs( /***???***/, num_devices_ids, devices_ids[i], &(n_devices[i]));
+    err = clGetDeviceIDs(platform_ids[i], CL_DEVICE_TYPE_{ALL}, num_devices_ids, devices_ids[i], &(n_devices[i]));
     cl_error(err, "Error: Failed to Scan for Devices IDs");
     printf("\t[%d]-Platform. Number of available devices: %d\n", i, n_devices[i]);
 
     for(int j = 0; j < n_devices[i]; j++){
-      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_NAME, sizeof(str_buffer), &str_buffer, NULL);
+      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_NAME, sizeof(str_buffer), str_buffer, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device name");
       printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_NAME: %s\n", i, j,str_buffer);
 
