@@ -242,33 +242,36 @@ int main(int argc, char *argv[]){
     auto h_div = p.second;
 
     auto start = std::chrono::steady_clock::now();
-
-    auto* c_ptr = c.get(); // raw pointer to Vector c
     
     // create a thread pool
-    thread_pool pool(std::thread::hardware_concurrency());
+    thread_pool* pool = new thread_pool({h_div * w_div});
+    //auto* pool_ptr = &pool;
 
     const auto y_height = h / h_div;
     const auto x_width = w /w_div;
 
+    auto* c_ptr = c.get(); // raw pointer to Vector c
     // launch the tasks
     for (size_t i = 0; i < h_div; ++i) {
         for (size_t j = 0; j < w_div; ++j) {
 
             size_t y0 = i * y_height;
-            size_t y1 = i == h_div - 1 ?h : y0 + y_height;
+            size_t y1 = i == h_div - 1 ? h : y0 + y_height;
 
             size_t x0 = j * x_width;
             size_t x1 = j == w_div - 1 ? w : x0 + x_width;
 
             Region reg (x0, x1, y0, y1);
-            pool.submit([=]{render (w, h, samps, cam, cx, cy, c_ptr,reg); });
+            pool->submit([=]{render (w, h, samps, cam, cx, cy, c_ptr,reg); });
         }
     }
 
     // wait for completion
-    //pool->~thread_pool();
-    pool.~thread_pool();
+    //pool->wait();  // Ensure that all tasks are completed before destruction
+
+    // no need to explicitly call pool destructor
+    pool->~thread_pool();  // not needed, destructor will be automatically called
+
     auto stop = std::chrono::steady_clock::now();
     std::cout << "Execution time: " <<
       std::chrono::duration_cast<std::chrono::milliseconds>(stop-start).count() << " ms." << std::endl;
