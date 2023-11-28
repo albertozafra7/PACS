@@ -50,6 +50,8 @@ int main(int argc, char** argv)
   cl_device_id device_id;             				// compute device id 
   cl_context context;                 				// compute context
   cl_command_queue command_queue;     				// compute command queue
+  cl_program program;                         // define a program
+  cl_kernel kernel;                           // create a kernel
     
 
   // 1. Scan the available platforms:
@@ -61,9 +63,30 @@ int main(int argc, char** argv)
     err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_NAME, t_buf, str_buffer, &e_buf);
     cl_error (err, "Error: Failed to get info of the platform\n");
     printf( "\t[%d]-Platform Name: %s\n", i, str_buffer);
+
+  // ***Task***: print on the screen the name, host_timer_resolution, vendor, version, ...
+
+    err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_VENDOR, t_buf, str_buffer, &e_buf);
+    cl_error (err, "Error: Failed to get info of the platform\n");
+    printf( "\t[%d]-Platform Vendor: %s\n", i, str_buffer);
+
+    err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_VERSION, t_buf, str_buffer, &e_buf);
+    cl_error (err, "Error: Failed to get info of the platform\n");
+    printf( "\t[%d]-Platform Version: %s\n", i, str_buffer);
+
+    /*err = clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_HOST_TIMER_RESOLUTION, t_buf, str_buffer, &e_buf);
+    cl_error(err, "Error: Failed to get host timer resolution\n");
+    printf("\t[%d]-Host Timer Resolution: %s\n", i, str_buffer);*/ //Not defined??
+    
+    err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_PROFILE, t_buf, str_buffer, &e_buf);
+    cl_error (err, "Error: Failed to get info of the platform\n");
+    printf( "\t[%d]-Platform Profile: %s\n", i, str_buffer);
+
+    err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_EXTENSIONS, t_buf, str_buffer, &e_buf);
+    cl_error (err, "Error: Failed to get info of the platform\n");
+    printf( "\t[%d]-Platform Extensions: %s\n", i, str_buffer);
   }
   printf("\n");
-  // ***Task***: print on the screen the name, host_timer_resolution, vendor, version, ...
 	
   // 2. Scan for devices in each platform
   for (int i = 0; i < n_platforms; i++ ){
@@ -80,12 +103,31 @@ int main(int argc, char** argv)
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(max_compute_units_available), &max_compute_units_available, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device max compute units available");
       printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_COMPUTE_UNITS: %d\n\n", i, j, max_compute_units_available);
+
+      // ***Task***: print on the screen the cache size, global mem size, local memsize, max work group size, profiling timer resolution and ... of each device
+      
+      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_GLOBAL_MEM_CACHE_SIZE, sizeof(str_buffer), str_buffer, NULL);
+      cl_error(err, "clGetDeviceInfo: Getting device name");
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_GLOBAL_MEM_CACHE_SIZE: %s\n", i, j,str_buffer);
+
+      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(str_buffer), str_buffer, NULL);
+      cl_error(err, "clGetDeviceInfo: Getting device name");
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_GLOBAL_MEM_CACHE_SIZE: %s\n", i, j,str_buffer);
+
+      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_LOCAL_MEM_SIZE, sizeof(str_buffer), str_buffer, NULL);
+      cl_error(err, "clGetDeviceInfo: Getting device name");
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_LOCAL_MEM_SIZE: %s\n", i, j,str_buffer);
+
+      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(str_buffer), str_buffer, NULL);
+      cl_error(err, "clGetDeviceInfo: Getting device name");
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_WORK_GROUP_SIZE: %s\n", i, j,str_buffer);
+
+       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_PROFILING_TIMER_RESOLUTION, sizeof(str_buffer), str_buffer, NULL);
+      cl_error(err, "clGetDeviceInfo: Getting device name");
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_PROFILING_TIMER_RESOLUTION: %s\n", i, j,str_buffer);
     }
   }	
-  // ***Task***: print on the screen the cache size, global mem size, local memsize, max work group size, profiling timer resolution and ... of each device
-
-
-
+  
   // 3. Create a context, with a device
   //TODO double chech number of platforms, if there are more than 1, idk which one to choose
   cl_context_properties properties[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platforms_ids[0], 0}; //0 if we start from the 1st platform (if it has more than one)
@@ -96,6 +138,39 @@ int main(int argc, char** argv)
   cl_command_queue_properties proprt[] = { CL_QUEUE_PROPERTIES, CL_QUEUE_PROFILING_ENABLE, 0 };
   command_queue = clCreateCommandQueueWithProperties(context, devices_ids[0][0], proprt, &err);//assuming we're taking 1st platform...
   cl_error(err, "Failed to create a command queue\n");
+
+  // 5. Calculate size of the file
+  FILE *fileHandler = fopen("kernel.cl", "r"); //Open the kernel file
+  fseek(fileHandler, 0, SEEK_END); // Move the file pointer to the end of the file
+  size_t fileSize = ftell(fileHandler);
+  rewind(fileHandler);
+
+  // read kernel source into buffer
+  char * sourceCode = (char*) malloc(fileSize + 1); // Allocate memory for the buffer to store the kernel source code
+  sourceCode[fileSize] = '\0';
+  fread(sourceCode, sizeof(char), fileSize, fileHandler); // Read the contents of the file into the buffer
+  fclose(fileHandler);
+
+  // create program from buffer
+  program = clCreateProgramWithSource(context, 1, (const char**)&sourceCode, NULL, &err);
+  cl_error(err, "Failed to create program with source\n");
+  free(sourceCode);
+
+  // Build the executable and check errors
+  err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+  if (err != CL_SUCCESS){
+    size_t len;
+    char buffer[2048];
+
+    printf("Error: Some error at building process.\n");
+    clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
+    printf("%s\n", buffer);
+    exit(-1);
+  }
+
+  // Create a compute kernel with the program we want to run
+  kernel = clCreateKernel(program, (const char**)&sourceCode, &err); //Is this pointer right?
+  cl_error(err, "Failed to create kernel from the program\n");
 
 
 
