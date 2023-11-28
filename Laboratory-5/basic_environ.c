@@ -63,11 +63,11 @@ int main(int argc, char** argv)
     printf( "\t[%d]-Platform Name: %s\n", i, str_buffer);
   }
   printf("\n");
-  // ***Task***: print on the screen the name, host_timer_resolution, vendor, versionm, ...
+  // ***Task***: print on the screen the name, host_timer_resolution, vendor, version, ...
 	
   // 2. Scan for devices in each platform
   for (int i = 0; i < n_platforms; i++ ){
-    err = clGetDeviceIDs(platform_ids[i], CL_DEVICE_TYPE_{ALL}, num_devices_ids, devices_ids[i], &(n_devices[i]));
+    err = clGetDeviceIDs(platforms_ids[i], CL_DEVICE_TYPE_ALL, num_devices_ids, devices_ids[i], &(n_devices[i]));
     cl_error(err, "Error: Failed to Scan for Devices IDs");
     printf("\t[%d]-Platform. Number of available devices: %d\n", i, n_devices[i]);
 
@@ -87,13 +87,14 @@ int main(int argc, char** argv)
 
 
   // 3. Create a context, with a device
-  cl_context_properties properties[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platforms_ids[/***???***/], 0};
-  context = clCreateContext(properties, /***???***/, NULL, NULL, &err);
+  //TODO double chech number of platforms, if there are more than 1, idk which one to choose
+  cl_context_properties properties[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platforms_ids[0], 0}; //0 if we start from the 1st platform (if it has more than one)
+  context = clCreateContext(properties, n_devices[0], devices_ids[0], NULL, NULL, &err); //assuming we're taking 1st platform
   cl_error(err, "Failed to create a compute context\n");
 
   // 4. Create a command queue
   cl_command_queue_properties proprt[] = { CL_QUEUE_PROPERTIES, CL_QUEUE_PROFILING_ENABLE, 0 };
-  command_queue = clCreateCommandQueueWithProperties( /***???***/, proprt, &err);
+  command_queue = clCreateCommandQueueWithProperties(context, devices_ids[0][0], proprt, &err);//assuming we're taking 1st platform...
   cl_error(err, "Failed to create a command queue\n");
 
 
