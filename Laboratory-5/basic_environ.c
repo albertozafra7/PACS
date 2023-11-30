@@ -72,7 +72,7 @@ int main(int argc, char** argv)
     cl_error (err, "Error: Failed to get info of the platform\n");
     printf( "\t[%d]-Platform Name: %s\n", i, str_buffer);
 
-  // ***Task***: print on the screen the name, host_timer_resolution, vendor, version, ...
+  // ***Task***: print on the screen the name, vendor, version, ...
 
     err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_VENDOR, t_buf, str_buffer, &e_buf);
     cl_error (err, "Error: Failed to get info of the platform\n");
@@ -82,17 +82,11 @@ int main(int argc, char** argv)
     cl_error (err, "Error: Failed to get info of the platform\n");
     printf( "\t[%d]-Platform Version: %s\n", i, str_buffer);
 
-    /*err = clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_HOST_TIMER_RESOLUTION, t_buf, str_buffer, &e_buf);
-    cl_error(err, "Error: Failed to get host timer resolution\n");
-    printf("\t[%d]-Host Timer Resolution: %s\n", i, str_buffer);*/ //Not defined??
     
     err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_PROFILE, t_buf, str_buffer, &e_buf);
     cl_error (err, "Error: Failed to get info of the platform\n");
     printf( "\t[%d]-Platform Profile: %s\n", i, str_buffer);
 
-    err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_EXTENSIONS, t_buf, str_buffer, &e_buf);
-    cl_error (err, "Error: Failed to get info of the platform\n");
-    printf( "\t[%d]-Platform Extensions: %s\n", i, str_buffer);
   }
   printf("\n");
 	
@@ -110,36 +104,35 @@ int main(int argc, char** argv)
       cl_uint max_compute_units_available;
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(max_compute_units_available), &max_compute_units_available, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device max compute units available");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_COMPUTE_UNITS: %d\n\n", i, j, max_compute_units_available);
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_COMPUTE_UNITS: %d\n", i, j, max_compute_units_available);
 
-      // ***Task***: print on the screen the cache size, global mem size, local memsize, max work group size, profiling timer resolution and ... of each device
-      
-      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_GLOBAL_MEM_CACHE_SIZE, sizeof(str_buffer), str_buffer, NULL);
-      cl_error(err, "clGetDeviceInfo: Getting device name");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_GLOBAL_MEM_CACHE_SIZE: %s\n", i, j,str_buffer);
+      // ***Task***: print on the screen the cache size, global mem size, local memsize, max work group size, profiling timer resolution and ... of each device   
+      cl_ulong DEVICE_GLOBAL_MEM_CACHE_SIZE;
+      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_GLOBAL_MEM_CACHE_SIZE, sizeof(DEVICE_GLOBAL_MEM_CACHE_SIZE), &DEVICE_GLOBAL_MEM_CACHE_SIZE, NULL);
+      cl_error(err, "clGetDeviceInfo: Getting device global memory cache size");
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_GLOBAL_MEM_CACHE_SIZE: %d\n", i, j,DEVICE_GLOBAL_MEM_CACHE_SIZE);
 
-      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(str_buffer), str_buffer, NULL);
-      cl_error(err, "clGetDeviceInfo: Getting device name");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_GLOBAL_MEM_CACHE_SIZE: %s\n", i, j,str_buffer);
+	  cl_ulong DEVICE_LOCAL_MEM_SIZE;
+      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_LOCAL_MEM_SIZE, sizeof(DEVICE_LOCAL_MEM_SIZE), &DEVICE_LOCAL_MEM_SIZE, NULL);
+      cl_error(err, "clGetDeviceInfo: Getting device local mem size");
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_LOCAL_MEM_SIZE: %d\n", i, j,DEVICE_LOCAL_MEM_SIZE);
+	  
+	  
+	  size_t DEVICE_MAX_WORK_GROUP_SIZE;
+      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(DEVICE_MAX_WORK_GROUP_SIZE), &DEVICE_MAX_WORK_GROUP_SIZE, NULL);
+      cl_error(err, "clGetDeviceInfo: Getting device maximum work group size");
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_WORK_GROUP_SIZE: %d\n", i, j,DEVICE_MAX_WORK_GROUP_SIZE);
 
-      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_LOCAL_MEM_SIZE, sizeof(str_buffer), str_buffer, NULL);
-      cl_error(err, "clGetDeviceInfo: Getting device name");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_LOCAL_MEM_SIZE: %s\n", i, j,str_buffer);
-
-      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(str_buffer), str_buffer, NULL);
-      cl_error(err, "clGetDeviceInfo: Getting device name");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_WORK_GROUP_SIZE: %s\n", i, j,str_buffer);
-
-       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_PROFILING_TIMER_RESOLUTION, sizeof(str_buffer), str_buffer, NULL);
-      cl_error(err, "clGetDeviceInfo: Getting device name");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_PROFILING_TIMER_RESOLUTION: %s\n", i, j,str_buffer);
+	  size_t DEVICE_PROFILING_TIMER_RESOLUTION;
+      err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_PROFILING_TIMER_RESOLUTION, sizeof(DEVICE_PROFILING_TIMER_RESOLUTION), &DEVICE_PROFILING_TIMER_RESOLUTION, NULL);
+      cl_error(err, "clGetDeviceInfo: Getting device profiling timer resolution");
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_PROFILING_TIMER_RESOLUTION: %d\n", i, j,DEVICE_PROFILING_TIMER_RESOLUTION);
     }
   }	
   
   // 3. Create a context, with a device
-  //TODO double chech number of platforms, if there are more than 1, idk which one to choose
-  cl_context_properties properties[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platforms_ids[0], 0}; //0 if we start from the 1st platform (if it has more than one)
-  context = clCreateContext(properties, n_devices[0], devices_ids[0], NULL, NULL, &err); //assuming we're taking 1st platform
+  cl_context_properties properties[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platforms_ids[0], 0}; 
+  context = clCreateContext(properties, n_devices[0], devices_ids[0], NULL, NULL, &err);
   cl_error(err, "Failed to create a compute context\n");
 
   // 4. Create a command queue
@@ -147,7 +140,7 @@ int main(int argc, char** argv)
   command_queue = clCreateCommandQueueWithProperties(context, devices_ids[0][0], proprt, &err);//assuming we're taking 1st platform...
   cl_error(err, "Failed to create a command queue\n");
 
-  // 5. Calculate size of the file
+  // 2. Calculate size of the file
   FILE *fileHandler = fopen("kernel.cl", "r"); //Open the kernel file
   fseek(fileHandler, 0, SEEK_END); // Move the file pointer to the end of the file
   size_t fileSize = ftell(fileHandler);
@@ -177,27 +170,38 @@ int main(int argc, char** argv)
   }
 
   // Create a compute kernel with the program we want to run
-  kernel = clCreateKernel(program, (const char**)&sourceCode, &err); //Is this pointer right?
+  kernel = clCreateKernel(program, "pow_of_two", &err); //Is this pointer right?
   cl_error(err, "Failed to create kernel from the program\n");
 
 
-
-  // Set the size of the arrays
-  const size_t arraySize = 100;  // Which arraySize?
+  // 5 Set the size of the arrays
+  const size_t arraySize = 100;  // We choose this array size, it's the count argument in the kernel.cl
 
   // Create and initialize input array in host memory
   float *inputArray = (float *)malloc(arraySize * sizeof(float));
   initializeArray(inputArray, arraySize);
 
-  // Create output array in host memory
+  // Create and initialize output array in host memory
   float *outputArray = (float *)malloc(arraySize * sizeof(float));
   initializeArray(outputArray, arraySize);
 
-  // Create OpenCL buffer visible to the OpenCl runtime
-  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, /***???***/, NULL, &err);
+  // 6 Create OpenCL buffer visible to the OpenCl runtime
+  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_float)*arraySize, NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
-  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, /***???***/, NULL, &err);
+  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_float)*arraySize, NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
+  
+  // 7 Write date into the memory object 
+  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(float) * arraySize, &in_device_object, 0, NULL, NULL);
+  cl_error(err, "Failed to enqueue a write command\n");
+  
+  // 8 Set the arguments to the kernel
+  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object);
+  cl_error(err, "Failed to set argument 0\n");
+  err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object);
+  cl_error(err, "Failed to set argument 1\n");
+  err = clSetKernelArg(kernel, 2, sizeof(size_t), &arraySize);
+  cl_error(err, "Failed to set argument 2\n");
 
   return 0;
 }
