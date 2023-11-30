@@ -28,6 +28,14 @@ void cl_error(cl_int code, const char *string){
 	    exit(-1);
 	}
 }
+
+// Function to initialize an array with sequential values
+void initializeArray(float *array, size_t size) {
+  for (size_t i = 0; i < size; ++i) {
+      array[i] = (float)i;  // Initialization to floating points
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char** argv)
@@ -173,6 +181,23 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to create kernel from the program\n");
 
 
+
+  // Set the size of the arrays
+  const size_t arraySize = 100;  // Which arraySize?
+
+  // Create and initialize input array in host memory
+  float *inputArray = (float *)malloc(arraySize * sizeof(float));
+  initializeArray(inputArray, arraySize);
+
+  // Create output array in host memory
+  float *outputArray = (float *)malloc(arraySize * sizeof(float));
+  initializeArray(outputArray, arraySize);
+
+  // Create OpenCL buffer visible to the OpenCl runtime
+  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, /***???***/, NULL, &err);
+  cl_error(err, "Failed to create memory buffer at device\n");
+  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, /***???***/, NULL, &err);
+  cl_error(err, "Failed to create memory buffer at device\n");
 
   return 0;
 }
