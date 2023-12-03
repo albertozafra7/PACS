@@ -203,6 +203,27 @@ int main(int argc, char** argv)
   err = clSetKernelArg(kernel, 2, sizeof(size_t), &arraySize);
   cl_error(err, "Failed to set argument 2\n");
 
+  // 9 Launch Kernel
+  local_size = 128;
+  global_size = 12800; //IDK which value(multiple of local size)
+  err = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &global_size, &local_size, 0, NULL, NULL);
+  cel_error(err, "Failed to launch kernel to the device\n");
+
+  // 10 Read data form device memory back to host memory
+  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, &out_device_object, 0, NULL, NULL);
+  cl_error(err, "Failed to enqueue a read command\n");
+
+  // 11 Write code to check correctness of execution ¿¿?? (idea chat gpt)
+
+
+  // 12 Release all the OpenCL memory objects allocated along the program
+  clReleaseMemObject(in_device_object);
+  clReleaseMemObject(out_device_object);
+  clReleaseProgram(program);
+  clReleaseKernel(kernel);
+  clReleaseCommandQueue(command_queue);
+  clReleaseContext(context);
+
   return 0;
 }
 
