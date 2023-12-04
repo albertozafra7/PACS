@@ -172,8 +172,8 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to create kernel from the program\n");
 
 
-  // 5 Set the size of the arrays
-  const size_t arraySize = 100;  // We choose this array size, it's the count argument in the kernel.cl
+    // 5 Set the size of the arrays
+  const size_t arraySize = 100;  // We choose this array size
 
   // Create and initialize input array in host memory
   float *inputArray = (float *)malloc(arraySize * sizeof(float));
@@ -190,7 +190,7 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to create memory buffer at device\n");
   
   // 7 Write date into the memory object 
-  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(float) * arraySize, inputArray, 0, NULL, NULL);
+  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(float) * arraySize, &in_device_object, 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a write command\n");
   
   // 8 Set the arguments to the kernel
@@ -201,19 +201,16 @@ int main(int argc, char** argv)
   err = clSetKernelArg(kernel, 2, sizeof(size_t), &arraySize);
   cl_error(err, "Failed to set argument 2\n");
 
-printf("HOli");
   // 9 Launch Kernel
   local_size = 128;
   global_size = 12800; //IDK which value(multiple of local size)
   err = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &global_size, &local_size, 0, NULL, NULL);
   cl_error(err, "Failed to launch kernel to the device\n");
-  
-printf("HOli");
+
   // 10 Read data form device memory back to host memory
-  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, outputArray, 0, NULL, NULL);
+  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, &out_device_object, 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a read command\n");
-printf("HOli");
-  // 11 Write code to check correctness of execution ¿¿?? (idea chat gpt)
+ // 11 Write code to check correctness of execution ¿¿?? (idea chat gpt)
 
 
   // 12 Release all the OpenCL memory objects allocated along the program
