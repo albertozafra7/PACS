@@ -198,7 +198,7 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to set argument 0\n");
   err = clSetKernelArg(kernel, 1, sizeof(cl_mem), outputArray);
   cl_error(err, "Failed to set argument 1\n");
-  err = clSetKernelArg(kernel, 2, sizeof(cl_uint), arraySize);
+  err = clSetKernelArg(kernel, 2, sizeof(size_t), arraySize);
   cl_error(err, "Failed to set argument 2\n");
 
 printf("HOli");
