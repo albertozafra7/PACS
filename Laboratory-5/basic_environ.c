@@ -110,23 +110,23 @@ int main(int argc, char** argv)
       cl_ulong DEVICE_GLOBAL_MEM_CACHE_SIZE;
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_GLOBAL_MEM_CACHE_SIZE, sizeof(DEVICE_GLOBAL_MEM_CACHE_SIZE), &DEVICE_GLOBAL_MEM_CACHE_SIZE, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device global memory cache size");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_GLOBAL_MEM_CACHE_SIZE: %d\n", i, j,DEVICE_GLOBAL_MEM_CACHE_SIZE);
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_GLOBAL_MEM_CACHE_SIZE: %ld\n", i, j,DEVICE_GLOBAL_MEM_CACHE_SIZE);
 
 	  cl_ulong DEVICE_LOCAL_MEM_SIZE;
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_LOCAL_MEM_SIZE, sizeof(DEVICE_LOCAL_MEM_SIZE), &DEVICE_LOCAL_MEM_SIZE, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device local mem size");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_LOCAL_MEM_SIZE: %d\n", i, j,DEVICE_LOCAL_MEM_SIZE);
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_LOCAL_MEM_SIZE: %ld\n", i, j,DEVICE_LOCAL_MEM_SIZE);
 	  
 	  
 	  size_t DEVICE_MAX_WORK_GROUP_SIZE;
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(DEVICE_MAX_WORK_GROUP_SIZE), &DEVICE_MAX_WORK_GROUP_SIZE, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device maximum work group size");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_WORK_GROUP_SIZE: %d\n", i, j,DEVICE_MAX_WORK_GROUP_SIZE);
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_WORK_GROUP_SIZE: %ld\n", i, j,DEVICE_MAX_WORK_GROUP_SIZE);
 
 	  size_t DEVICE_PROFILING_TIMER_RESOLUTION;
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_PROFILING_TIMER_RESOLUTION, sizeof(DEVICE_PROFILING_TIMER_RESOLUTION), &DEVICE_PROFILING_TIMER_RESOLUTION, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device profiling timer resolution");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_PROFILING_TIMER_RESOLUTION: %d\n", i, j,DEVICE_PROFILING_TIMER_RESOLUTION);
+      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_PROFILING_TIMER_RESOLUTION: %ld\n", i, j,DEVICE_PROFILING_TIMER_RESOLUTION);
     }
   }	
   
@@ -192,7 +192,7 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to create memory buffer at device\n");
   
   // 7 Write date into the memory object 
-  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(float) * arraySize, &in_device_object, 0, NULL, NULL);
+  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(float) * arraySize, inputArray, 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a write command\n");
   
   // 8 Set the arguments to the kernel
@@ -206,15 +206,17 @@ int main(int argc, char** argv)
   // 9 Launch Kernel
   local_size = 128;
   global_size = 12800; //IDK which value(multiple of local size)
+
   err = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &global_size, &local_size, 0, NULL, NULL);
   cl_error(err, "Failed to launch kernel to the device\n");
 
   // 10 Read data form device memory back to host memory
-  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, &out_device_object, 0, NULL, NULL);
+  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, outputArray, 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a read command\n");
 
   // 11 Write code to check correctness of execution ¿¿?? (idea chat gpt)
-
+  for(size_t i = 0; i < arraySize; i++)
+    printf("%ld iteration is %f\n", i, outputArray[i]);
 
   // 12 Release all the OpenCL memory objects allocated along the program
   clReleaseMemObject(in_device_object);
