@@ -207,7 +207,7 @@ int main(int argc, char** argv)
   local_size = 128;
   global_size = 12800; //IDK which value(multiple of local size)
   err = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &global_size, &local_size, 0, NULL, NULL);
-  cel_error(err, "Failed to launch kernel to the device\n");
+  cl_error(err, "Failed to launch kernel to the device\n");
 
   // 10 Read data form device memory back to host memory
   err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, &out_device_object, 0, NULL, NULL);
