@@ -176,11 +176,11 @@ int main(int argc, char** argv)
   const size_t arraySize = 100;  // We choose this array size, it's the count argument in the kernel.cl
 
   // Create and initialize input array in host memory
-  float *inputArray = (float *)malloc(arraySize * sizeof(cl_float));
+  float *inputArray = (float *)malloc(arraySize * sizeof(float));
   initializeArray(inputArray, arraySize);
 
   // Create and initialize output array in host memory
-  float *outputArray = (float *)malloc(arraySize * sizeof(cl_float));
+  float *outputArray = (float *)malloc(arraySize * sizeof(float));
   initializeArray(outputArray, arraySize);
 
   // 6 Create OpenCL buffer visible to the OpenCl runtime
