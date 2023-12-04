@@ -139,7 +139,7 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to create a command queue\n");
 
   // 2. Calculate size of the file
-  FILE *fileHandler = fopen("kernel.cl", "r"); //Open the kernel file
+  FILE *fileHandler = fopen("img_rot_kernel.cl", "r"); //Open the kernel file
   fseek(fileHandler, 0, SEEK_END); // Move the file pointer to the end of the file
   size_t fileSize = ftell(fileHandler);
   rewind(fileHandler);
@@ -168,12 +168,12 @@ int main(int argc, char** argv)
   }
 
   // 4 Create a compute kernel with the program we want to run
-  kernel = clCreateKernel(program, "pow_of_two", &err); 
+  kernel = clCreateKernel(program, "img_rot", &err); 
   cl_error(err, "Failed to create kernel from the program\n");
 
 
   // 5 Set the size of the arrays
-  const size_t arraySize = 100;  // We choose this array size, it's the count argument in the kernel.cl
+  const size_t arraySize = 100;  // We choose this array size
 
   // Create and initialize input array in host memory
   float *inputArray = (float *)malloc(arraySize * sizeof(float));
