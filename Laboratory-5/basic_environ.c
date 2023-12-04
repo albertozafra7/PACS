@@ -176,11 +176,11 @@ int main(int argc, char** argv)
   const size_t arraySize = 100;  // We choose this array size, it's the count argument in the kernel.cl
 
   // Create and initialize input array in host memory
-  float *inputArray = (float *)malloc(arraySize * sizeof(float));
+  float *inputArray = (float *)malloc(arraySize * sizeof(cl_float));
   initializeArray(inputArray, arraySize);
 
   // Create and initialize output array in host memory
-  float *outputArray = (float *)malloc(arraySize * sizeof(float));
+  float *outputArray = (float *)malloc(arraySize * sizeof(cl_float));
   initializeArray(outputArray, arraySize);
 
   // 6 Create OpenCL buffer visible to the OpenCl runtime
@@ -190,16 +190,17 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to create memory buffer at device\n");
   
   // 7 Write date into the memory object 
-  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(float) * arraySize, &in_device_object, 0, NULL, NULL);
+  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(float) * arraySize, inputArray, 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a write command\n");
   
   // 8 Set the arguments to the kernel
-  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object);
+  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), inputArray);
   cl_error(err, "Failed to set argument 0\n");
-  err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object);
+  err = clSetKernelArg(kernel, 1, sizeof(cl_mem), outputArray);
   cl_error(err, "Failed to set argument 1\n");
-  err = clSetKernelArg(kernel, 2, sizeof(cl_uint), &arraySize);
+  err = clSetKernelArg(kernel, 2, sizeof(cl_uint), arraySize);
   cl_error(err, "Failed to set argument 2\n");
+
 printf("HOli");
   // 9 Launch Kernel
   local_size = 128;
@@ -209,7 +210,7 @@ printf("HOli");
   
 printf("HOli");
   // 10 Read data form device memory back to host memory
-  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, &out_device_object, 0, NULL, NULL);
+  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, outputArray, 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a read command\n");
 printf("HOli");
   // 11 Write code to check correctness of execution ¿¿?? (idea chat gpt)
