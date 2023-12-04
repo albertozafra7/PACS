@@ -200,7 +200,7 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to set argument 1\n");
   err = clSetKernelArg(kernel, 2, sizeof(cl_uint), &arraySize);
   cl_error(err, "Failed to set argument 2\n");
-
+printf("HOli");
   // 9 Launch Kernel
   local_size = 128;
   global_size = 12800; //IDK which value(multiple of local size)
