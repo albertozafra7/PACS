@@ -25,6 +25,10 @@
 #include <iostream>
 #include "CImg/CImg.h"
 using namespace cimg_library;
+
+#include <iostream>
+#include <chrono>
+#include <string>
   
 // check error, in such a case, it exits
 
@@ -108,6 +112,14 @@ void initializeArray(float *array, size_t size) {
 
 int main(int argc, char** argv)
 {
+
+  // *** Global time ***
+	clock_t global_start_time;
+
+  global_start_time = clock();
+
+  // ********************
+
   int err;                            	// error code returned from api calls
   size_t t_buf = 50;			// size of str_buffer
   char str_buffer[t_buf];		// auxiliary buffer	
@@ -337,6 +349,10 @@ int main(int argc, char** argv)
   free(histogramRed);
   free(histogramBlue);
   free(histogramGreen);
+
+  // **** Total execution time in seconds ****
+  clock_t exec_time = clock() - global_start_time;
+  std::cout << "Total execution time = " << ((float)exec_time)/CLOCKS_PER_SEC  << " seconds" << std::endl;
 
   return 0;
 }

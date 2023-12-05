@@ -25,6 +25,10 @@
 #include <iostream>
 #include "CImg/CImg.h"
 using namespace cimg_library;
+
+#include <iostream>
+#include <chrono>
+#include <string>
   
 // check error, in such a case, it exits
 
@@ -46,6 +50,14 @@ void initializeArray(float *array, size_t size) {
 
 int main(int argc, char** argv)
 {
+
+  // *** Global time ***
+	clock_t global_start_time;
+
+  global_start_time = clock();
+
+  // ********************
+
   int err;                            	// error code returned from api calls
   size_t t_buf = 50;			// size of str_buffer
   char str_buffer[t_buf];		// auxiliary buffer	
@@ -199,8 +211,11 @@ int main(int argc, char** argv)
   cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar)*outputImg.size(), NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
   
+  // Create events for measuring memory transfer time
+  cl_event writeEvent, readEvent;
+
   // 7 Write date into the memory object 
-  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * inputImg.size(), inputImg.data(), 0, NULL, NULL);
+  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * inputImg.size(), inputImg.data(), 0, NULL, &writeEvent);
   cl_error(err, "Failed to enqueue a write command\n");
   
   // 8 Set the arguments to the kernel
@@ -213,8 +228,6 @@ int main(int argc, char** argv)
   err = clSetKernelArg(kernel, 3, sizeof(img_height), &img_height);
   cl_error(err, "Failed to set argument 3 --> IMG height\n");
 
-
-
   // 9 Launch Kernel
   local_size[0] = 128;
   local_size[1] = 128;
@@ -222,12 +235,46 @@ int main(int argc, char** argv)
   global_size[0] = img_width; // N of work items que quieres
   global_size[1] = img_height; // N of work items que quieres
 
-  err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, NULL);
+  cl_event event;
+  err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, &event);
   cl_error(err, "Failed to launch kernel to the device\n");
 
+  clWaitForEvents(1, &event);
+  clFinish(command_queue);
+
+  cl_ulong time_start;
+  cl_ulong time_end;
+  clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
+  clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
+  double nanoSeconds = time_end-time_start; printf("Kernel Execution time: %0.3f milliseconds \n",nanoSeconds / 1000000.0);
+
   // 10 Read data form device memory back to host memory
-  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(cl_uchar)*outputImg.size(), outputImg.data(), 0, NULL, NULL);
+  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(cl_uchar)*outputImg.size(), outputImg.data(), 0, NULL, &readEvent);
   cl_error(err, "Failed to enqueue a read command\n");
+
+  // Wait for the commands to finish --> bandwidth
+  clFinish(command_queue);
+
+  // Calculate the time taken for write and read operations
+  cl_ulong writeStart, writeEnd, readStart, readEnd;
+  clGetEventProfilingInfo(writeEvent, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart, NULL);
+  clGetEventProfilingInfo(writeEvent, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
+  clGetEventProfilingInfo(readEvent, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart, NULL);
+  clGetEventProfilingInfo(readEvent, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd, NULL);
+
+  // Calculate bandwidth
+  double writeTime = (writeEnd - writeStart) * 1.0e-9; // Convert nanoseconds to seconds
+  double readTime = (readEnd - readStart) * 1.0e-9;
+  size_t dataSize = sizeof(cl_uchar) * inputImg.size();
+  //size_t dataSize = sizeof(cl_uchar)*arraySize;
+
+  double writeBandwidth = dataSize / writeTime; // in bytes per second
+  double readBandwidth = dataSize / readTime;
+
+  // Print or use the bandwidth values as needed
+  printf("Write Bandwidth (Host to device): %.2f MB/s\n", writeBandwidth / (1024 * 1024));
+  printf("Read Bandwidth (Host to device): %.2f MB/s\n", readBandwidth / (1024 * 1024));
+
 
   // 11 Write code to check correctness of execution
   inputImg.display("My first CImg code");  
@@ -240,6 +287,10 @@ int main(int argc, char** argv)
   clReleaseKernel(kernel);
   clReleaseCommandQueue(command_queue);
   clReleaseContext(context);
+
+  // **** Total execution time in seconds ****
+  clock_t exec_time = clock() - global_start_time;
+  std::cout << "Total execution time = " << ((float)exec_time)/CLOCKS_PER_SEC  << " seconds" << std::endl;
 
   return 0;
 }
