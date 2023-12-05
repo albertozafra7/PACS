@@ -231,6 +231,7 @@ void write_output_file(const std::unique_ptr<Vec[]>& c, size_t w, size_t h)
 }
 
 int main(int argc, char *argv[]){
+    auto start = std::chrono::steady_clock::now();
     size_t w=1024, h=768, samps = 2; // # samples
 
     Ray cam(Vec(50,52,295.6), Vec(0,-0.042612,-1).norm()); // cam pos, dir
@@ -241,16 +242,16 @@ int main(int argc, char *argv[]){
     auto w_div = p.first;
     auto h_div = p.second;
 
-    auto start = std::chrono::steady_clock::now();
+    const auto y_height = h / h_div;
+    const auto x_width = w /w_div;
+
+    auto* c_ptr = c.get(); // raw pointer to Vector c
+    auto sequential_t = std::chrono::steady_clock::now();
     
     // create a thread pool
     thread_pool* pool = new thread_pool({h_div * w_div});
     //auto* pool_ptr = &pool;
 
-    const auto y_height = h / h_div;
-    const auto x_width = w /w_div;
-
-    auto* c_ptr = c.get(); // raw pointer to Vector c
     // launch the tasks
     for (size_t i = 0; i < h_div; ++i) {
         for (size_t j = 0; j < w_div; ++j) {
@@ -273,8 +274,14 @@ int main(int argc, char *argv[]){
     pool->~thread_pool();  // not needed, destructor will be automatically called
 
     auto stop = std::chrono::steady_clock::now();
-    std::cout << "Execution time: " <<
-      std::chrono::duration_cast<std::chrono::milliseconds>(stop-start).count() << " ms." << std::endl;
+    //std::cout << "Execution time: " <<
+      //std::chrono::duration_cast<std::chrono::milliseconds>(stop-start).count() << " ms." << std::endl;
+    auto total_ms = std::chrono::duration_cast<std::chrono::nanoseconds>(stop-start).count();
+    auto paralel_ms =  std::chrono::duration_cast<std::chrono::nanoseconds>(stop-sequential_t).count();
+    auto sequential_ms = std::chrono::duration_cast<std::chrono::nanoseconds>(sequential_t-start).count();
+      
+   std::cout << w_div << "," << std::chrono::duration_cast<std::chrono::milliseconds>(stop-start).count() << std::endl;
+   std::cout << sequential_ms << "," << paralel_ms << "," << total_ms << std::endl;
 
     write_output_file(c, w, h);
 }

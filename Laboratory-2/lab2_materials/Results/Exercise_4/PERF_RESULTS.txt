@@ -1,0 +1,59 @@
+MATRICES C --> CLOCK
+ Performance counter stats for 'system wide' (5 runs):
+
+      1.224.766,32 msec cpu-clock                 #    7,955 CPUs utilized            ( +-  0,28% )
+         1.485.212      context-switches          #    1,206 K/sec                    ( +-  3,69% )
+           130.982      cpu-migrations            #  106,341 /sec                     ( +-  9,41% )
+           352.820      page-faults               #  286,446 /sec                     ( +- 59,57% )
+   842.457.346.443      cycles                    #    0,684 GHz                      ( +-  2,52% )
+   456.580.554.797      instructions              #    0,52  insn per cycle           ( +-  4,20% )
+    57.779.315.379      branches                  #   46,910 M/sec                    ( +-  5,55% )
+     1.355.436.141      branch-misses             #    2,01% of all branches          ( +-  7,27% )
+
+           153,966 +- 0,425 seconds time elapsed  ( +-  0,28% )
+           
+           
+MATRICES C --> GETIME
+ Performance counter stats for 'system wide' (5 runs):
+
+      1.453.040,61 msec cpu-clock                 #    8,015 CPUs utilized            ( +-  0,09% )
+         1.527.741      context-switches          #    1,053 K/sec                    ( +-  0,32% )
+            42.187      cpu-migrations            #   29,090 /sec                     ( +-  1,58% )
+         2.522.331      page-faults               #    1,739 K/sec                    ( +-  1,05% )
+ 1.360.786.068.360      cycles                    #    0,938 GHz                      ( +-  0,28% )
+   717.729.977.493      instructions              #    0,53  insn per cycle           ( +-  0,29% )
+   128.560.748.391      branches                  #   88,649 M/sec                    ( +-  0,33% )
+     2.873.152.289      branch-misses             #    2,25% of all branches          ( +-  1,35% )
+
+           181,279 +- 0,162 seconds time elapsed  ( +-  0,09% )
+           
+           
+           
+MATRICES LV --> CLOCK
+ Performance counter stats for 'system wide' (5 runs):
+
+         39.688,90 msec cpu-clock                 #    7,985 CPUs utilized            ( +-  0,31% )
+            56.160      context-switches          #    1,412 K/sec                    ( +-  0,80% )
+             5.627      cpu-migrations            #  141,511 /sec                     ( +-  3,79% )
+            60.594      page-faults               #    1,524 K/sec                    ( +-  0,14% )
+    26.286.166.195      cycles                    #    0,661 GHz                      ( +-  0,83% )
+    58.584.835.871      instructions              #    2,24  insn per cycle           ( +-  0,16% )
+     1.836.944.093      branches                  #   46,197 M/sec                    ( +-  1,23% )
+        45.194.343      branch-misses             #    2,48% of all branches          ( +-  1,86% )
+
+            4,9706 +- 0,0155 seconds time elapsed  ( +-  0,31% )
+            
+            
+MATRICES LV --> GETIME
+ Performance counter stats for 'system wide' (5 runs):
+
+         38.762,19 msec cpu-clock                 #    8,036 CPUs utilized            ( +-  0,21% )
+            43.913      context-switches          #    1,138 K/sec                    ( +-  0,66% )
+             3.429      cpu-migrations            #   88,862 /sec                     ( +-  6,36% )
+            59.408      page-faults               #    1,540 K/sec                    ( +-  1,53% )
+    24.370.939.386      cycles                    #    0,632 GHz                      ( +-  0,52% )
+    58.250.303.730      instructions              #    2,38  insn per cycle           ( +-  0,12% )
+     1.768.000.542      branches                  #   45,817 M/sec                    ( +-  0,81% )
+        38.761.209      branch-misses             #    2,19% of all branches          ( +-  2,06% )
+
+            4,8235 +- 0,0102 seconds time elapsed  ( +-  0,21% )

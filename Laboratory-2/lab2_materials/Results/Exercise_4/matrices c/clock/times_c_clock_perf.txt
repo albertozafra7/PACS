@@ -1,0 +1,736 @@
+# started on Fri Oct 13 18:49:36 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+         18.098,65 msec cpu-clock                 #    7,982 CPUs utilized            ( +-  0,77% )
+            21.750      context-switches          #    1,200 K/sec                    ( +-  4,90% )
+             1.406      cpu-migrations            #   77,548 /sec                     ( +-  8,05% )
+             9.909      page-faults               #  546,530 /sec                     ( +-  6,97% )
+    13.596.299.932      cycles                    #    0,750 GHz                      ( +-  4,09% )
+    14.329.231.628      instructions              #    1,07  insn per cycle           ( +-  5,18% )
+     2.328.373.617      branches                  #  128,421 M/sec                    ( +-  6,72% )
+        29.065.917      branch-misses             #    1,23% of all branches          ( +-  9,21% )
+
+            2,2674 +- 0,0178 seconds time elapsed  ( +-  0,78% )
+
+# started on Fri Oct 13 18:52:53 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             12,45 msec cpu-clock                 #    6,247 CPUs utilized            ( +-  8,94% )
+                32      context-switches          #    2,057 K/sec                    ( +- 40,73% )
+                 8      cpu-migrations            #  514,137 /sec                     ( +- 14,58% )
+               138      page-faults               #    8,869 K/sec                    ( +-  0,59% )
+         5.209.648      cycles                    #    0,335 GHz                      ( +- 15,95% )
+         4.814.706      instructions              #    0,60  insn per cycle           ( +-  4,95% )
+           854.867      branches                  #   54,940 M/sec                    ( +-  5,57% )
+            24.443      branch-misses             #    2,37% of all branches          ( +- 17,08% )
+
+          0,001993 +- 0,000150 seconds time elapsed  ( +-  7,51% )
+
+# started on Fri Oct 13 18:52:53 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             12,78 msec cpu-clock                 #    7,334 CPUs utilized            ( +-  4,70% )
+                33      context-switches          #    2,344 K/sec                    ( +- 23,72% )
+                 8      cpu-migrations            #  568,182 /sec                     ( +- 17,05% )
+               137      page-faults               #    9,730 K/sec                    ( +-  0,37% )
+         4.882.761      cycles                    #    0,347 GHz                      ( +- 16,16% )
+         4.862.099      instructions              #    0,73  insn per cycle           ( +-  8,02% )
+           861.327      branches                  #   61,174 M/sec                    ( +-  8,72% )
+            25.384      branch-misses             #    2,57% of all branches          ( +- 19,05% )
+
+         0,0017427 +- 0,0000510 seconds time elapsed  ( +-  2,93% )
+
+# started on Fri Oct 13 18:52:53 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+            181,99 msec cpu-clock                 #   32,849 CPUs utilized            ( +- 18,34% )
+               214      context-switches          #    4,406 K/sec                    ( +- 16,56% )
+                32      cpu-migrations            #  658,776 /sec                     ( +- 14,48% )
+               138      page-faults               #    2,841 K/sec                    ( +-  0,59% )
+        88.189.264      cycles                    #    1,816 GHz                      ( +- 18,24% )
+       158.951.055      instructions              #    6,52  insn per cycle           ( +- 19,18% )
+        33.477.762      branches                  #  689,198 M/sec                    ( +- 19,27% )
+           310.756      branch-misses             #    4,04% of all branches          ( +- 17,67% )
+
+           0,00554 +- 0,00358 seconds time elapsed  ( +- 64,59% )
+
+# started on Fri Oct 13 18:52:54 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             13,00 msec cpu-clock                 #    7,285 CPUs utilized            ( +-106,30% )
+                30      context-switches          #    1,103 K/sec                    ( +- 71,70% )
+                 8      cpu-migrations            #  294,216 /sec                     ( +- 29,95% )
+               136      page-faults               #    5,002 K/sec                    ( +-  0,63% )
+        10.703.116      cycles                    #    0,394 GHz                      ( +- 29,05% )
+        16.485.591      instructions              #    1,17  insn per cycle           ( +- 14,76% )
+         3.306.598      branches                  #  121,607 M/sec                    ( +- 15,46% )
+            45.336      branch-misses             #    1,37% of all branches          ( +- 37,01% )
+
+          0,001784 +- 0,000129 seconds time elapsed  ( +-  7,21% )
+
+# started on Fri Oct 13 18:52:54 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             12,86 msec cpu-clock                 #    6,840 CPUs utilized            ( +- 95,33% )
+                30      context-switches          #    1,098 K/sec                    ( +- 23,87% )
+                 8      cpu-migrations            #  292,742 /sec                     ( +- 10,16% )
+               145      page-faults               #    5,306 K/sec                    ( +-  0,35% )
+        10.285.705      cycles                    #    0,376 GHz                      ( +- 17,32% )
+        16.226.511      instructions              #    1,11  insn per cycle           ( +-  9,24% )
+         3.228.867      branches                  #  118,153 M/sec                    ( +-  9,82% )
+            38.928      branch-misses             #    1,21% of all branches          ( +- 73,29% )
+
+         0,0018802 +- 0,0000671 seconds time elapsed  ( +-  3,57% )
+
+# started on Fri Oct 13 18:52:54 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             15,56 msec cpu-clock                 #    3,878 CPUs utilized            ( +-172,26% )
+                36      context-switches          #  840,636 /sec                     ( +- 52,72% )
+                 9      cpu-migrations            #  210,159 /sec                     ( +- 22,66% )
+               148      page-faults               #    3,456 K/sec                    ( +-  0,70% )
+        13.801.408      cycles                    #    0,322 GHz                      ( +- 75,64% )
+        18.629.510      instructions              #    0,77  insn per cycle           ( +- 69,38% )
+         3.694.381      branches                  #   86,267 M/sec                    ( +- 74,06% )
+            59.342      branch-misses             #    0,93% of all branches          ( +-150,78% )
+
+           0,00401 +- 0,00203 seconds time elapsed  ( +- 50,52% )
+
+# started on Fri Oct 13 18:52:54 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             16,08 msec cpu-clock                 #    6,055 CPUs utilized            ( +- 36,73% )
+                40      context-switches          #    1,595 K/sec                    ( +- 32,96% )
+                 8      cpu-migrations            #  318,900 /sec                     ( +- 22,01% )
+               157      page-faults               #    6,258 K/sec                    ( +-  0,35% )
+        12.860.607      cycles                    #    0,513 GHz                      ( +- 26,54% )
+        19.944.426      instructions              #    1,08  insn per cycle           ( +- 16,67% )
+         3.904.461      branches                  #  155,642 M/sec                    ( +- 17,71% )
+            51.569      branch-misses             #    1,18% of all branches          ( +- 37,34% )
+
+          0,002656 +- 0,000581 seconds time elapsed  ( +- 21,88% )
+
+# started on Fri Oct 13 18:52:54 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             16,35 msec cpu-clock                 #    4,012 CPUs utilized            ( +-188,31% )
+                31      context-switches          #  508,685 /sec                     ( +-406,96% )
+                 9      cpu-migrations            #  147,683 /sec                     ( +-109,63% )
+               160      page-faults               #    2,625 K/sec                    ( +- 55,80% )
+        19.573.413      cycles                    #    0,321 GHz                      ( +-177,28% )
+        34.752.417      instructions              #    0,61  insn per cycle           ( +- 89,21% )
+         6.887.799      branches                  #  113,023 M/sec                    ( +- 98,80% )
+            63.710      branch-misses             #    0,48% of all branches          ( +-326,05% )
+
+           0,00407 +- 0,00202 seconds time elapsed  ( +- 49,45% )
+
+# started on Fri Oct 13 18:52:54 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             72,03 msec cpu-clock                 #   23,781 CPUs utilized            ( +- 14,57% )
+               162      context-switches          #    5,384 K/sec                    ( +- 15,34% )
+                24      cpu-migrations            #  797,606 /sec                     ( +- 11,44% )
+               239      page-faults               #    7,943 K/sec                    ( +-  5,80% )
+        54.640.876      cycles                    #    1,816 GHz                      ( +- 10,51% )
+        58.175.163      instructions              #    1,78  insn per cycle           ( +-  7,57% )
+        11.775.174      branches                  #  391,331 M/sec                    ( +-  8,02% )
+           296.149      branch-misses             #    3,59% of all branches          ( +- 13,90% )
+
+          0,003029 +- 0,000555 seconds time elapsed  ( +- 18,31% )
+
+# started on Fri Oct 13 18:52:54 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             20,64 msec cpu-clock                 #    5,692 CPUs utilized            ( +- 29,25% )
+                50      context-switches          #    1,673 K/sec                    ( +- 26,77% )
+                12      cpu-migrations            #  401,540 /sec                     ( +- 16,37% )
+               181      page-faults               #    6,057 K/sec                    ( +-  0,48% )
+        26.676.804      cycles                    #    0,893 GHz                      ( +- 20,40% )
+        43.945.690      instructions              #    1,21  insn per cycle           ( +- 26,14% )
+         8.555.210      branches                  #  286,272 M/sec                    ( +- 28,19% )
+           126.590      branch-misses             #    1,11% of all branches          ( +- 35,72% )
+
+          0,003626 +- 0,000784 seconds time elapsed  ( +- 21,61% )
+
+# started on Fri Oct 13 18:52:54 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             98,26 msec cpu-clock                 #   16,918 CPUs utilized            ( +- 23,08% )
+               137      context-switches          #    2,305 K/sec                    ( +- 22,54% )
+                17      cpu-migrations            #  286,014 /sec                     ( +- 33,87% )
+               196      page-faults               #    3,298 K/sec                    ( +-  3,05% )
+        27.158.134      cycles                    #    0,457 GHz                      ( +- 60,82% )
+        34.784.036      instructions              #    0,84  insn per cycle           ( +- 78,38% )
+         6.441.395      branches                  #  108,372 M/sec                    ( +- 88,86% )
+           113.455      branch-misses             #    0,96% of all branches          ( +- 76,67% )
+
+           0,00581 +- 0,00259 seconds time elapsed  ( +- 44,62% )
+
+# started on Fri Oct 13 18:52:54 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+             25,17 msec cpu-clock                 #    8,028 CPUs utilized            ( +-  1,25% )
+                81      context-switches          #    3,114 K/sec                    ( +- 20,99% )
+                15      cpu-migrations            #  576,657 /sec                     ( +- 21,77% )
+               193      page-faults               #    7,420 K/sec                    ( +-  1,46% )
+        23.765.622      cycles                    #    0,914 GHz                      ( +-  4,77% )
+        22.751.567      instructions              #    0,88  insn per cycle           ( +-  8,87% )
+         4.086.425      branches                  #  157,098 M/sec                    ( +-  9,89% )
+           105.945      branch-misses             #    2,05% of all branches          ( +- 20,19% )
+
+         0,0031353 +- 0,0000545 seconds time elapsed  ( +-  1,74% )
+
+# started on Fri Oct 13 18:52:54 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+            100,00 msec cpu-clock                 #    6,961 CPUs utilized            ( +-  5,49% )
+               118      context-switches          #    1,081 K/sec                    ( +- 22,58% )
+                25      cpu-migrations            #  229,120 /sec                     ( +- 20,37% )
+               370      page-faults               #    3,391 K/sec                    ( +-  1,13% )
+       138.906.619      cycles                    #    1,273 GHz                      ( +-  7,39% )
+       243.605.807      instructions              #    1,61  insn per cycle           ( +-  5,07% )
+        45.147.875      branches                  #  413,771 M/sec                    ( +-  5,81% )
+           536.482      branch-misses             #    1,16% of all branches          ( +- 15,75% )
+
+           0,01437 +- 0,00128 seconds time elapsed  ( +-  8,94% )
+
+# started on Fri Oct 13 18:52:55 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+            283,82 msec cpu-clock                 #    7,835 CPUs utilized            ( +-  1,94% )
+               291      context-switches          #    1,007 K/sec                    ( +-  8,22% )
+                30      cpu-migrations            #  103,801 /sec                     ( +- 17,21% )
+               662      page-faults               #    2,291 K/sec                    ( +-  0,09% )
+       253.809.787      cycles                    #    0,878 GHz                      ( +-  3,22% )
+       401.334.982      instructions              #    1,48  insn per cycle           ( +-  4,51% )
+        68.586.174      branches                  #  237,310 M/sec                    ( +-  4,98% )
+           937.957      branch-misses             #    1,18% of all branches          ( +-  6,46% )
+
+          0,036225 +- 0,000845 seconds time elapsed  ( +-  2,33% )
+
+# started on Fri Oct 13 18:52:55 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+            663,46 msec cpu-clock                 #    7,681 CPUs utilized            ( +-  2,84% )
+               979      context-switches          #    1,424 K/sec                    ( +-  8,30% )
+                99      cpu-migrations            #  143,993 /sec                     ( +- 13,50% )
+             1.156      page-faults               #    1,681 K/sec                    ( +-  3,31% )
+       623.105.388      cycles                    #    0,906 GHz                      ( +-  1,51% )
+     1.068.715.753      instructions              #    1,65  insn per cycle           ( +-  2,91% )
+       181.318.501      branches                  #  263,723 M/sec                    ( +-  3,54% )
+         1.933.184      branch-misses             #    0,99% of all branches          ( +-  6,39% )
+
+           0,08638 +- 0,00175 seconds time elapsed  ( +-  2,03% )
+
+# started on Fri Oct 13 18:52:55 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+          1.315,87 msec cpu-clock                 #    7,494 CPUs utilized            ( +-  3,35% )
+             1.500      context-switches          #    1,067 K/sec                    ( +- 11,89% )
+                44      cpu-migrations            #   31,307 /sec                     ( +- 94,06% )
+             1.604      page-faults               #    1,141 K/sec                    ( +- 29,09% )
+       761.958.662      cycles                    #    0,542 GHz                      ( +- 30,58% )
+     1.184.686.802      instructions              #    0,76  insn per cycle           ( +- 27,79% )
+       163.385.096      branches                  #  116,252 M/sec                    ( +- 42,35% )
+         1.629.890      branch-misses             #    0,41% of all branches          ( +- 66,86% )
+
+           0,17558 +- 0,00577 seconds time elapsed  ( +-  3,28% )
+
+# started on Fri Oct 13 18:52:56 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+          2.568,85 msec cpu-clock                 #    7,773 CPUs utilized            ( +-  2,74% )
+             3.479      context-switches          #    1,321 K/sec                    ( +-  4,77% )
+               177      cpu-migrations            #   67,230 /sec                     ( +- 16,07% )
+             2.253      page-faults               #  855,754 /sec                     ( +-  1,20% )
+     1.559.610.521      cycles                    #    0,592 GHz                      ( +- 17,76% )
+     2.036.727.698      instructions              #    0,91  insn per cycle           ( +- 23,57% )
+       279.976.127      branches                  #  106,343 M/sec                    ( +- 35,97% )
+         2.949.932      branch-misses             #    0,57% of all branches          ( +- 42,88% )
+
+           0,33050 +- 0,00877 seconds time elapsed  ( +-  2,65% )
+
+# started on Fri Oct 13 18:52:58 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+          3.940,57 msec cpu-clock                 #    7,403 CPUs utilized            ( +-  4,71% )
+             3.911      context-switches          #  918,739 /sec                     ( +- 13,31% )
+               165      cpu-migrations            #   38,760 /sec                     ( +- 35,07% )
+             3.017      page-faults               #  708,728 /sec                     ( +-  1,04% )
+     2.085.937.096      cycles                    #    0,490 GHz                      ( +- 21,32% )
+     2.971.377.891      instructions              #    1,08  insn per cycle           ( +- 19,18% )
+       388.462.325      branches                  #   91,254 M/sec                    ( +- 31,30% )
+         2.617.041      branch-misses             #    0,46% of all branches          ( +- 60,39% )
+
+            0,5323 +- 0,0232 seconds time elapsed  ( +-  4,37% )
+
+# started on Fri Oct 13 18:53:01 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+          7.248,92 msec cpu-clock                 #    7,598 CPUs utilized            ( +-  2,14% )
+             7.015      context-switches          #  919,285 /sec                     ( +-  5,61% )
+               258      cpu-migrations            #   33,810 /sec                     ( +- 23,46% )
+             5.056      page-faults               #  662,566 /sec                     ( +- 11,32% )
+     3.864.639.214      cycles                    #    0,506 GHz                      ( +-  9,40% )
+     4.373.409.104      instructions              #    0,93  insn per cycle           ( +- 12,17% )
+       564.589.572      branches                  #   73,987 M/sec                    ( +- 20,01% )
+         4.128.994      branch-misses             #    0,52% of all branches          ( +- 40,95% )
+
+            0,9540 +- 0,0194 seconds time elapsed  ( +-  2,03% )
+
+# started on Fri Oct 13 18:53:06 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+         12.026,71 msec cpu-clock                 #    7,907 CPUs utilized            ( +-  0,65% )
+            13.780      context-switches          #    1,132 K/sec                    ( +-  8,77% )
+               721      cpu-migrations            #   59,243 /sec                     ( +- 10,51% )
+             5.245      page-faults               #  430,969 /sec                     ( +- 20,08% )
+     6.529.747.642      cycles                    #    0,537 GHz                      ( +-  6,08% )
+     6.479.462.599      instructions              #    0,92  insn per cycle           ( +- 11,62% )
+       855.663.784      branches                  #   70,308 M/sec                    ( +- 18,54% )
+         6.969.251      branch-misses             #    0,68% of all branches          ( +- 22,04% )
+
+           1,52109 +- 0,00996 seconds time elapsed  ( +-  0,66% )
+
+# started on Fri Oct 13 18:53:13 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+         18.209,61 msec cpu-clock                 #    8,023 CPUs utilized            ( +-  1,77% )
+            20.957      context-switches          #    1,155 K/sec                    ( +-  6,79% )
+             1.137      cpu-migrations            #   62,656 /sec                     ( +- 10,40% )
+             6.294      page-faults               #  346,839 /sec                     ( +- 25,29% )
+    12.024.326.545      cycles                    #    0,663 GHz                      ( +-  8,10% )
+    12.575.489.429      instructions              #    0,98  insn per cycle           ( +-  9,72% )
+     1.950.808.070      branches                  #  107,502 M/sec                    ( +- 13,30% )
+        19.774.961      branch-misses             #    0,88% of all branches          ( +- 24,26% )
+
+            2,2696 +- 0,0403 seconds time elapsed  ( +-  1,78% )
+
+# started on Fri Oct 13 18:53:25 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+         26.752,31 msec cpu-clock                 #    7,820 CPUs utilized            ( +-  0,72% )
+            24.732      context-switches          #  903,751 /sec                     ( +-  6,71% )
+             1.144      cpu-migrations            #   41,804 /sec                     ( +- 10,29% )
+             7.369      page-faults               #  269,276 /sec                     ( +- 10,74% )
+    16.074.887.659      cycles                    #    0,587 GHz                      ( +-  5,68% )
+    15.795.514.309      instructions              #    0,87  insn per cycle           ( +-  6,97% )
+     2.408.457.021      branches                  #   88,009 M/sec                    ( +-  9,85% )
+        20.736.843      branch-misses             #    0,74% of all branches          ( +- 14,21% )
+
+            3,4209 +- 0,0242 seconds time elapsed  ( +-  0,71% )
+
+# started on Fri Oct 13 18:53:42 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+         35.858,02 msec cpu-clock                 #    8,459 CPUs utilized            ( +-  1,43% )
+            44.572      context-switches          #    1,314 K/sec                    ( +-  5,52% )
+             2.169      cpu-migrations            #   63,959 /sec                     ( +-  6,06% )
+             8.619      page-faults               #  254,157 /sec                     ( +-  0,28% )
+    23.687.015.575      cycles                    #    0,698 GHz                      ( +-  3,24% )
+    20.734.982.580      instructions              #    1,00  insn per cycle           ( +-  1,50% )
+     3.183.201.495      branches                  #   93,866 M/sec                    ( +-  2,11% )
+        37.196.441      branch-misses             #    1,27% of all branches          ( +-  6,57% )
+
+            4,2392 +- 0,0642 seconds time elapsed  ( +-  1,52% )
+
+# started on Fri Oct 13 18:54:03 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+         46.657,37 msec cpu-clock                 #    8,039 CPUs utilized            ( +-  1,61% )
+            77.501      context-switches          #    1,669 K/sec                    ( +- 12,16% )
+             4.724      cpu-migrations            #  101,748 /sec                     ( +- 22,43% )
+            30.216      page-faults               #  650,809 /sec                     ( +- 43,63% )
+    39.463.213.202      cycles                    #    0,850 GHz                      ( +-  8,38% )
+    32.030.105.044      instructions              #    0,89  insn per cycle           ( +-  5,76% )
+     4.962.762.587      branches                  #  106,891 M/sec                    ( +-  6,71% )
+        98.606.106      branch-misses             #    2,13% of all branches          ( +- 15,35% )
+
+            5,8037 +- 0,0941 seconds time elapsed  ( +-  1,62% )
+
+# started on Fri Oct 13 18:54:32 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+         54.506,14 msec cpu-clock                 #    8,109 CPUs utilized            ( +-  1,10% )
+            60.185      context-switches          #    1,119 K/sec                    ( +-  9,89% )
+             2.743      cpu-migrations            #   51,009 /sec                     ( +- 23,86% )
+            16.653      page-faults               #  309,683 /sec                     ( +- 26,76% )
+    35.211.999.815      cycles                    #    0,655 GHz                      ( +-  6,78% )
+    34.082.264.306      instructions              #    0,97  insn per cycle           ( +-  4,32% )
+     5.284.485.264      branches                  #   98,271 M/sec                    ( +-  5,70% )
+        52.919.381      branch-misses             #    1,08% of all branches          ( +- 21,73% )
+
+            6,7220 +- 0,0750 seconds time elapsed  ( +-  1,12% )
+
+# started on Fri Oct 13 18:55:06 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+         80.109,34 msec cpu-clock                 #    7,984 CPUs utilized            ( +-  0,96% )
+            97.663      context-switches          #    1,217 K/sec                    ( +-  6,51% )
+             4.728      cpu-migrations            #   58,904 /sec                     ( +- 14,29% )
+            28.079      page-faults               #  349,824 /sec                     ( +- 18,57% )
+    49.781.845.164      cycles                    #    0,620 GHz                      ( +-  6,18% )
+    39.367.660.616      instructions              #    0,76  insn per cycle           ( +-  3,85% )
+     5.944.384.577      branches                  #   74,058 M/sec                    ( +-  4,93% )
+        71.666.168      branch-misses             #    1,20% of all branches          ( +- 21,42% )
+
+           10,0335 +- 0,0963 seconds time elapsed  ( +-  0,96% )
+
+# started on Fri Oct 13 18:55:56 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        107.561,42 msec cpu-clock                 #    8,007 CPUs utilized            ( +-  0,36% )
+           121.981      context-switches          #    1,135 K/sec                    ( +-  2,36% )
+             5.375      cpu-migrations            #   50,013 /sec                     ( +-  5,06% )
+            25.442      page-faults               #  236,729 /sec                     ( +-  8,49% )
+    63.459.883.274      cycles                    #    0,590 GHz                      ( +-  1,90% )
+    45.569.248.387      instructions              #    0,70  insn per cycle           ( +-  3,24% )
+     6.784.556.813      branches                  #   63,128 M/sec                    ( +-  4,51% )
+        78.914.391      branch-misses             #    1,08% of all branches          ( +-  6,54% )
+
+           13,4337 +- 0,0488 seconds time elapsed  ( +-  0,36% )
+
+# started on Fri Oct 13 18:57:03 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        141.576,55 msec cpu-clock                 #    7,769 CPUs utilized            ( +-  0,98% )
+           110.167      context-switches          #  755,695 /sec                     ( +- 15,33% )
+             3.329      cpu-migrations            #   22,835 /sec                     ( +- 44,15% )
+            21.795      page-faults               #  149,504 /sec                     ( +- 45,06% )
+    74.629.131.279      cycles                    #    0,512 GHz                      ( +-  7,21% )
+    49.259.224.222      instructions              #    0,58  insn per cycle           ( +-  6,96% )
+     6.976.159.945      branches                  #   47,853 M/sec                    ( +- 10,00% )
+        61.385.918      branch-misses             #    0,75% of all branches          ( +- 41,10% )
+
+            18,223 +- 0,174 seconds time elapsed  ( +-  0,95% )
+
+# started on Fri Oct 13 18:58:34 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        188.557,27 msec cpu-clock                 #    7,946 CPUs utilized            ( +-  0,52% )
+           126.874      context-switches          #  668,317 /sec                     ( +-  5,50% )
+             3.956      cpu-migrations            #   20,838 /sec                     ( +- 18,66% )
+            28.452      page-faults               #  149,873 /sec                     ( +- 30,10% )
+    98.950.958.608      cycles                    #    0,521 GHz                      ( +-  1,44% )
+    58.077.271.896      instructions              #    0,57  insn per cycle           ( +-  1,64% )
+     8.190.127.871      branches                  #   43,142 M/sec                    ( +-  2,14% )
+        73.318.529      branch-misses             #    0,87% of all branches          ( +- 10,22% )
+
+            23,731 +- 0,124 seconds time elapsed  ( +-  0,52% )
+
+# started on Fri Oct 13 19:00:33 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        260.736,78 msec cpu-clock                 #    8,244 CPUs utilized            ( +-  1,93% )
+           321.996      context-switches          #    1,273 K/sec                    ( +- 21,01% )
+            19.468      cpu-migrations            #   76,942 /sec                     ( +- 31,30% )
+           168.477      page-faults               #  665,860 /sec                     ( +- 36,46% )
+   187.155.923.122      cycles                    #    0,740 GHz                      ( +- 12,92% )
+   101.692.099.557      instructions              #    0,59  insn per cycle           ( +- 13,79% )
+    16.056.468.640      branches                  #   63,459 M/sec                    ( +- 16,75% )
+       370.434.479      branch-misses             #    2,54% of all branches          ( +- 32,25% )
+
+            31,628 +- 0,628 seconds time elapsed  ( +-  1,99% )
+
+# started on Fri Oct 13 19:03:11 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        289.067,23 msec cpu-clock                 #    7,977 CPUs utilized            ( +-  1,37% )
+           330.604      context-switches          #    1,140 K/sec                    ( +- 20,49% )
+            18.040      cpu-migrations            #   62,230 /sec                     ( +- 38,58% )
+           204.419      page-faults               #  705,157 /sec                     ( +- 40,34% )
+   194.419.357.389      cycles                    #    0,671 GHz                      ( +-  9,89% )
+   109.647.147.352      instructions              #    0,50  insn per cycle           ( +- 10,36% )
+    16.766.271.110      branches                  #   57,836 M/sec                    ( +- 11,31% )
+       339.402.027      branch-misses             #    1,77% of all branches          ( +- 25,78% )
+
+            36,237 +- 0,495 seconds time elapsed  ( +-  1,37% )
+
+# started on Fri Oct 13 19:06:13 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        379.928,93 msec cpu-clock                 #    8,090 CPUs utilized            ( +-  0,94% )
+           589.969      context-switches          #    1,570 K/sec                    ( +- 10,21% )
+            44.968      cpu-migrations            #  119,691 /sec                     ( +- 18,45% )
+           348.295      page-faults               #  927,058 /sec                     ( +- 20,84% )
+   284.961.310.432      cycles                    #    0,758 GHz                      ( +-  6,07% )
+   147.204.357.948      instructions              #    0,52  insn per cycle           ( +-  8,00% )
+    23.329.147.353      branches                  #   62,095 M/sec                    ( +-  7,61% )
+       609.356.774      branch-misses             #    2,61% of all branches          ( +- 11,97% )
+
+            46,963 +- 0,446 seconds time elapsed  ( +-  0,95% )
+
+# started on Fri Oct 13 19:10:07 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        409.935,49 msec cpu-clock                 #    7,924 CPUs utilized            ( +-  0,65% )
+           468.666      context-switches          #    1,132 K/sec                    ( +-  5,08% )
+            26.709      cpu-migrations            #   64,534 /sec                     ( +- 13,95% )
+           281.559      page-faults               #  680,304 /sec                     ( +-  8,84% )
+   282.278.124.465      cycles                    #    0,682 GHz                      ( +-  2,64% )
+   150.506.548.363      instructions              #    0,52  insn per cycle           ( +-  3,59% )
+    23.522.318.444      branches                  #   56,835 M/sec                    ( +-  3,58% )
+       502.513.202      branch-misses             #    2,09% of all branches          ( +-  5,91% )
+
+            51,735 +- 0,331 seconds time elapsed  ( +-  0,64% )
+
+# started on Fri Oct 13 19:14:26 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        504.395,29 msec cpu-clock                 #    8,176 CPUs utilized            ( +-  0,92% )
+           596.224      context-switches          #    1,208 K/sec                    ( +-  8,16% )
+            41.329      cpu-migrations            #   83,740 /sec                     ( +- 11,64% )
+           354.815      page-faults               #  718,917 /sec                     ( +-  9,22% )
+   356.763.278.258      cycles                    #    0,723 GHz                      ( +-  4,21% )
+   185.002.621.836      instructions              #    0,58  insn per cycle           ( +-  4,37% )
+    28.338.168.047      branches                  #   57,418 M/sec                    ( +-  5,05% )
+       644.300.028      branch-misses             #    2,61% of all branches          ( +-  9,64% )
+
+            61,694 +- 0,579 seconds time elapsed  ( +-  0,94% )
+
+# started on Fri Oct 13 19:19:35 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        588.106,47 msec cpu-clock                 #    8,217 CPUs utilized            ( +-  0,81% )
+           938.539      context-switches          #    1,639 K/sec                    ( +-  7,36% )
+            70.941      cpu-migrations            #  123,901 /sec                     ( +- 10,62% )
+           491.911      page-faults               #  859,137 /sec                     ( +- 25,21% )
+   471.813.461.564      cycles                    #    0,824 GHz                      ( +-  3,99% )
+   247.277.977.289      instructions              #    0,59  insn per cycle           ( +-  5,36% )
+    38.760.109.499      branches                  #   67,696 M/sec                    ( +-  5,12% )
+     1.060.701.646      branch-misses             #    3,06% of all branches          ( +-  6,89% )
+
+            71,572 +- 0,593 seconds time elapsed  ( +-  0,83% )
+
+# started on Fri Oct 13 19:25:33 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        671.748,30 msec cpu-clock                 #    8,189 CPUs utilized            ( +-  0,81% )
+           896.274      context-switches          #    1,366 K/sec                    ( +-  7,20% )
+            45.128      cpu-migrations            #   68,766 /sec                     ( +- 10,81% )
+           516.002      page-faults               #  786,282 /sec                     ( +- 12,71% )
+   468.641.092.281      cycles                    #    0,714 GHz                      ( +-  4,25% )
+   251.147.697.208      instructions              #    0,64  insn per cycle           ( +-  5,61% )
+    40.169.668.312      branches                  #   61,210 M/sec                    ( +-  6,60% )
+       825.658.929      branch-misses             #    2,69% of all branches          ( +- 10,62% )
+
+            82,032 +- 0,682 seconds time elapsed  ( +-  0,83% )
+
+# started on Fri Oct 13 19:32:23 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        761.104,11 msec cpu-clock                 #    8,215 CPUs utilized            ( +-  0,84% )
+           969.308      context-switches          #    1,308 K/sec                    ( +-  7,77% )
+            74.386      cpu-migrations            #  100,358 /sec                     ( +- 13,32% )
+           598.521      page-faults               #  807,493 /sec                     ( +- 13,91% )
+   542.405.884.790      cycles                    #    0,732 GHz                      ( +-  4,78% )
+   296.021.552.499      instructions              #    0,67  insn per cycle           ( +-  6,53% )
+    43.315.340.063      branches                  #   58,439 M/sec                    ( +-  6,40% )
+     1.014.807.683      branch-misses             #    3,07% of all branches          ( +- 11,67% )
+
+            92,651 +- 0,799 seconds time elapsed  ( +-  0,86% )
+
+# started on Fri Oct 13 19:40:06 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        864.639,15 msec cpu-clock                 #    7,967 CPUs utilized            ( +-  0,37% )
+           851.577      context-switches          #  980,788 /sec                     ( +-  5,30% )
+            38.779      cpu-migrations            #   44,663 /sec                     ( +- 28,42% )
+           378.332      page-faults               #  435,737 /sec                     ( +-  8,29% )
+   529.508.320.080      cycles                    #    0,610 GHz                      ( +-  2,15% )
+   250.697.555.031      instructions              #    0,46  insn per cycle           ( +-  4,54% )
+    38.268.738.411      branches                  #   44,075 M/sec                    ( +-  1,56% )
+       753.155.571      branch-misses             #    1,94% of all branches          ( +-  4,21% )
+
+           108,533 +- 0,395 seconds time elapsed  ( +-  0,36% )
+
+# started on Fri Oct 13 19:49:09 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+        973.687,22 msec cpu-clock                 #    7,950 CPUs utilized            ( +-  0,34% )
+           931.835      context-switches          #  951,085 /sec                     ( +-  6,22% )
+            45.454      cpu-migrations            #   46,393 /sec                     ( +- 12,00% )
+           401.371      page-faults               #  409,663 /sec                     ( +- 30,36% )
+   592.571.852.762      cycles                    #    0,605 GHz                      ( +-  3,74% )
+   278.196.157.035      instructions              #    0,45  insn per cycle           ( +-  4,88% )
+    42.293.438.298      branches                  #   43,167 M/sec                    ( +-  5,97% )
+       821.147.948      branch-misses             #    1,80% of all branches          ( +- 14,32% )
+
+           122,472 +- 0,409 seconds time elapsed  ( +-  0,33% )
+
+# started on Fri Oct 13 19:59:21 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+      1.114.776,87 msec cpu-clock                 #    7,974 CPUs utilized            ( +-  0,30% )
+         1.419.824      context-switches          #    1,270 K/sec                    ( +-  2,60% )
+           120.161      cpu-migrations            #  107,441 /sec                     ( +-  3,40% )
+           474.316      page-faults               #  424,107 /sec                     ( +- 11,92% )
+   817.612.654.863      cycles                    #    0,731 GHz                      ( +-  1,92% )
+   462.323.064.524      instructions              #    0,59  insn per cycle           ( +-  3,86% )
+    65.551.031.133      branches                  #   58,612 M/sec                    ( +-  4,50% )
+     1.463.856.862      branch-misses             #    2,61% of all branches          ( +-  5,43% )
+
+           139,799 +- 0,414 seconds time elapsed  ( +-  0,30% )
+
+# started on Fri Oct 13 20:11:00 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+      1.224.766,32 msec cpu-clock                 #    7,955 CPUs utilized            ( +-  0,28% )
+         1.485.212      context-switches          #    1,206 K/sec                    ( +-  3,69% )
+           130.982      cpu-migrations            #  106,341 /sec                     ( +-  9,41% )
+           352.820      page-faults               #  286,446 /sec                     ( +- 59,57% )
+   842.457.346.443      cycles                    #    0,684 GHz                      ( +-  2,52% )
+   456.580.554.797      instructions              #    0,52  insn per cycle           ( +-  4,20% )
+    57.779.315.379      branches                  #   46,910 M/sec                    ( +-  5,55% )
+     1.355.436.141      branch-misses             #    2,01% of all branches          ( +-  7,27% )
+
+           153,966 +- 0,425 seconds time elapsed  ( +-  0,28% )
+
+# started on Fri Oct 13 20:23:50 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+      1.433.848,75 msec cpu-clock                 #    8,098 CPUs utilized            ( +-  0,41% )
+         1.991.802      context-switches          #    1,406 K/sec                    ( +-  2,85% )
+           139.419      cpu-migrations            #   98,431 /sec                     ( +-  5,01% )
+         2.256.313      page-faults               #    1,593 K/sec                    ( +- 15,66% )
+ 1.190.033.507.406      cycles                    #    0,840 GHz                      ( +-  3,44% )
+   598.618.183.174      instructions              #    0,58  insn per cycle           ( +-  2,94% )
+    95.677.253.498      branches                  #   67,549 M/sec                    ( +-  6,55% )
+     2.751.069.846      branch-misses             #    3,69% of all branches          ( +-  8,21% )
+
+           177,053 +- 0,733 seconds time elapsed  ( +-  0,41% )
+
+# started on Fri Oct 13 20:38:35 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+      1.554.212,18 msec cpu-clock                 #    7,421 CPUs utilized            ( +-  3,02% )
+         1.649.935      context-switches          #  984,822 /sec                     ( +-  8,50% )
+            92.325      cpu-migrations            #   55,107 /sec                     ( +- 16,03% )
+           917.020      page-faults               #  547,356 /sec                     ( +- 25,29% )
+ 1.036.990.560.456      cycles                    #    0,619 GHz                      ( +-  4,38% )
+   488.691.047.047      instructions              #    0,44  insn per cycle           ( +-  5,06% )
+    77.708.975.326      branches                  #   46,383 M/sec                    ( +-  5,48% )
+     1.734.466.491      branch-misses             #    2,01% of all branches          ( +- 12,00% )
+
+            209,42 +- 5,86 seconds time elapsed  ( +-  2,80% )
+
+# started on Fri Oct 13 20:58:50 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+      1.671.646,88 msec cpu-clock                 #    7,883 CPUs utilized            ( +-  0,62% )
+         1.484.386      context-switches          #  874,960 /sec                     ( +-  9,80% )
+           115.480      cpu-migrations            #   68,069 /sec                     ( +- 14,79% )
+           197.267      page-faults               #  116,278 /sec                     ( +-346,67% )
+   910.542.089.673      cycles                    #    0,537 GHz                      ( +-  6,94% )
+   372.293.309.615      instructions              #    0,36  insn per cycle           ( +- 19,47% )
+    54.048.030.566      branches                  #   31,858 M/sec                    ( +- 24,22% )
+       814.369.352      branch-misses             #    1,10% of all branches          ( +- 40,24% )
+
+            212,07 +- 1,29 seconds time elapsed  ( +-  0,61% )
+
+# started on Fri Oct 13 22:21:07 2023
+
+
+ Performance counter stats for 'system wide' (5 runs):
+
+      1.939.338,89 msec cpu-clock                 #    8,048 CPUs utilized            ( +-  0,45% )
+         2.346.971      context-switches          #    1,218 K/sec                    ( +-  4,46% )
+           201.752      cpu-migrations            #  104,662 /sec                     ( +-  5,56% )
+           204.422      page-faults               #  106,047 /sec                     ( +- 12,04% )
+ 1.192.940.645.934      cycles                    #    0,619 GHz                      ( +-  1,98% )
+   473.651.919.062      instructions              #    0,41  insn per cycle           ( +-  1,94% )
+    72.924.392.708      branches                  #   37,831 M/sec                    ( +-  2,57% )
+     1.662.327.634      branch-misses             #    2,32% of all branches          ( +-  6,22% )
+
+            240,96 +- 1,10 seconds time elapsed  ( +-  0,46% )
+

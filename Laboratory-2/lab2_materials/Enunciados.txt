@@ -1,0 +1,14 @@
+Exercise 1: Measure the execution time of both your standard matrix multiplication and Eigen-based (only with vectorization) programs from the previous lab using clock(), including everything in the code, that is, matrix declarations, memory allocations, matrix element initializations, and the actual matrix multiplication. Try different N sizes, compare the results with those from the time command, and extract conclusions. For a fair and meaningful comparison, run the instrumented program and time as a single command line. In case of no completion of the assignment from lab 1, the materials of this lab (See Moodle) include two versions of the matrix multiplication that can be used for this purpose.
+
+-----------------------------------------------------------
+
+\time -o time.txt -a ./matrices_c 3000 false false >> time_trials.txt
+
+
+-----------------------------------------------------------
+Exercise 2: Separate the clean standard matrix multiplication code from lab 1 (removing the clock() calls from the previous exercise) into two pieces of code and obtain the execution time of each piece using gettimeofday(). One piece of code should exclusively refer to the computation of the matrix multiplication. The other part should contain everything else, including the matrix declarations, memory allocations, and initializations. Try different N size values, compare the results with those from the time command, and extract conclusions. Again, for a fair comparison, run the instrumented program and time as a single command line. Finally, do the same with the clean Eigen-based version with vectorization and compare results.
+
+
+------------------------------------------------------------
+
+Exercise 3: For a sufficiently large N size value, run the strace command with the -c option for both the instrumented standard matrix multiplication and the Eigen-based (with vectorization) programs with the clock() and gettimeofday() functions. That is, four different runs of the strace command are requested: i) standard matmult + clock, ii) standard matmult + gettimeofday, iii) Eigen + clock, and iv) Eigen + gettimeofday. Include in the report the most interesting results from the four outputs, perform cross-comparisons among them stating the main differences, and reason about such differences.
