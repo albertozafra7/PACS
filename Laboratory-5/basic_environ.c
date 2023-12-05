@@ -214,9 +214,9 @@ int main(int argc, char** argv)
   err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, outputArray, 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a read command\n");
 
-  // 11 Write code to check correctness of execution ¿¿?? (idea chat gpt)
+  // 11 Write code to check correctness of execution
   for(size_t i = 0; i < arraySize; i++)
-    printf("%ld iteration is %f\n", i, outputArray[i]);
+    printf("%ld iteration is %f\n", i, outputArray[i]); // Just checking if the pow is correctly done
 
   // 12 Release all the OpenCL memory objects allocated along the program
   clReleaseMemObject(in_device_object);
