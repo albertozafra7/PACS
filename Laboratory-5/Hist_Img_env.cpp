@@ -30,6 +30,7 @@ using namespace cimg_library;
 
 #include <vector>
 #include <algorithm>
+#include <fstream>
 
 void plotHistogram(const unsigned int* data, size_t arraySize) {
     // Find the maximum value in the data
@@ -67,6 +68,25 @@ void plotHistogram(const unsigned int* data, size_t arraySize) {
         }
         std::cout << std::endl;
     }
+}
+
+void writeHistogramValuesToFile(const unsigned int* histogramRed, const unsigned int* histogramGreen, const unsigned int* histogramBlue, size_t arraySize, const std::string& fileName) {
+    // Open the file for writing
+    std::ofstream outFile(fileName);
+    if (!outFile.is_open()) {
+        std::cerr << "Error: Unable to open file for writing: " << fileName << std::endl;
+        return;
+    }
+
+    // Write histogram values to the file
+    for (size_t i = 0; i < arraySize; ++i) {
+        outFile << i << "," << histogramRed[i] << "," << histogramGreen[i] << "," << histogramBlue[i] << std::endl;
+    }
+
+    // Close the file
+    outFile.close();
+
+    std::cout << "Histogram values written to: " << fileName << std::endl;
 }
 
 
@@ -300,8 +320,9 @@ int main(int argc, char** argv)
   printf("Plotting Histogram Blue\n");
   plotHistogram(histogramBlue, arraySize);
 
+  writeHistogramValuesToFile(histogramRed, histogramGreen, histogramBlue, arraySize, "histogram_values.txt");
 
-  
+
 
   // 12 Release all the OpenCL memory objects allocated along the program
   clReleaseMemObject(in_device_object);
