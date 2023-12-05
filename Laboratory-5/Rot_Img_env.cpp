@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////
-//File: Rot_Img_environ.c
+//File: Rot_Img_env.cpp
 //
 //Description: file for the image rotation with openCL
 //
@@ -20,6 +20,7 @@
   #include <CL/cl.h>
 #endif
 
+// Image libraries
 #define cimg_use_jpeg
 #include <iostream>
 #include "CImg/CImg.h"
@@ -146,7 +147,7 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to create a command queue\n");
 
   // 2. Calculate size of the file
-  FILE *fileHandler = fopen("kernel.cl", "r"); //Open the kernel file
+  FILE *fileHandler = fopen("img_rot_kernel.cl", "r"); //Open the kernel file
   fseek(fileHandler, 0, SEEK_END); // Move the file pointer to the end of the file
   size_t fileSize = ftell(fileHandler);
   rewind(fileHandler);
@@ -175,38 +176,62 @@ int main(int argc, char** argv)
   }
 
   // Create a compute kernel with the program we want to run
-  kernel = clCreateKernel(program, "pow_of_two", &err); //Is this pointer right?
+  kernel = clCreateKernel(program, "img_rot", &err); //Is this pointer right?
   cl_error(err, "Failed to create kernel from the program\n");
 
 
-  // 5 Set the size of the arrays
-  const size_t arraySize = 100;  // We choose this array size, it's the count argument in the kernel.cl
+  // 5 Set the input and output vars
 
   // Create and initialize input array in host memory
-  float *inputArray = (float *)malloc(arraySize * sizeof(float));
-  initializeArray(inputArray, arraySize);
+  CImg<unsigned char> inputImg("image.jpg");
 
   // Create and initialize output array in host memory
-  float *outputArray = (float *)malloc(arraySize * sizeof(float));
-  initializeArray(outputArray, arraySize);
+  CImg<unsigned char> outputImg(inputImg);
+
+  // Get the general size
+  int depth = 1;
+  int dim = 3; // RGB
+  size_t arraySize = inputImg.width()*inputImg.height()*depth*dim;
+
+  // Set the pivot
+  int pivot_x = inputImg.width()/2;
+  int pivot_y = inputImg.height()/2;
+
+  // Set the angle in degrees
+  float angle = 90.0;
+
+  // Set the width and the height
+  int img_width = inputImg.width();
+  int img_height = inputImg.height();
+
 
   // 6 Create OpenCL buffer visible to the OpenCl runtime
-  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_float)*arraySize, NULL, &err);
+  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar)*arraySize, NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
-  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_float)*arraySize, NULL, &err);
+  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar)*arraySize, NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
   
   // 7 Write date into the memory object 
-  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(float) * arraySize, inputArray, 0, NULL, NULL);
+  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * arraySize, inputImg.data(), 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a write command\n");
   
   // 8 Set the arguments to the kernel
   err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object);
-  cl_error(err, "Failed to set argument 0\n");
+  cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
   err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object);
-  cl_error(err, "Failed to set argument 1\n");
-  err = clSetKernelArg(kernel, 2, sizeof(cl_uint), &arraySize);
-  cl_error(err, "Failed to set argument 2\n");
+  cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
+  err = clSetKernelArg(kernel, 2, sizeof(cl_int), &pivot_x);
+  cl_error(err, "Failed to set argument 2 --> Pivot in X\n");
+  err = clSetKernelArg(kernel, 3, sizeof(cl_int), &pivot_y);
+  cl_error(err, "Failed to set argument 3 --> Pivot in Y\n");
+  err = clSetKernelArg(kernel, 4, sizeof(cl_float), &angle);
+  cl_error(err, "Failed to set argument 4 --> Rotation angle\n");
+  err = clSetKernelArg(kernel, 5, sizeof(cl_int), &img_width);
+  cl_error(err, "Failed to set argument 5 --> IMG width\n");
+  err = clSetKernelArg(kernel, 6, sizeof(cl_int), &img_height);
+  cl_error(err, "Failed to set argument 6 --> IMG height\n");
+
+
 
   // 9 Launch Kernel
   local_size = 128;
@@ -216,12 +241,14 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to launch kernel to the device\n");
 
   // 10 Read data form device memory back to host memory
-  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, outputArray, 0, NULL, NULL);
+  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(cl_uchar) * arraySize, outputImg.data(), 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a read command\n");
 
   // 11 Write code to check correctness of execution
-  for(size_t i = 0; i < arraySize; i++)
-    printf("%ld iteration is %f\n", i, outputArray[i]); // Just checking if the pow is correctly done
+  printf("Input IMG:\n");
+  inputImg.display("My first CImg code");  
+  printf("Rotated IMG:\n"); 
+  outputImg.display("Rotated IMG");
 
   // 12 Release all the OpenCL memory objects allocated along the program
   clReleaseMemObject(in_device_object);
