@@ -189,30 +189,30 @@ int main(int argc, char** argv)
   CImg<unsigned char> outputImg(inputImg);
 
   // Get the general size
-  int depth = 1;
-  int dim = 3; // RGB
-  size_t arraySize = inputImg.width()*inputImg.height()*depth*dim;
+  //int depth = 1;
+  //int dim = 3; // RGB
+  //size_t arraySize = inputImg.width()*inputImg.height()*depth*dim;
 
   // Set the pivot
   int pivot_x = inputImg.width()/2;
   int pivot_y = inputImg.height()/2;
 
   // Set the angle in degrees
-  float angle = 90.0;
+  float angle = 3.14;
 
   // Set the width and the height
-  int img_width = inputImg.width();
-  int img_height = inputImg.height();
+  int img_width = static_cast<int>(inputImg.width());
+  int img_height = static_cast<int>(inputImg.height());
 
 
   // 6 Create OpenCL buffer visible to the OpenCl runtime
-  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar)*arraySize, NULL, &err);
+  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar)*inputImg.size(), NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
-  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar)*arraySize, NULL, &err);
+  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar)*inputImg.size(), NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
   
   // 7 Write date into the memory object 
-  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * arraySize, inputImg.data(), 0, NULL, NULL);
+  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar)*inputImg.size(), inputImg.data(), 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a write command\n");
   
   // 8 Set the arguments to the kernel
@@ -241,13 +241,11 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to launch kernel to the device\n");
 
   // 10 Read data form device memory back to host memory
-  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(cl_uchar) * arraySize, outputImg.data(), 0, NULL, NULL);
+  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(cl_uchar)*inputImg.size(), outputImg.data(), 0, NULL, NULL);
   cl_error(err, "Failed to enqueue a read command\n");
 
   // 11 Write code to check correctness of execution
-  printf("Input IMG:\n");
   inputImg.display("My first CImg code");  
-  printf("Rotated IMG:\n"); 
   outputImg.display("Rotated IMG");
 
   // 12 Release all the OpenCL memory objects allocated along the program
