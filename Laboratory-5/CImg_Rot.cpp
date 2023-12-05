@@ -37,7 +37,7 @@ CImg<unsigned char> RotateImg(const std::vector<int> pivot, const float angle, C
 
         // Copy pixel from input to output
         for(int channel = 0; channel < 3; ++channel)
-          dest_img[src_index+channel*dest_img.height()] = img[dest_index+channel*dest_img.height()];
+          dest_img[src_index+channel*dest_img.height()*dest_img.width()] = img[dest_index+channel*dest_img.height()*dest_img.width()];
     }
   }
 

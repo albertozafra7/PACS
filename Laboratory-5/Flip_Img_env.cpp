@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////
-//File: Rot_Img_env.cpp
+//File: Flip_Img_env.cpp
 //
-//Description: file for the image rotation with openCL
+//Description: file for the image flip with openCL
 //
 // 
 ////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to create a command queue\n");
 
   // 2. Calculate size of the file
-  FILE *fileHandler = fopen("img_rot_kernel.cl", "r"); //Open the kernel file
+  FILE *fileHandler = fopen("img_flip_kernel.cl", "r"); //Open the kernel file
   fseek(fileHandler, 0, SEEK_END); // Move the file pointer to the end of the file
   size_t fileSize = ftell(fileHandler);
   rewind(fileHandler);
@@ -176,7 +176,7 @@ int main(int argc, char** argv)
   }
 
   // Create a compute kernel with the program we want to run
-  kernel = clCreateKernel(program, "img_rot", &err); //Is this pointer right?
+  kernel = clCreateKernel(program, "img_flip", &err); //Is this pointer right?
   cl_error(err, "Failed to create kernel from the program\n");
 
 
@@ -187,13 +187,6 @@ int main(int argc, char** argv)
 
   // Create and initialize output array in host memory
   CImg<unsigned char> outputImg(inputImg);
-
-  // Set the pivot
-  int pivot_x = inputImg.width()/2;
-  int pivot_y = inputImg.height()/2;
-
-  // Set the angle in degrees
-  float angle = 3.14;
 
   // Set the width and the height
   int img_width = inputImg.width();
@@ -215,16 +208,10 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
   err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object);
   cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
-  err = clSetKernelArg(kernel, 2, sizeof(pivot_x), &pivot_x);
-  cl_error(err, "Failed to set argument 2 --> Pivot in X\n");
-  err = clSetKernelArg(kernel, 3, sizeof(pivot_y), &pivot_y);
-  cl_error(err, "Failed to set argument 3 --> Pivot in Y\n");
-  err = clSetKernelArg(kernel, 4, sizeof(angle), &angle);
-  cl_error(err, "Failed to set argument 4 --> Rotation angle\n");
-  err = clSetKernelArg(kernel, 5, sizeof(img_width), &img_width);
-  cl_error(err, "Failed to set argument 5 --> IMG width\n");
-  err = clSetKernelArg(kernel, 6, sizeof(img_height), &img_height);
-  cl_error(err, "Failed to set argument 6 --> IMG height\n");
+  err = clSetKernelArg(kernel, 2, sizeof(img_width), &img_width);
+  cl_error(err, "Failed to set argument 2 --> IMG width\n");
+  err = clSetKernelArg(kernel, 3, sizeof(img_height), &img_height);
+  cl_error(err, "Failed to set argument 3 --> IMG height\n");
 
 
 
@@ -244,7 +231,7 @@ int main(int argc, char** argv)
 
   // 11 Write code to check correctness of execution
   inputImg.display("My first CImg code");  
-  outputImg.display("Rotated IMG");
+  outputImg.display("Flipped IMG");
 
   // 12 Release all the OpenCL memory objects allocated along the program
   clReleaseMemObject(in_device_object);
