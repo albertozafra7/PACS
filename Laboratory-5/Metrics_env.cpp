@@ -46,6 +46,11 @@ void initializeArray(float *array, size_t size) {
 int main(int argc, char** argv)
 {
 
+  bool standard_print = true;
+  if(argc == 2){
+    if((strchr(argv[1], 'F') != NULL) || (strchr(argv[1], 'f') != NULL))
+      standard_print = false;
+  }
   // -------- Global Execution time --------
 	clock_t global_start_time;
 
@@ -77,71 +82,85 @@ int main(int argc, char** argv)
   cl_kernel kernel;                           // create a kernel
     
 
+  
   // 1. Scan the available platforms:
   err = clGetPlatformIDs (num_platforms_ids, platforms_ids, &n_platforms);
   cl_error(err, "Error: Failed to Scan for Platforms IDs");
-  printf("Number of available platforms: %d\n\n", n_platforms);
+  if(standard_print)
+    printf("Number of available platforms: %d\n\n", n_platforms);
 
   for (int i = 0; i < n_platforms; i++ ){
     err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_NAME, t_buf, str_buffer, &e_buf);
     cl_error (err, "Error: Failed to get info of the platform\n");
-    printf( "\t[%d]-Platform Name: %s\n", i, str_buffer);
+    if(standard_print)
+      printf( "\t[%d]-Platform Name: %s\n", i, str_buffer);
 
   // ***Task***: print on the screen the name, vendor, version, ...
 
     err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_VENDOR, t_buf, str_buffer, &e_buf);
     cl_error (err, "Error: Failed to get info of the platform\n");
-    printf( "\t[%d]-Platform Vendor: %s\n", i, str_buffer);
+    if(standard_print)
+      printf( "\t[%d]-Platform Vendor: %s\n", i, str_buffer);
 
     err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_VERSION, t_buf, str_buffer, &e_buf);
     cl_error (err, "Error: Failed to get info of the platform\n");
-    printf( "\t[%d]-Platform Version: %s\n", i, str_buffer);
+    if(standard_print)
+      printf( "\t[%d]-Platform Version: %s\n", i, str_buffer);
 
     
     err= clGetPlatformInfo(platforms_ids[i], CL_PLATFORM_PROFILE, t_buf, str_buffer, &e_buf);
     cl_error (err, "Error: Failed to get info of the platform\n");
-    printf( "\t[%d]-Platform Profile: %s\n", i, str_buffer);
+    if(standard_print)
+      printf( "\t[%d]-Platform Profile: %s\n", i, str_buffer);
 
   }
-  printf("\n");
+  if(standard_print)
+    printf("\n");
 	
   // 2. Scan for devices in each platform
   for (int i = 0; i < n_platforms; i++ ){
     err = clGetDeviceIDs(platforms_ids[i], CL_DEVICE_TYPE_ALL, num_devices_ids, devices_ids[i], &(n_devices[i]));
     cl_error(err, "Error: Failed to Scan for Devices IDs");
-    printf("\t[%d]-Platform. Number of available devices: %d\n", i, n_devices[i]);
+    if(standard_print)
+      printf("\t[%d]-Platform. Number of available devices: %d\n", i, n_devices[i]);
 
     for(int j = 0; j < n_devices[i]; j++){
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_NAME, sizeof(str_buffer), str_buffer, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device name");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_NAME: %s\n", i, j,str_buffer);
+      if(standard_print)
+        printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_NAME: %s\n", i, j,str_buffer);
 
       cl_uint max_compute_units_available;
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(max_compute_units_available), &max_compute_units_available, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device max compute units available");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_COMPUTE_UNITS: %d\n", i, j, max_compute_units_available);
+      if(standard_print)
+        printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_COMPUTE_UNITS: %d\n", i, j, max_compute_units_available);
 
       // ***Task***: print on the screen the cache size, global mem size, local memsize, max work group size, profiling timer resolution and ... of each device   
       cl_ulong DEVICE_GLOBAL_MEM_CACHE_SIZE;
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_GLOBAL_MEM_CACHE_SIZE, sizeof(DEVICE_GLOBAL_MEM_CACHE_SIZE), &DEVICE_GLOBAL_MEM_CACHE_SIZE, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device global memory cache size");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_GLOBAL_MEM_CACHE_SIZE: %ld\n", i, j,DEVICE_GLOBAL_MEM_CACHE_SIZE);
+      if(standard_print)
+        printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_GLOBAL_MEM_CACHE_SIZE: %ld\n", i, j,DEVICE_GLOBAL_MEM_CACHE_SIZE);
 
-	  cl_ulong DEVICE_LOCAL_MEM_SIZE;
+	    cl_ulong DEVICE_LOCAL_MEM_SIZE;
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_LOCAL_MEM_SIZE, sizeof(DEVICE_LOCAL_MEM_SIZE), &DEVICE_LOCAL_MEM_SIZE, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device local mem size");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_LOCAL_MEM_SIZE: %ld\n", i, j,DEVICE_LOCAL_MEM_SIZE);
+      if(standard_print)
+        printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_LOCAL_MEM_SIZE: %ld\n", i, j,DEVICE_LOCAL_MEM_SIZE);
 	  
 	  
-	  size_t DEVICE_MAX_WORK_GROUP_SIZE;
+	    size_t DEVICE_MAX_WORK_GROUP_SIZE;
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(DEVICE_MAX_WORK_GROUP_SIZE), &DEVICE_MAX_WORK_GROUP_SIZE, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device maximum work group size");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_WORK_GROUP_SIZE: %ld\n", i, j,DEVICE_MAX_WORK_GROUP_SIZE);
+      if(standard_print)
+        printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_MAX_WORK_GROUP_SIZE: %ld\n", i, j,DEVICE_MAX_WORK_GROUP_SIZE);
 
-	  size_t DEVICE_PROFILING_TIMER_RESOLUTION;
+	    size_t DEVICE_PROFILING_TIMER_RESOLUTION;
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_PROFILING_TIMER_RESOLUTION, sizeof(DEVICE_PROFILING_TIMER_RESOLUTION), &DEVICE_PROFILING_TIMER_RESOLUTION, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device profiling timer resolution");
-      printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_PROFILING_TIMER_RESOLUTION: %ld\n", i, j,DEVICE_PROFILING_TIMER_RESOLUTION);
+      if(standard_print)
+        printf("\t\t [%d]-Platform [%d]-Device CL_DEVICE_PROFILING_TIMER_RESOLUTION: %ld\n", i, j,DEVICE_PROFILING_TIMER_RESOLUTION);
     }
   }	
   
@@ -274,7 +293,8 @@ int main(int argc, char** argv)
   // +++++ Total execution time in seconds +++++
 
   clock_t exec_time = clock() - global_start_time;
-  std::cout << "Total execution time = " << ((float)exec_time)/CLOCKS_PER_SEC  << " seconds" << std::endl;
+  if(standard_print)
+    std::cout << "Total execution time = " << ((float)exec_time)/CLOCKS_PER_SEC  << " seconds" << std::endl;
 
 
   // +++++ Kernel Execution Time +++++
@@ -286,7 +306,8 @@ int main(int argc, char** argv)
   clGetEventProfilingInfo(Kernel_exectime_event, CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end, NULL);
   double kernel_exec_time_ns = kernel_time_end-kernel_time_start;   // Get the execution time of the kernel in nanoseconds
   //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
-  printf("Kernel Execution time %0.10f seconds \n", kernel_exec_time_ns / 1.0e+9);  // Print the execution time in seconds
+  if(standard_print)
+    printf("Kernel Execution time %0.10f seconds \n", kernel_exec_time_ns / 1.0e+9);  // Print the execution time in seconds
 
 
   // +++++ Bandwidth --> HOST TO DEVICE +++++
@@ -308,8 +329,10 @@ int main(int argc, char** argv)
   double readBandwidth = dataSize / readTime;
 
   // Print or use the bandwidth values as needed
-  printf("General Write Bandwidth (Host to device): %.2f MB/s\n", writeBandwidth / (1024 * 1024));
-  printf("General Read Bandwidth (Host to device): %.2f MB/s\n", readBandwidth / (1024 * 1024));
+  if(standard_print){
+    printf("General Write Bandwidth (Host to device): %.2f MB/s\n", writeBandwidth / (1024 * 1024));
+    printf("General Read Bandwidth (Host to device): %.2f MB/s\n", readBandwidth / (1024 * 1024));
+  }
 
 
   // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
@@ -324,8 +347,21 @@ int main(int argc, char** argv)
   size_t dataSize_kernel = sizeof(cl_uchar)*arraySize;
   double kernelBandwidth = dataSize_kernel / kernelTime; // in bytes per second
 
-// Print or use the bandwidth value as needed
-printf("Kernel Bandwidth (Device access to local memory): %.2f MB/s\n", kernelBandwidth / (1024 * 1024));
+  // Print or use the bandwidth value as needed
+  if(standard_print)
+    printf("Kernel Bandwidth (Device access to local memory): %.2f MB/s\n", kernelBandwidth / (1024 * 1024));
+
+  // **************** Measurement prints for further analyzing ****************
+  // The output will be reduced to the following prints:
+  // total execution time, kernel execution time, Host to device (Write) bandwidth, Host to device (Read) Bandwidth, Kernel bandwidth
+  if(!standard_print)
+    printf("%0.10f, %0.10f, 0.2%f, 0.2%f, 0.2%f\n", 
+          ((float)exec_time)/CLOCKS_PER_SEC, 
+          (kernel_exec_time_ns / 1.0e+9), 
+          writeBandwidth / (1024 * 1024), 
+          readBandwidth / (1024 * 1024), 
+          kernelBandwidth / (1024 * 1024));
+  
 
 
   return 0;
