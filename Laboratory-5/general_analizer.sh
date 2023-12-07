@@ -4,7 +4,7 @@ NOOK='[101m[1m'"------> NO OK <------"'[0m'
 Prueba="Ejecutando Prueba nº"
 Inicio='[7m[1m'
 Fin='[0m'
-limite=6
+limite=1000
 programas=3
 Nombre="Image analysis"
 Prefijo="image_"
@@ -38,16 +38,20 @@ Histogram='[103m[30m'"------> Histogram <------"'[0m'
 		#echo $Prueba $i
 		./$Prefijo"rot" "false" >> img_rot_metrics.csv
 	done
-    end=`date +%s`
+    
+	end=`date +%s`
 
-	rotation_time = $end - $start
-	throughput_rot = $limite/$rotation_time
+	let rotation_time=($end - $start)
 
 	echo
 	echo "The rotation test has finished"
 	echo "Analized: $limite images"
     echo "Execution time was $rotation_time seconds."
-	echo "The throughput of the image rotation is $throughput_rot images per second."
+	# printf "The throughput of the image rotation is " 
+	# echo "scale=3; $limite / $rotation_time" | bc 
+	# echo "Images per second"
+	LC_NUMERIC=C printf "The throughput of the image rotation is %.3f Images per second\n" "$(echo "scale=3; $limite / $rotation_time" | bc)"
+
 	echo
 	echo
 
@@ -64,14 +68,13 @@ Histogram='[103m[30m'"------> Histogram <------"'[0m'
 	done
     end=`date +%s`
 
-	flip_time = $end - $start
-	throughput_flip = $limite/$flip_time
+	let flip_time=($end - $start)
 
 	echo
 	echo "The flip test has finished"
 	echo "Analized: $limite images"
     echo "Execution time was $flip_time seconds."
-	echo "The throughput of the image flip is $throughput_flip images per second."
+	LC_NUMERIC=C printf "The throughput of the image flip is %.3f Images per second\n" "$(echo "scale=3; $limite / $flip_time" | bc)"
 	echo
 	echo
 
@@ -87,14 +90,13 @@ Histogram='[103m[30m'"------> Histogram <------"'[0m'
 	done
 	end=`date +%s`
 
-	hist_time = $end - $start
-	throughput_hist = $limite/$hist_time
+	let hist_time=($end - $start)
 
 	echo
 	echo "The histogram test has finished"
 	echo "Analized: $limite images"
     echo "Execution time was $hist_time seconds."
-	echo "The throughput of the image histogram is $throughput_hist images per second."
+	LC_NUMERIC=C printf "The throughput of the image histogram is %.3f Images per second\n" "$(echo "scale=3; $limite / $hist_time" | bc)"
 	echo
 	echo
 	
