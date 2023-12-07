@@ -1,0 +1,18 @@
+Number of available platforms: 1
+
+	[0]-Platform Name: NVIDIA CUDA
+	[0]-Platform Vendor: NVIDIA Corporation
+	[0]-Platform Version: OpenCL 3.0 CUDA 12.2.147
+	[0]-Platform Profile: FULL_PROFILE
+
+	[0]-Platform. Number of available devices: 1
+		 [0]-Platform [0]-Device CL_DEVICE_NAME: NVIDIA GeForce GTX 1060
+		 [0]-Platform [0]-Device CL_DEVICE_MAX_COMPUTE_UNITS: 10
+		 [0]-Platform [0]-Device CL_DEVICE_GLOBAL_MEM_CACHE_SIZE: 491520
+		 [0]-Platform [0]-Device CL_DEVICE_LOCAL_MEM_SIZE: 49152
+		 [0]-Platform [0]-Device CL_DEVICE_MAX_WORK_GROUP_SIZE: 1024
+		 [0]-Platform [0]-Device CL_DEVICE_PROFILING_TIMER_RESOLUTION: 1000
+Kernel Execution time: 0.034 milliseconds 
+Write Bandwidth (Host to device): 11658.13 MB/s
+Read Bandwidth (Host to device): 10986.70 MB/s
+Total execution time = 0.265509 seconds
