@@ -1,6 +1,7 @@
 {
     "cmake.sourceDirectory": "/home/albertozafra7/Desktop/Universidad/Master/PACS/REPO/PACS",
     "files.associations": {
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "condition_variable": "cpp"
     }
 }

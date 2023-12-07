@@ -46,12 +46,14 @@ void initializeArray(float *array, size_t size) {
 int main(int argc, char** argv)
 {
 
-  // *** Global time ***
+  // -------- Global Execution time --------
 	clock_t global_start_time;
 
   global_start_time = clock();
 
-  // ********************
+  // --------------------------------------
+
+  // Start of the program
 
   int err;                            	// error code returned from api calls
   size_t t_buf = 50;			// size of str_buffer
@@ -205,10 +207,13 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to create memory buffer at device\n");
   
 
+  // -------- Memory Transfer time (data interchanged between host and device) --------
+
   // Create events for measuring memory transfer time
   cl_event writeEvent, readEvent;
 
-  // 7 Write date into the memory object 
+  // -------- Global WRITE bandwithd --------
+  // 7 Write data into the memory object 
   err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(float) * arraySize, inputArray, 0, NULL, &writeEvent);
   cl_error(err, "Failed to enqueue a write command\n");
   
@@ -224,31 +229,67 @@ int main(int argc, char** argv)
   local_size = 128;
   global_size = 12800; //IDK which value(multiple of local size)
 
-  cl_event event;
-  err = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &global_size, &local_size, 0, NULL, &event);
+  // -------- Kernel execution time --------
+  cl_event Kernel_exectime_event;
+
+
+  err = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &global_size, &local_size, 0, NULL, &Kernel_exectime_event);
   cl_error(err, "Failed to launch kernel to the device\n");
 
+  // -------- Kernel device bandwithd --------
   // Create an event for measuring kernel execution time
-  cl_event kernelEvent_bandwidth;
+  cl_event kernel_local_bandwidth_event;
+
   clFinish(command_queue); // Make sure previous commands are finished before recording the kernel event
-  err = clEnqueueMarkerWithWaitList(command_queue, 0, NULL, &kernelEvent_bandwidth);
+  err = clEnqueueMarkerWithWaitList(command_queue, 0, NULL, &kernel_local_bandwidth_event);
   cl_error(err, "Failed to enqueue marker for kernel event\n");
 
-  clWaitForEvents(1, &event);
+  clWaitForEvents(1, &Kernel_exectime_event);
   clFinish(command_queue);
 
-  cl_ulong time_start;
-  cl_ulong time_end;
-  clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
-  clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
-  double nanoSeconds = time_end-time_start; printf("Kernel Execution time: %0.3f milliseconds \n",nanoSeconds / 1000000.0);
-
+  // -------- Global READ bandwithd --------
   // 10 Read data form device memory back to host memory
   err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(float) * arraySize, outputArray, 0, NULL, &readEvent);
   cl_error(err, "Failed to enqueue a read command\n");
 
   // Wait for the commands to finish --> bandwidth
   clFinish(command_queue);
+
+
+  // 11 Write code to check correctness of execution
+  //for(size_t i = 0; i < arraySize; i++)
+    //printf("%ld iteration is %f\n", i, outputArray[i]); // Just checking if the pow is correctly done
+
+  // 12 Release all the OpenCL memory objects allocated along the program
+  clReleaseMemObject(in_device_object);
+  clReleaseMemObject(out_device_object);
+  clReleaseProgram(program);
+  clReleaseKernel(kernel);
+  clReleaseCommandQueue(command_queue);
+  clReleaseContext(context);
+
+
+  // **************** Measurement calculations ****************
+
+  // +++++ Total execution time in seconds +++++
+
+  clock_t exec_time = clock() - global_start_time;
+  std::cout << "Total execution time = " << ((float)exec_time)/CLOCKS_PER_SEC  << " seconds" << std::endl;
+
+
+  // +++++ Kernel Execution Time +++++
+
+  cl_ulong kernel_time_start;
+  cl_ulong kernel_time_end;
+  // Get starting and ending time of the event
+  clGetEventProfilingInfo(Kernel_exectime_event, CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start, NULL);
+  clGetEventProfilingInfo(Kernel_exectime_event, CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end, NULL);
+  double kernel_exec_time_ns = kernel_time_end-kernel_time_start;   // Get the execution time of the kernel in nanoseconds
+  //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
+  printf("Kernel Execution time %0.10f seconds \n", kernel_exec_time_ns / 1.0e+9);  // Print the execution time in seconds
+
+
+  // +++++ Bandwidth --> HOST TO DEVICE +++++
 
   // Calculate the time taken for write and read operations
   cl_ulong writeStart, writeEnd, readStart, readEnd;
@@ -267,12 +308,15 @@ int main(int argc, char** argv)
   double readBandwidth = dataSize / readTime;
 
   // Print or use the bandwidth values as needed
-  printf("Write Bandwidth (Host to device): %.2f MB/s\n", writeBandwidth / (1024 * 1024));
-  printf("Read Bandwidth (Host to device): %.2f MB/s\n", readBandwidth / (1024 * 1024));
+  printf("General Write Bandwidth (Host to device): %.2f MB/s\n", writeBandwidth / (1024 * 1024));
+  printf("General Read Bandwidth (Host to device): %.2f MB/s\n", readBandwidth / (1024 * 1024));
+
+
+  // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
 
   cl_ulong kernelStart, kernelEnd;
-  clGetEventProfilingInfo(kernelEvent_bandwidth, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &kernelStart, NULL);
-  clGetEventProfilingInfo(kernelEvent_bandwidth, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &kernelEnd, NULL);
+  clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &kernelStart, NULL);
+  clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &kernelEnd, NULL);
 
   // Calculate bandwidth
   double kernelTime = (kernelEnd - kernelStart) * 1.0e-9; // Convert nanoseconds to seconds
@@ -281,26 +325,8 @@ int main(int argc, char** argv)
   double kernelBandwidth = dataSize_kernel / kernelTime; // in bytes per second
 
 // Print or use the bandwidth value as needed
-printf("Kernel Bandwidth: %.2f MB/s\n", kernelBandwidth / (1024 * 1024));
+printf("Kernel Bandwidth (Device access to local memory): %.2f MB/s\n", kernelBandwidth / (1024 * 1024));
 
-
-
-  // 11 Write code to check correctness of execution
-  //for(size_t i = 0; i < arraySize; i++)
-    //printf("%ld iteration is %f\n", i, outputArray[i]); // Just checking if the pow is correctly done
-
-  // 12 Release all the OpenCL memory objects allocated along the program
-  clReleaseMemObject(in_device_object);
-  clReleaseMemObject(out_device_object);
-  clReleaseProgram(program);
-  clReleaseKernel(kernel);
-  clReleaseCommandQueue(command_queue);
-  clReleaseContext(context);
-  
-
-  // **** Total execution time in seconds ****
-  clock_t exec_time = clock() - global_start_time;
-  std::cout << "Total execution time = " << ((float)exec_time)/CLOCKS_PER_SEC  << " seconds" << std::endl;
 
   return 0;
 }
