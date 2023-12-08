@@ -1,0 +1,72 @@
+------> Rotation <------
+img_rot_metrics.csv Results:
+	Mean values:
+        {
+         'Total Execution Time (s)': 0.0774022279596, 
+         'Kernel Execution Time (s)': 4.802832e-05, 
+         'Host to Device (Write) Bandwidth (MB/s)': 11431.704464095434, 
+         'Host to Device (Read) Bandwidth (MB/s)': 11626.192776536313, 
+         'Kernel Bandwidth (MB/ns)': 0.002641544479588015
+        }
+
+	Standard deviation values:
+        {
+         'Total Execution Time (s)': 0.006675318117255051, 
+         'Kernel Execution Time (s)': 3.3471303211836536e-06, 
+         'Host to Device (Write) Bandwidth (MB/s)': 842.5223022010604, 
+         'Host to Device (Read) Bandwidth (MB/s)': 830.6752315497156, 
+         'Kernel Bandwidth (MB/ns)': 0.006227158156374177
+        }
+
+Analized: 1000 images
+Execution time was 130 seconds.
+The throughput of the image rotation is 7.692 Images per second
+
+
+
+------> Flip <------
+img_flip_metrics.csv Results:
+	Mean values:
+        {
+         'Total Execution Time (s)': 0.07791556894910001, 
+         'Kernel Execution Time (s)': 3.3480672e-05, 
+         'Host to Device (Write) Bandwidth (MB/s)': 11468.327426125907, 
+         'Host to Device (Read) Bandwidth (MB/s)': 11647.732881620164, 
+         'Kernel Bandwidth (MB/ns)': 0.0021448277346666667}
+
+	Standard deviation values:
+        {
+         'Total Execution Time (s)': 0.007124251994922323, 
+         'Kernel Execution Time (s)': 3.6235152616302403e-06, 
+         'Host to Device (Write) Bandwidth (MB/s)': 780.6630782406676, 
+         'Host to Device (Read) Bandwidth (MB/s)': 842.9118867815392, 
+         'Kernel Bandwidth (MB/ns)': 0.004696971468534055}
+
+Analized: 1000 images
+Execution time was 130 seconds.
+The throughput of the image flip is 7.692 Images per second
+
+
+
+------> Histogram <------
+img_hist_metrics.csv Results:
+	Mean values:
+        {
+         'Total Execution Time (s)': 0.0770505630011, 
+         'Kernel Execution Time (s)': 0.000248641312, 
+         'Host to Device (Write) Bandwidth (MB/s)': 30.619865592319503, 
+         'Host to Device (Read) Bandwidth (MB/s)': 1081.9747396574653, 
+         'Kernel Bandwidth (MB/ns)': 2.4190754990925587e-06}
+
+	Standard deviation values:
+        {
+         'Total Execution Time (s)': 0.006134197587407817, 
+         'Kernel Execution Time (s)': 5.132348803705659e-06, 
+         'Host to Device (Write) Bandwidth (MB/s)': 2.107666128279811, 
+         'Host to Device (Read) Bandwidth (MB/s)': 80.32556924711884, 
+         'Kernel Bandwidth (MB/ns)': 5.717159462135854e-06}
+
+Analized: 1000 images
+Execution time was 131 seconds.
+The throughput of the image histogram is 7.633 Images per second
+
