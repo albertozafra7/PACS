@@ -119,12 +119,14 @@ int main(int argc, char** argv)
       standard_print = false;
   }
 
-  // *** Global time ***
+  // -------- Global Execution time --------
 	clock_t global_start_time;
 
   global_start_time = clock();
 
-  // ********************
+  // --------------------------------------
+
+  // Start of the program
 
   int err;                            	// error code returned from api calls
   size_t t_buf = 50;			// size of str_buffer
@@ -300,8 +302,16 @@ int main(int argc, char** argv)
   cl_mem out_device_object_hBlue = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uint)*arraySize, NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
   
+
+  // -------- Memory Transfer time (data interchanged between host and device) --------
+
+  // Create events for measuring memory transfer time
+  cl_event writeEvent, readEvent_hred, readEvent_hgreen, readEvent_hblue;
+
+  // -------- Global WRITE bandwithd --------
+
   // 7 Write date into the memory object 
-  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * inputImg.size(), inputImg.data(), 0, NULL, NULL);
+  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * inputImg.size(), inputImg.data(), 0, NULL, &writeEvent);
   cl_error(err, "Failed to enqueue a write command\n");
   
   // 8 Set the arguments to the kernel
@@ -327,15 +337,31 @@ int main(int argc, char** argv)
   global_size[0] = img_width; // N of work items que quieres
   global_size[1] = img_height; // N of work items que quieres
 
-  err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, NULL);
+  // -------- Kernel execution time --------
+  cl_event Kernel_exectime_event;
+
+  err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
   cl_error(err, "Failed to launch kernel to the device\n");
 
+ // -------- Kernel device bandwithd --------
+  // Create an event for measuring kernel execution time
+  cl_event kernel_local_bandwidth_event;
+
+  clFinish(command_queue); // Make sure previous commands are finished before recording the kernel event
+  err = clEnqueueMarkerWithWaitList(command_queue, 0, NULL, &kernel_local_bandwidth_event);
+  cl_error(err, "Failed to enqueue marker for kernel event\n");
+
+  clWaitForEvents(1, &Kernel_exectime_event);
+  clFinish(command_queue);
+
+  // -------- Global READ bandwithd --------
+
   // 10 Read data form device memory back to host memory
-  err = clEnqueueReadBuffer(command_queue, out_device_object_hRed, CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramRed, 0, NULL, NULL);
+  err = clEnqueueReadBuffer(command_queue, out_device_object_hRed, CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramRed, 0, NULL, &readEvent_hred);
   cl_error(err, "Failed to enqueue a read command\n");
-   err = clEnqueueReadBuffer(command_queue, out_device_object_hBlue, CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramBlue, 0, NULL, NULL);
+   err = clEnqueueReadBuffer(command_queue, out_device_object_hBlue, CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramBlue, 0, NULL, &readEvent_hblue);
   cl_error(err, "Failed to enqueue a read command\n");
-   err = clEnqueueReadBuffer(command_queue, out_device_object_hGreen, CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramGreen, 0, NULL, NULL);
+   err = clEnqueueReadBuffer(command_queue, out_device_object_hGreen, CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramGreen, 0, NULL, &readEvent_hgreen);
   cl_error(err, "Failed to enqueue a read command\n");
 
   // 11 Write code to check correctness of execution
@@ -370,9 +396,84 @@ int main(int argc, char** argv)
   free(histogramBlue);
   free(histogramGreen);
 
-  // **** Total execution time in seconds ****
+// **************** Measurement calculations ****************
+
+  // +++++ Total execution time in seconds +++++
+
   clock_t exec_time = clock() - global_start_time;
-  std::cout << "Total execution time = " << ((float)exec_time)/CLOCKS_PER_SEC  << " seconds" << std::endl;
+  if(standard_print)
+    std::cout << "Total execution time = " << ((float)exec_time)/CLOCKS_PER_SEC  << " seconds" << std::endl;
+
+
+  // +++++ Kernel Execution Time +++++
+
+  cl_ulong kernel_time_start;
+  cl_ulong kernel_time_end;
+  // Get starting and ending time of the event
+  clGetEventProfilingInfo(Kernel_exectime_event, CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start, NULL);
+  clGetEventProfilingInfo(Kernel_exectime_event, CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end, NULL);
+  double kernel_exec_time_ns = kernel_time_end-kernel_time_start;   // Get the execution time of the kernel in nanoseconds
+  //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
+  if(standard_print)
+    printf("Kernel Execution time %0.10f seconds \n", kernel_exec_time_ns / 1.0e+9);  // Print the execution time in seconds
+
+
+  // +++++ Bandwidth --> HOST TO DEVICE +++++
+
+  // Calculate the time taken for write and read operations
+  cl_ulong writeStart, writeEnd, readStart_hred, readEnd_hred, readStart_hgreen, readEnd_hgreen, readStart_hblue, readEnd_hblue;
+  clGetEventProfilingInfo(writeEvent, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart, NULL);
+  clGetEventProfilingInfo(writeEvent, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
+  clGetEventProfilingInfo(readEvent_hred, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart_hred, NULL);
+  clGetEventProfilingInfo(readEvent_hred, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd_hred, NULL);
+  clGetEventProfilingInfo(readEvent_hgreen, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart_hgreen, NULL);
+  clGetEventProfilingInfo(readEvent_hgreen, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd_hgreen, NULL);
+  clGetEventProfilingInfo(readEvent_hblue, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart_hblue, NULL);
+  clGetEventProfilingInfo(readEvent_hblue, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd_hblue, NULL);
+
+  // Calculate bandwidth
+  double writeTime = (writeEnd - writeStart) * 1.0e-9; // Convert nanoseconds to seconds
+  double readTime_hred = (readEnd_hred - readStart_hred) * 1.0e-9;
+  double readTime_hgreen = (readEnd_hgreen - readStart_hgreen) * 1.0e-9;
+  double readTime_hblue = (readEnd_hblue - readStart_hblue) * 1.0e-9;
+  size_t dataSize = sizeof(unsigned int) * arraySize * 3; // *3 because we have 3 arrays
+
+  double writeBandwidth = dataSize / writeTime; // in bytes per second
+  double readBandwidth = dataSize / (readTime_hred + readTime_hgreen + readTime_hblue);
+
+  // Print or use the bandwidth values as needed
+  if(standard_print){
+    printf("General Write Bandwidth (Host to device): %.2f MB/s\n", writeBandwidth / (1024 * 1024));
+    printf("General Read Bandwidth (Host to device): %.2f MB/s\n", readBandwidth / (1024 * 1024));
+  }
+
+
+  // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
+
+  cl_ulong kernelStart, kernelEnd;
+  clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &kernelStart, NULL);
+  clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &kernelEnd, NULL);
+
+  // Calculate bandwidth
+  double kernelTime = (kernelEnd - kernelStart); // Convert nanoseconds to miliseconds
+  size_t dataSize_kernel = sizeof(unsigned int) * arraySize; // Adjust data size based on your specific kernel data requirements
+  double kernelBandwidth = dataSize_kernel / kernelTime; // in bytes per nanosecond
+  
+
+  // Print or use the bandwidth value as needed
+  if(standard_print)
+    printf("Kernel Bandwidth (Device access to local memory): %.4f MB/ns\n", kernelBandwidth / (1024 * 1024));
+
+  // **************** Measurement prints for further analyzing ****************
+  // The output will be reduced to the following prints:
+  // total execution time, kernel execution time, Host to device (Write) bandwidth, Host to device (Read) Bandwidth, Kernel bandwidth
+  if(!standard_print)
+    printf("%.10f, %.10f, %.10f, %.10f, %.10f\n", 
+          ((float)exec_time)/CLOCKS_PER_SEC, 
+          (kernel_exec_time_ns / 1.0e+9), 
+          writeBandwidth / (1024 * 1024), 
+          readBandwidth / (1024 * 1024), 
+          kernelBandwidth / (1024 * 1024));
 
   return 0;
 }
