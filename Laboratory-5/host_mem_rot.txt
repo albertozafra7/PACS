@@ -1,0 +1,54 @@
+alberto+   18963  0.0  0.0 8961924 11228 pts/0   Rl+  23:42   0:00 ./image_rot False
+alberto+   18965  0.0  0.0  11644   784 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19036  0.0  0.0  11644   712 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19077  0.0  0.7 9044060 124484 pts/0  Rl+  23:42   0:00 ./image_rot False
+alberto+   19082  0.0  0.0  11644   772 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19125  0.0  0.0  11644   720 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19146  6.0  0.7 9044060 124428 pts/0  Rl+  23:42   0:00 ./image_rot False
+alberto+   19151  0.0  0.0  11644   784 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19178  0.0  0.6 8963048 98468 pts/0   Rl+  23:42   0:00 ./image_rot False
+alberto+   19183  0.0  0.0  11644   780 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19221  0.0  0.0  11644   784 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19252  0.0  0.0 8961924 11352 pts/0   Rl+  23:42   0:00 ./image_rot False
+alberto+   19254  0.0  0.0  11644   784 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19285  0.0  0.0  11644   784 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19316  0.0  0.0  35400  6576 pts/0    D+   23:42   0:00 ./image_rot False
+alberto+   19318  0.0  0.0  11644   776 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19338  0.0  0.7 9171812 126988 pts/0  Rl+  23:42   0:00 ./image_rot False
+alberto+   19344  0.0  0.0  11644   784 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19370  0.0  0.7 9044060 124312 pts/0  Rl+  23:42   0:00 ./image_rot False
+alberto+   19375  0.0  0.0  11644   784 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19402  6.0  0.7 9171812 127056 pts/0  Rl+  23:42   0:00 ./image_rot False
+alberto+   19408  0.0  0.0  11644   784 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19434  0.0  0.8 9174144 145716 pts/0  Rl+  23:42   0:00 ./image_rot False
+alberto+   19445  0.0  0.0  11644   772 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19476  0.0  0.0  35400  6312 pts/0    D+   23:42   0:00 ./image_rot False
+alberto+   19478  0.0  0.0  11644   712 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19509  0.0  0.0  11644   784 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19540  0.0  0.0 8929156 11316 pts/0   Rl+  23:42   0:00 ./image_rot False
+alberto+   19544  0.0  0.0  11644   720 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19572  0.0  0.0 8961924 11012 pts/0   Rl+  23:42   0:00 ./image_rot False
+alberto+   19574  0.0  0.0  11644   712 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19604  0.0  0.0 8961924 11124 pts/0   Rl+  23:42   0:00 ./image_rot False
+alberto+   19609  0.0  0.0  11644   712 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19636  0.0  0.8 9173020 143228 pts/0  Rl+  23:42   0:00 ./image_rot False
+alberto+   19642  0.0  0.0  11644   720 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   19739  0.0  0.0  11644   712 pts/1    S+   23:42   0:00 grep --color=auto ./image_rot
+alberto+   26554  0.0  0.6 8971740 112152 pts/0  Rl+  23:44   0:00 ./image_rot False
+alberto+   26559  0.0  0.0  11644   776 pts/1    S+   23:44   0:00 grep --color=auto ./image_rot
+alberto+   26618  0.0  0.0  11644   720 pts/1    S+   23:44   0:00 grep --color=auto ./image_rot
+alberto+   26650  0.0  0.0  11644   712 pts/1    S+   23:44   0:00 grep --color=auto ./image_rot
+alberto+   26681  0.0  0.0 8961924 11344 pts/0   Rl+  23:44   0:00 ./image_rot False
+alberto+   26683  0.0  0.0  11644   712 pts/1    S+   23:44   0:00 grep --color=auto ./image_rot
+alberto+   26713  0.0  0.0 8961924 11312 pts/0   Rl+  23:44   0:00 ./image_rot False
+alberto+   26717  0.0  0.0  11644   780 pts/1    S+   23:44   0:00 grep --color=auto ./image_rot
+alberto+   26745  0.0  0.0 8961924 11096 pts/0   Rl+  23:44   0:00 ./image_rot False
+alberto+   26749  0.0  0.0  11644   776 pts/1    S+   23:44   0:00 grep --color=auto ./image_rot
+alberto+   26777  0.0  0.0 8961924 11180 pts/0   Rl+  23:44   0:00 ./image_rot False
+alberto+   26781  0.0  0.0  11644   780 pts/1    S+   23:44   0:00 grep --color=auto ./image_rot
+alberto+   26809  0.0  0.8 9173020 144076 pts/0  Rl+  23:44   0:00 ./image_rot False
+alberto+   26815  0.0  0.0  11644   776 pts/1    S+   23:44   0:00 grep --color=auto ./image_rot
+alberto+   26861  0.0  0.8 9171892 139440 pts/0  Rl+  23:44   0:00 ./image_rot False
+alberto+   26867  0.0  0.0  11644   784 pts/1    S+   23:44   0:00 grep --color=auto ./image_rot
+alberto+   26903  0.0  0.6 8962408 98104 pts/0   Rl+  23:44   0:00 ./image_rot False
+alberto+   26908  0.0  0.0  11644   784 pts/1    S+   23:44   0:00 grep --color=auto ./image_rot

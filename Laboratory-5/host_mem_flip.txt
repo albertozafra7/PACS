@@ -1,0 +1,86 @@
+alberto+   45782  0.0  0.0  35708  7556 pts/0    R+   23:48   0:00 ./image_flip False
+alberto+   45780  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   45852  0.0  0.8 9171944 135756 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   45858  0.0  0.0  11644   720 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   45934  0.0  0.6 8963048 98592 pts/0   Rl+  23:48   0:00 ./image_flip False
+alberto+   45939  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   45976  0.0  0.0 8961924 11100 pts/0   Rl+  23:48   0:00 ./image_flip False
+alberto+   45981  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46008  0.0  0.8 9172224 142400 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   46014  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46051  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46082  0.0  0.0  35400  6616 pts/0    D+   23:48   0:00 ./image_flip False
+alberto+   46084  0.0  0.0  11644   720 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46115  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46147  0.0  0.0  11644   720 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46178  0.0  0.0  35400  6572 pts/0    D+   23:48   0:00 ./image_flip False
+alberto+   46180  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46211  0.0  0.0  11644   780 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46243  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46315  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46336  0.0  0.0 8961924 11064 pts/0   Rl+  23:48   0:00 ./image_flip False
+alberto+   46341  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46368  0.0  0.7 8977528 120032 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   46373  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46400  5.0  0.7 8974348 118804 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   46405  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46443  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46475  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46506  0.0  0.0 4625616 9016 pts/0    R+   23:48   0:00 ./image_flip False
+alberto+   46508  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46538  0.0  0.0  35400  6384 pts/0    D+   23:48   0:00 ./image_flip False
+alberto+   46540  0.0  0.0  11644   780 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46570  0.0  0.0 4625616 8988 pts/0    R+   23:48   0:00 ./image_flip False
+alberto+   46572  0.0  0.0  11644   720 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46604  0.0  0.0 135048  7580 pts/0    R+   23:48   0:00 ./image_flip False
+alberto+   46603  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46634  0.0  0.0  35400  6488 pts/0    D+   23:48   0:00 ./image_flip False
+alberto+   46636  0.0  0.0  11644   720 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46666  0.0  0.0 8961924 11352 pts/0   Rl+  23:48   0:00 ./image_flip False
+alberto+   46668  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46698  0.0  0.0 8961924 11192 pts/0   Rl+  23:48   0:00 ./image_flip False
+alberto+   46703  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46730  0.0  0.6 8962408 97980 pts/0   Rl+  23:48   0:00 ./image_flip False
+alberto+   46735  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46762  0.0  0.6 8963048 98516 pts/0   Rl+  23:48   0:00 ./image_flip False
+alberto+   46767  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46794  0.0  0.7 9044060 124424 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   46799  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46837  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46869  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46901  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46932  0.0  0.0  35400  6572 pts/0    D+   23:48   0:00 ./image_flip False
+alberto+   46934  0.0  0.0  11644   720 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46964  0.0  0.0 8961924 11216 pts/0   Rl+  23:48   0:00 ./image_flip False
+alberto+   46966  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   46996  0.0  0.6 8973788 114208 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   47001  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47039  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47071  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47102  0.0  0.0 8961924 11388 pts/0   Rl+  23:48   0:00 ./image_flip False
+alberto+   47107  0.0  0.0  11644   784 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47134  0.0  0.6 8971608 108928 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   47139  0.0  0.0  11644   708 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47166  0.0  0.6 8973788 113940 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   47171  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47209  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47240  0.0  0.0 8961924 11344 pts/0   Rl+  23:48   0:00 ./image_flip False
+alberto+   47242  0.0  0.0  11644   780 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47272  0.0  0.7 9043356 124164 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   47277  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47317  0.0  0.0  11644   720 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47348  0.0  0.7 8974480 119184 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   47353  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47380  6.0  0.7 9044060 124460 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   47386  0.0  0.0  11644   720 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47423  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47454  0.0  0.0  35400  6560 pts/0    D+   23:48   0:00 ./image_flip False
+alberto+   47456  0.0  0.0  11644   720 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47496  0.0  0.0  35400  6464 pts/0    D+   23:48   0:00 ./image_flip False
+alberto+   47498  0.0  0.0  11644   776 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   47558  0.0  0.7 9044060 124420 pts/0  Rl+  23:48   0:00 ./image_flip False
+alberto+   47563  0.0  0.0  11644   712 pts/1    S+   23:48   0:00 grep --color=auto ./image_flip
+alberto+   57011  0.0  0.0 8961936 11340 pts/0   Rl+  23:50   0:00 ./image_hist False
+alberto+   57016  0.0  0.0  11644   712 pts/1    S+   23:50   0:00 grep --color=auto ./image_hist
+alberto+   57630  0.0  0.0  35412  6568 pts/0    D+   23:51   0:00 ./image_hist False
+alberto+   57629  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist

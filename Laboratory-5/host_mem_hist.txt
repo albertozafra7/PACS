@@ -1,0 +1,145 @@
+alberto+   57535  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   57577  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   57821  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   57862  0.0  0.0 8961936 11076 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   57867  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   57924  0.0  0.0 8961936 11336 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   57928  0.0  0.0  11644   720 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   57966  0.0  0.0 4625628 10076 pts/0   R+   23:51   0:00 ./image_hist False
+alberto+   57968  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58009  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58050  0.0  0.0 8961936 11372 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   58055  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58082  0.0  0.7 9085052 125912 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   58088  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58124  0.0  0.0 8960044 11300 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   58129  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58156  0.0  0.8 9173032 144056 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   58162  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58199  0.0  0.0  11644   720 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58230  0.0  0.0 8961936 11392 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   58235  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58262  0.0  0.6 8971416 107344 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   58267  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58305  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58336  0.0  0.0 8961936 11456 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   58341  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58368  0.0  0.8 9171824 130792 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   58374  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58412  0.0  0.0  35412  6600 pts/0    D+   23:51   0:00 ./image_hist False
+alberto+   58411  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58442  0.0  0.6 8962560 98404 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   58447  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58484  0.0  0.0  35412  6484 pts/0    D+   23:51   0:00 ./image_hist False
+alberto+   58486  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58516  0.0  0.0 8929168 11404 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   58520  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58559  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58590  0.0  0.7 9043368 124220 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   58595  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58632  0.0  0.0  35412  6572 pts/0    D+   23:51   0:00 ./image_hist False
+alberto+   58634  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58674  0.0  0.0 8961936 11064 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   58676  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58726  0.0  0.7 9085052 126260 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   58732  0.0  0.0  11644   708 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58778  0.0  0.0  35412  6448 pts/0    D+   23:51   0:00 ./image_hist False
+alberto+   58780  0.0  0.0  11644   720 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58820  0.0  0.0 4625628 10228 pts/0   R+   23:51   0:00 ./image_hist False
+alberto+   58822  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58852  0.0  0.7 8974360 118864 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   58857  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58895  0.0  0.0  11644   780 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58926  0.0  0.7 8977832 123720 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   58931  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   58979  0.0  0.0  11644   780 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59051  0.0  0.0  11644   720 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59103  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59184  0.0  0.7 9043368 124228 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   59189  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59226  0.0  0.0 8961936 11348 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   59231  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59268  0.0  0.0 8961936 11468 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   59270  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59310  0.0  0.0 4625628 10156 pts/0   R+   23:51   0:00 ./image_hist False
+alberto+   59312  0.0  0.0  11644   720 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59352  0.0  0.0 8961936 11276 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   59357  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59394  0.0  0.0 8961936 11252 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   59396  0.0  0.0  11644   780 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59453  0.0  0.7 8977540 120376 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   59458  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59495  0.0  0.0 8961936 11336 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   59500  0.0  0.0  11644   780 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59538  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59569  0.0  0.8 9173032 144388 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   59575  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59611  0.0  0.0 8961936 11480 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   59616  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59654  0.0  0.0  11644   720 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59685  0.0  0.0 4596528 8748 pts/0    R+   23:51   0:00 ./image_hist False
+alberto+   59687  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59728  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59759  0.0  0.7 9043368 124208 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   59764  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59801  0.0  0.0 135060  7424 pts/0    R+   23:51   0:00 ./image_hist False
+alberto+   59803  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59833  0.0  0.5 8962420 97912 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   59838  0.0  0.0  11644   780 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59875  0.0  0.0 8961936 11148 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   59880  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59918  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59955  0.0  0.0  11644   720 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   59991  0.0  0.0 8961936 11316 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   59993  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60023  0.0  0.8 9173036 144204 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   60029  0.0  0.0  11644   720 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60065  0.0  0.0 8912784 11412 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   60070  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60107  0.0  0.0 8961936 11340 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   60109  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60149  0.0  0.0  35412  6428 pts/0    D+   23:51   0:00 ./image_hist False
+alberto+   60151  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60192  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60233  0.0  0.6 8962560 98160 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   60238  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60296  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60338  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60369  0.0  0.7 9085052 125260 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   60375  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60411  0.0  0.0  35412  6520 pts/0    D+   23:51   0:00 ./image_hist False
+alberto+   60413  0.0  0.0  11644   720 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60443  5.0  0.7 8977540 120308 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   60448  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60485  0.0  0.8 9171956 135712 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   60491  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60527  0.0  0.0 4625628 10124 pts/0   R+   23:51   0:00 ./image_hist False
+alberto+   60529  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60569  0.0  0.0 135060  7492 pts/0    R+   23:51   0:00 ./image_hist False
+alberto+   60571  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60612  0.0  0.0  11644   720 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60643  0.0  0.7 9085052 125204 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   60649  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60696  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60737  0.0  0.0  35412  6508 pts/0    D+   23:51   0:00 ./image_hist False
+alberto+   60739  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60780  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60811  0.0  0.7 8977540 120508 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   60816  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60864  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   60906  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   61008  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   61059  0.0  0.5 8962252 97696 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   61064  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   61101  0.0  0.7 9085052 126372 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   61107  0.0  0.0  11644   784 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   61153  0.0  0.6 8971256 98408 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   61158  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   61195  0.0  0.0 8961936 11192 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   61199  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   61378  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   61419  0.0  0.0 8961936 11048 pts/0   Rl+  23:51   0:00 ./image_hist False
+alberto+   61421  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   61471  0.0  0.7 9044072 124464 pts/0  Rl+  23:51   0:00 ./image_hist False
+alberto+   61477  0.0  0.0  11644   712 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
+alberto+   61594  0.0  0.0  11644   776 pts/1    S+   23:51   0:00 grep --color=auto ./image_hist
