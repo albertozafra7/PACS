@@ -1,20 +1,24 @@
-__kernel void img_flip(__global const uchar *input,
-                        __global uchar *output,
-                        const int width,
-                        const int height) {
+__kernel void img_histogram(__global const uchar *input,
+                             __global uint *histogramRed,
+                             __global uint *histogramGreen,
+                             __global uint *histogramBlue,
+                             const int width,
+                             const int height) {
     const int i = get_global_id(0);
     const int j = get_global_id(1);
 
     if (i < width && j < height) {
-        // Calculate the corresponding index for the flipped image
-        const int newI = width - 1 - i;
+        // Calculate the 1D array index for the pixel
+        const int index = (j * width + i);
 
-        // Map the 2D coordinates to the 1D array index
-        const int src_index = (j * width + newI);
-        const int dest_index = (j * width + i);
+        // Extract color channels
+        uchar red = input[index];
+        uchar green = input[index + height * width];
+        uchar blue = input[index + 2 * height * width];
 
-        // Copy pixel from input to output
-        for (int channel = 0; channel < 3; ++channel)
-            output[src_index + channel * height * width] = input[dest_index + channel * height * width];
+        // Update histograms
+        atomic_inc(&histogramRed[red]);
+        atomic_inc(&histogramGreen[green]);
+        atomic_inc(&histogramBlue[blue]);
     }
 }

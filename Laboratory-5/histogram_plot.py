@@ -3,7 +3,7 @@ import numpy as np
 
 def plot_histograms(file_path):
     # Read histogram values from the file
-    data = np.loadtxt(file_path)
+    data = np.genfromtxt(file_path, delimiter=',')
 
     # Extract data for each channel
     bin_indices = data[:, 0]
@@ -35,3 +35,4 @@ if __name__ == "__main__":
 
     # Plot histograms
     plot_histograms(file_path)
+
