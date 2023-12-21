@@ -171,7 +171,7 @@ int main(int argc, char** argv)
   
   // 3. Create a context, with a device
   cl_context_properties properties[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platforms_ids[0], 0}; 
-  context = clCreateContext(properties, 2, *devices_ids, NULL, NULL, &err);
+  context = clCreateContext(properties, n_devices[num_platforms_ids], *devices_ids, NULL, NULL, &err);
   cl_error(err, "Failed to create a compute context\n");
 
   // 4. Create a command queue
@@ -197,7 +197,7 @@ int main(int argc, char** argv)
   free(sourceCode);
 
   // Build the executable and check errors
-  err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+  err = clBuildProgram(program, n_devices[num_platforms_ids], *devices_ids, NULL, NULL, NULL);
   if (err != CL_SUCCESS){
     size_t len;
     char buffer[2048];
