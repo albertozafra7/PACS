@@ -1,3 +1,4 @@
+
 __kernel void img_rot(__global const uchar *input,
                            __global uchar *output,
                            const int pivot_x,
