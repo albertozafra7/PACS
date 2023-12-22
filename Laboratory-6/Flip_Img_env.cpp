@@ -67,7 +67,7 @@ int main(int argc, char** argv)
   // Start of the program
 
   int err;                            	// error code returned from api calls
-  size_t t_buf = 50;			// size of str_buffer
+  size_t t_buf = 100;			// size of str_buffer
   char str_buffer[t_buf];		// auxiliary buffer	
   size_t e_buf;				// effective size of str_buffer in use
 	    
@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 	
   cl_device_id device_id;             				// compute device id 
   cl_context context;                 				// compute context
-  cl_command_queue command_queue[n_devices[num_platforms_ids]];     				// compute command queue
+  cl_command_queue command_queue[2];     				// compute command queue
   cl_program program;                         // define a program
   cl_kernel kernel;                           // create a kernel
     
@@ -169,16 +169,14 @@ int main(int argc, char** argv)
     }
   }	
   
-  std::cout << "holi" << std::endl;
   // 3. Create a context, with a device
   cl_context_properties properties[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platforms_ids[0], 0}; 
-  context = clCreateContext(properties, n_devices[0], devices_ids[0], NULL, NULL, &err);
+  context = clCreateContext(properties, 2 /*n_devices*/, devices_ids[0], NULL, NULL, &err);
   cl_error(err, "Failed to create a compute context\n");
 
-std::cout << "holi2" << std::endl;
   // 4. Create a command queue
   cl_command_queue_properties proprt[] = { CL_QUEUE_PROPERTIES, CL_QUEUE_PROFILING_ENABLE, 0 };
-  for(size_t i = 0; i < n_devices[0]; ++i){
+  for(size_t i = 0; i < 2 /*n_devices*/; ++i){
     command_queue[i] = clCreateCommandQueueWithProperties(context, devices_ids[0][i], proprt, &err);
     std::cout << "Creating command queue n" << i << std::endl;
     cl_error(err, "Failed to create a command queue\n");
@@ -202,7 +200,7 @@ std::cout << "holi2" << std::endl;
   free(sourceCode);
 
   // Build the executable and check errors
-  err = clBuildProgram(program, n_devices[0], *devices_ids, NULL, NULL, NULL);
+  err = clBuildProgram(program, 2, *devices_ids, NULL, NULL, NULL);
   if (err != CL_SUCCESS){
     size_t len;
     char buffer[2048];
