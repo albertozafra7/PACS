@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 	
   cl_device_id device_id;             				// compute device id 
   cl_context context;                 				// compute context
-  cl_command_queue command_queue;     				// compute command queue
+  cl_command_queue command_queue[n_devices[num_platforms_ids]];     				// compute command queue
   cl_program program;                         // define a program
   cl_kernel kernel;                           // create a kernel
     
@@ -169,15 +169,20 @@ int main(int argc, char** argv)
     }
   }	
   
+  std::cout << "holi" << std::endl;
   // 3. Create a context, with a device
   cl_context_properties properties[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platforms_ids[0], 0}; 
-  context = clCreateContext(properties, n_devices[num_platforms_ids], *devices_ids, NULL, NULL, &err);
+  context = clCreateContext(properties, n_devices[0], devices_ids[0], NULL, NULL, &err);
   cl_error(err, "Failed to create a compute context\n");
 
+std::cout << "holi2" << std::endl;
   // 4. Create a command queue
   cl_command_queue_properties proprt[] = { CL_QUEUE_PROPERTIES, CL_QUEUE_PROFILING_ENABLE, 0 };
-  command_queue = clCreateCommandQueueWithProperties(context, *devices_ids, proprt, &err);
-  cl_error(err, "Failed to create a command queue\n");
+  for(size_t i = 0; i < n_devices[0]; ++i){
+    command_queue[i] = clCreateCommandQueueWithProperties(context, devices_ids[0][i], proprt, &err);
+    std::cout << "Creating command queue n" << i << std::endl;
+    cl_error(err, "Failed to create a command queue\n");
+  }
 
   // 2. Calculate size of the file
   FILE *fileHandler = fopen("img_flip_kernel.cl", "r"); //Open the kernel file
@@ -197,7 +202,7 @@ int main(int argc, char** argv)
   free(sourceCode);
 
   // Build the executable and check errors
-  err = clBuildProgram(program, n_devices[num_platforms_ids], *devices_ids, NULL, NULL, NULL);
+  err = clBuildProgram(program, n_devices[0], *devices_ids, NULL, NULL, NULL);
   if (err != CL_SUCCESS){
     size_t len;
     char buffer[2048];
@@ -238,7 +243,7 @@ int main(int argc, char** argv)
   cl_event writeEvent, readEvent;
 
   // -------- Global WRITE bandwithd --------
-
+/*
   // 7 Write date into the memory object 
   err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * inputImg.size(), inputImg.data(), 0, NULL, &writeEvent);
   cl_error(err, "Failed to enqueue a write command\n");
@@ -263,7 +268,7 @@ int main(int argc, char** argv)
   // -------- Kernel execution time --------
   cl_event Kernel_exectime_event;
 
-  err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
+  err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size, NULL/*local_size*//*, 0, NULL, &Kernel_exectime_event);
   cl_error(err, "Failed to launch kernel to the device\n");
 
  // -------- Kernel device bandwithd --------
@@ -373,7 +378,7 @@ int main(int argc, char** argv)
           writeBandwidth / (1024 * 1024), 
           readBandwidth / (1024 * 1024), 
           kernelBandwidth / (1024 * 1024));
-  
+  */
   return 0;
 }
 
