@@ -60,7 +60,7 @@ void fillImg(cl_uchar3 *filledImg, CImg<unsigned char> originImg){
     }
 }
 
-void fillImg(CImg<unsigned char> destImg, cl_uchar3 *fillerImg){
+void fillImg(CImg<unsigned char> *destImg, cl_uchar3 *fillerImg){
     // Get image dimensions
     const int width = destImg.width();
     const int height = destImg.height();
