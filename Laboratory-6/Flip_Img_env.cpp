@@ -241,10 +241,15 @@ int main(int argc, char** argv)
   cl_event writeEvent, readEvent;
 
   // -------- Global WRITE bandwithd --------
-/*
+
   // 7 Write date into the memory object 
-  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * inputImg.size(), inputImg.data(), 0, NULL, &writeEvent);
-  cl_error(err, "Failed to enqueue a write command\n");
+  // First device
+  err = clEnqueueWriteBuffer(command_queue[0], in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * inputImg.size(), inputImg.data(), 0, NULL, &writeEvent);
+  cl_error(err, "Failed to enqueue a write command on first device\n");
+
+  // Second device
+  err = clEnqueueWriteBuffer(command_queue[1], in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * inputImg.size(), inputImg.data(), 0, NULL, &writeEvent);
+  cl_error(err, "Failed to enqueue a write command on second device\n");
   
   // 8 Set the arguments to the kernel
   err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object);
@@ -265,29 +270,53 @@ int main(int argc, char** argv)
 
   // -------- Kernel execution time --------
   cl_event Kernel_exectime_event;
+  
+  // Enqueue kernel for the first device
+  size_t global_size_device1[2] = {img_width, img_height - img_height / 2}; // Adjust as needed
+  err = clEnqueueNDRangeKernel(command_queue[0], kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
+  cl_error(err, "Failed to launch kernel to the first device\n");
 
-  err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size, NULL/*local_size*//*, 0, NULL, &Kernel_exectime_event);
-  cl_error(err, "Failed to launch kernel to the device\n");
+  // Enqueue kernel for the second device
+  size_t global_size_device2[2] = {img_width, img_height - img_height / 2}; // Adjust as needed
+  err = clEnqueueNDRangeKernel(command_queue[1], kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
+  cl_error(err, "Failed to launch kernel to the second device\n");
 
  // -------- Kernel device bandwithd --------
   // Create an event for measuring kernel execution time
   cl_event kernel_local_bandwidth_event;
-
-  clFinish(command_queue); // Make sure previous commands are finished before recording the kernel event
-  err = clEnqueueMarkerWithWaitList(command_queue, 0, NULL, &kernel_local_bandwidth_event);
+  
+  // First device
+  clFinish(command_queue[0]); // Make sure previous commands are finished before recording the kernel event
+  err = clEnqueueMarkerWithWaitList(command_queue[0], 0, NULL, &kernel_local_bandwidth_event);
   cl_error(err, "Failed to enqueue marker for kernel event\n");
 
   clWaitForEvents(1, &Kernel_exectime_event);
-  clFinish(command_queue);
+  clFinish(command_queue[0]);
+
+  // Second device
+  clFinish(command_queue[1]); // Make sure previous commands are finished before recording the kernel event
+  err = clEnqueueMarkerWithWaitList(command_queue[1], 0, NULL, &kernel_local_bandwidth_event);
+  cl_error(err, "Failed to enqueue marker for kernel event\n");
+
+  clWaitForEvents(1, &Kernel_exectime_event);
+  clFinish(command_queue[1]);
 
   // -------- Global READ bandwithd --------
 
   // 10 Read data form device memory back to host memory
-  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(cl_uchar)*outputImg.size(), outputImg.data(), 0, NULL, &readEvent);
+  // First device
+  err = clEnqueueReadBuffer(command_queue[0], out_device_object, CL_TRUE, 0, sizeof(cl_uchar)*outputImg.size(), outputImg.data(), 0, NULL, &readEvent);
   cl_error(err, "Failed to enqueue a read command\n");
 
   // Wait for the commands to finish --> bandwidth
-  clFinish(command_queue);
+  clFinish(command_queue[0]);
+
+  // Second device
+  err = clEnqueueReadBuffer(command_queue[1], out_device_object, CL_TRUE, 0, sizeof(cl_uchar)*outputImg.size(), outputImg.data(), 0, NULL, &readEvent);
+  cl_error(err, "Failed to enqueue a read command\n");
+
+  // Wait for the commands to finish --> bandwidth
+  clFinish(command_queue[1]);
   
 
   // 11 Write code to check correctness of execution
@@ -301,7 +330,8 @@ int main(int argc, char** argv)
   clReleaseMemObject(out_device_object);
   clReleaseProgram(program);
   clReleaseKernel(kernel);
-  clReleaseCommandQueue(command_queue);
+  clReleaseCommandQueue(command_queue[0]);
+  clReleaseCommandQueue(command_queue[1]);
   clReleaseContext(context);
 
 // **************** Measurement calculations ****************
@@ -376,7 +406,7 @@ int main(int argc, char** argv)
           writeBandwidth / (1024 * 1024), 
           readBandwidth / (1024 * 1024), 
           kernelBandwidth / (1024 * 1024));
-  */
+  
   return 0;
 }
 
