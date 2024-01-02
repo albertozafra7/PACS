@@ -357,10 +357,16 @@ int main(int argc, char** argv)
   fillImg(finalImg, outputImg);
 
   // 11 Write code to check correctness of execution
-  if(standard_print){
+  /*if(standard_print){
     originImg.display("My first CImg code");  
     finalImg.display("Flipped IMG");
-  }
+  }*/
+  // Save the image to a file (e.g., in PNG format)
+  const char* filename = "output.png";
+  finalImg.save(filename);
+
+  // Display the saved image filename
+  std::cout << "Image saved to: " << filename << std::endl;
 
   // 12 Release all the OpenCL memory objects allocated along the program
   clReleaseMemObject(in_device_object);
