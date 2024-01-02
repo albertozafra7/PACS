@@ -60,7 +60,7 @@ void fillImg(cl_uchar3 *filledImg, CImg<unsigned char> originImg){
     }
 }
 
-void fillImg(CImg<unsigned char> *destImg, cl_uchar3 *fillerImg){
+void fillImg(CImg<unsigned char> &destImg, cl_uchar3 *fillerImg){
     // Get image dimensions
     const int width = destImg.width();
     const int height = destImg.height();
@@ -307,7 +307,7 @@ int main(int argc, char** argv)
   cl_event Kernel_exectime_event;
   
   // Enqueue kernel for the first device
-  size_t global_size_device1[2] = {img_width, img_height - img_height / 2}; // Adjust as needed
+  size_t global_size_device1[2] = {img_width, img_height / 2}; // Adjust as needed
   err = clEnqueueNDRangeKernel(command_queue[0], kernel, 2, NULL, global_size_device1, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
   cl_error(err, "Failed to launch kernel to the first device\n");
 
