@@ -1,7 +1,8 @@
-__kernel void img_flip(__global const uchar *input,
-                        __global uchar *output,
+__kernel void img_flip(__global const uchar3 *input,
+                        __global uchar3 *output,
                         const int width,
                         const int height) {
+                            
     const int i = get_global_id(0);
     const int j = get_global_id(1);
 
@@ -14,7 +15,6 @@ __kernel void img_flip(__global const uchar *input,
         const int dest_index = (j * width + i);
 
         // Copy pixel from input to output
-        for (int channel = 0; channel < 3; ++channel)
-            output[src_index + channel * height * width] = input[dest_index + channel * height * width];
+        output[src_index] = input[dest_index];
     }
 }

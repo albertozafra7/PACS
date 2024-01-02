@@ -46,6 +46,36 @@ void initializeArray(float *array, size_t size) {
   }
 }
 
+void fillImg(cl_uchar3 *filledImg, CImg<unsigned char> originImg){
+    // Get image dimensions
+    const int width = originImg.width();
+    const int height = originImg.height();
+
+    // Iterate through image pixels and fill with specified color
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            // Set pixel value to filledImg
+            filledImg[y * width + x] = {originImg(x, y, 0), originImg(x, y, 1), originImg(x, y, 2)};
+        }
+    }
+}
+
+void fillImg(CImg<unsigned char> destImg, cl_uchar3 *fillerImg){
+    // Get image dimensions
+    const int width = destImg.width();
+    const int height = destImg.height();
+
+    // Iterate through image pixels and fill with specified color
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            // Set pixel value to filledImg
+            destImg(x,y,0) = fillerImg[y * width + x].s[0];
+            destImg(x,y,1) = fillerImg[y * width + x].s[1];
+            destImg(x,y,2) = fillerImg[y * width + x].s[2];
+        }
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char** argv)
@@ -219,20 +249,25 @@ int main(int argc, char** argv)
   // 5 Set the input and output vars
 
   // Create and initialize input array in host memory
-  CImg<unsigned char> inputImg("image.jpg");
+  CImg<unsigned char> originImg("image.jpg");
 
   // Create and initialize output array in host memory
-  CImg<unsigned char> outputImg(inputImg);
+  //CImg<unsigned char> outputImg(inputImg);
 
   // Set the width and the height
-  int img_width = inputImg.width();
-  int img_height = inputImg.height();
+  int img_width = originImg.width();
+  int img_height = originImg.height();
+
+  cl_uchar3 inputImg[img_width*img_height];
+  fillImg(inputImg, originImg);
+
+  cl_uchar3 outputImg[img_width*img_height];
 
 
   // 6 Create OpenCL buffer visible to the OpenCl runtime
-  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar)*inputImg.size(), NULL, &err);
+  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3)*(img_width*img_height), NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
-  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar)*outputImg.size(), NULL, &err);
+  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3)*(img_width*img_height), NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
   
   // -------- Memory Transfer time (data interchanged between host and device) --------
@@ -244,11 +279,11 @@ int main(int argc, char** argv)
 
   // 7 Write date into the memory object 
   // First device
-  err = clEnqueueWriteBuffer(command_queue[0], in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * inputImg.size(), inputImg.data(), 0, NULL, &writeEvent);
+  err = clEnqueueWriteBuffer(command_queue[0], in_device_object, CL_TRUE, 0, sizeof(cl_uchar3) *(img_width*img_height), inputImg, 0, NULL, &writeEvent);
   cl_error(err, "Failed to enqueue a write command on first device\n");
 
   // Second device
-  err = clEnqueueWriteBuffer(command_queue[1], in_device_object, CL_TRUE, 0, sizeof(cl_uchar) * inputImg.size(), inputImg.data(), 0, NULL, &writeEvent);
+  err = clEnqueueWriteBuffer(command_queue[1], in_device_object, CL_TRUE, 0, sizeof(cl_uchar3) *(img_width*img_height), inputImg, 0, NULL, &writeEvent);
   cl_error(err, "Failed to enqueue a write command on second device\n");
   
   // 8 Set the arguments to the kernel
@@ -272,13 +307,13 @@ int main(int argc, char** argv)
   cl_event Kernel_exectime_event;
   
   // Enqueue kernel for the first device
-  //size_t global_size_device1[2] = {img_width, img_height - img_height / 2}; // Adjust as needed
-  err = clEnqueueNDRangeKernel(command_queue[0], kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
+  size_t global_size_device1[2] = {img_width, img_height - img_height / 2}; // Adjust as needed
+  err = clEnqueueNDRangeKernel(command_queue[0], kernel, 2, NULL, global_size_device1, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
   cl_error(err, "Failed to launch kernel to the first device\n");
 
   // Enqueue kernel for the second device
-  //size_t global_size_device2[2] = {img_width, img_height - img_height / 2}; // Adjust as needed
-  err = clEnqueueNDRangeKernel(command_queue[1], kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
+  size_t global_size_device2[2] = {img_width, img_height - img_height / 2}; // Adjust as needed
+  err = clEnqueueNDRangeKernel(command_queue[1], kernel, 2, NULL, global_size_device2, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
   cl_error(err, "Failed to launch kernel to the second device\n");
 
  // -------- Kernel device bandwithd --------
@@ -305,24 +340,26 @@ int main(int argc, char** argv)
 
   // 10 Read data form device memory back to host memory
   // First device
-  err = clEnqueueReadBuffer(command_queue[0], out_device_object, CL_TRUE, 0, sizeof(cl_uchar)*outputImg.size(), outputImg.data(), 0, NULL, &readEvent);
+  err = clEnqueueReadBuffer(command_queue[0], out_device_object, CL_TRUE, 0, sizeof(cl_uchar3)*(img_width*img_height), outputImg, 0, NULL, &readEvent);
   cl_error(err, "Failed to enqueue a read command\n");
 
   // Wait for the commands to finish --> bandwidth
   clFinish(command_queue[0]);
 
   // Second device
-  err = clEnqueueReadBuffer(command_queue[1], out_device_object, CL_TRUE, 0, sizeof(cl_uchar)*outputImg.size(), outputImg.data(), 0, NULL, &readEvent);
+  err = clEnqueueReadBuffer(command_queue[1], out_device_object, CL_TRUE, 0, sizeof(cl_uchar3)*(img_width*img_height), outputImg, 0, NULL, &readEvent);
   cl_error(err, "Failed to enqueue a read command\n");
 
   // Wait for the commands to finish --> bandwidth
   clFinish(command_queue[1]);
   
+  CImg<unsigned char> finalImg(originImg);
+  fillImg(finalImg, outputImg);
 
   // 11 Write code to check correctness of execution
   if(standard_print){
-    inputImg.display("My first CImg code");  
-    outputImg.display("Flipped IMG");
+    originImg.display("My first CImg code");  
+    finalImg.display("Flipped IMG");
   }
 
   // 12 Release all the OpenCL memory objects allocated along the program
@@ -368,7 +405,7 @@ int main(int argc, char** argv)
   // Calculate bandwidth
   double writeTime = (writeEnd - writeStart) * 1.0e-9; // Convert nanoseconds to seconds
   double readTime = (readEnd - readStart) * 1.0e-9;
-  size_t dataSize = sizeof(cl_uchar) * inputImg.size();
+  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height);
 
   double writeBandwidth = dataSize / writeTime; // in bytes per second
   double readBandwidth = dataSize / readTime;
@@ -388,7 +425,7 @@ int main(int argc, char** argv)
 
   // Calculate bandwidth
   double kernelTime = (kernelEnd - kernelStart); // Convert nanoseconds to miliseconds
-  size_t dataSize_kernel = sizeof(cl_uchar) * inputImg.size(); // Adjust data size based on your specific kernel data requirements
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height); // Adjust data size based on your specific kernel data requirements
   double kernelBandwidth = dataSize_kernel / kernelTime; // in bytes per nanosecond
   
 
