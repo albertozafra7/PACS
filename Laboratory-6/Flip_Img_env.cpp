@@ -246,6 +246,8 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to create kernel from the program\n");
 
 
+//+++++++++++++++++++++
+
   // 5 Set the input and output vars
 
   // Create and initialize input array in host memory
@@ -263,6 +265,13 @@ int main(int argc, char** argv)
 
   cl_uchar3 outputImg[img_width*img_height];
 
+  size_t n_images = 5000;
+  // We create an input and an output vector which will contain the replicated images
+  std::vector<cl_uchar3[img_width*img_height]> in_images;
+  std::vector<cl_uchar3[img_width*img_height]> out_images;
+  for(size_t i = 0; i < n_images; ++i)
+    in_images.push_back(inputImg);
+
 
   // 6 Create OpenCL buffer visible to the OpenCl runtime
   cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3)*(img_width*img_height), NULL, &err);
@@ -277,7 +286,7 @@ int main(int argc, char** argv)
 
   // -------- Global WRITE bandwithd --------
 
-  // 7 Write date into the memory object 
+  // 7 Write data into the memory object 
   // First device
   err = clEnqueueWriteBuffer(command_queue[0], in_device_object, CL_TRUE, 0, sizeof(cl_uchar3) *(img_width*img_height), inputImg, 0, NULL, &writeEvent);
   cl_error(err, "Failed to enqueue a write command on first device\n");
@@ -297,23 +306,23 @@ int main(int argc, char** argv)
   cl_error(err, "Failed to set argument 3 --> IMG height\n");
 
   // 9 Launch Kernel
-  local_size[0] = 128;
-  local_size[1] = 128;
+  //local_size[0] = 128;
+  //local_size[1] = 128;
 
-  global_size[0] = img_width; // N of work items que quieres
-  global_size[1] = img_height; // N of work items que quieres
+  //global_size[0] = img_width; // N of work items que quieres
+  //global_size[1] = img_height; // N of work items que quieres
 
   // -------- Kernel execution time --------
   cl_event Kernel_exectime_event;
-  
+ 
+  size_t global_size_device[2] = {img_width, img_height}; // Each device does 1 full image
+
   // Enqueue kernel for the first device
-  size_t global_size_device1[2] = {img_width, img_height / 2}; // Adjust as needed
-  err = clEnqueueNDRangeKernel(command_queue[0], kernel, 2, NULL, global_size_device1, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
+  err = clEnqueueNDRangeKernel(command_queue[0], kernel, 2, NULL, global_size_device, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
   cl_error(err, "Failed to launch kernel to the first device\n");
 
   // Enqueue kernel for the second device
-  size_t global_size_device2[2] = {img_width, img_height - img_height / 2}; // Adjust as needed
-  err = clEnqueueNDRangeKernel(command_queue[1], kernel, 2, NULL, global_size_device2, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
+  err = clEnqueueNDRangeKernel(command_queue[1], kernel, 2, NULL, global_size_device, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
   cl_error(err, "Failed to launch kernel to the second device\n");
 
  // -------- Kernel device bandwithd --------
