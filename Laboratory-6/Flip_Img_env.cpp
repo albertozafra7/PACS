@@ -306,7 +306,7 @@ int main(int argc, char** argv)
   cl_ulong kernel_time_start[2];
   cl_ulong kernel_time_end[2];
 
-  cl_ulong kernel_time_acc[2];
+  cl_ulong kernel_time_acc[2] = {0,0};
   size_t acc = 0;
 
   // Launch Kernel for both devices
