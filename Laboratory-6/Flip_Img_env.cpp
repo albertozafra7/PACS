@@ -337,8 +337,8 @@ int main(int argc, char** argv)
       }
   }
 
-  std::cout << "Device 0 accumulated time = " << kernel_time_acc[0] << std::endl;
-  std::cout << "Device 1 accumulated time = " << kernel_time_acc[1] << std::endl;
+  std::cout << "Device 0 accumulated time = " << kernel_time_acc[0]/ 1.0e+9 << " s" << std::endl;
+  std::cout << "Device 1 accumulated time = " << kernel_time_acc[1]/ 1.0e+9 << " s" << std::endl;
   std::cout << acc << std::endl;
   
 
