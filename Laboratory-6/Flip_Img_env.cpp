@@ -309,18 +309,21 @@ int main(int argc, char** argv)
   cl_ulong kernel_time_acc[2] = {0,0};
   size_t acc = 0;
 
+
+  // 8 Set the arguments to the kernel
+  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[0]);
+  cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
+  err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[0]);
+  cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
+  err = clSetKernelArg(kernel, 2, sizeof(img_width), &img_width);
+  cl_error(err, "Failed to set argument 2 --> IMG width\n");
+  err = clSetKernelArg(kernel, 3, sizeof(img_height), &img_height);
+  cl_error(err, "Failed to set argument 3 --> IMG height\n");
+  
+
   // Launch Kernel for both devices
   for (size_t i = 0; i < n_images; ++i) {
       for (size_t dev = 0; dev < 2; ++dev) {
-          // 8 Set the arguments to the kernel
-          err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[0]);
-          cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
-          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[0]);
-          cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
-          err = clSetKernelArg(kernel, 2, sizeof(img_width), &img_width);
-          cl_error(err, "Failed to set argument 2 --> IMG width\n");
-          err = clSetKernelArg(kernel, 3, sizeof(img_height), &img_height);
-          cl_error(err, "Failed to set argument 3 --> IMG height\n");
 
           // 9 Enqueue kernel for the devices
           err = clEnqueueNDRangeKernel(command_queue[dev], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[dev]);
@@ -338,40 +341,16 @@ int main(int argc, char** argv)
       }
   }
 
-  std::cout << "Device 0 accumulated time = " << kernel_time_acc[0]/ 1.0e+9 << " s" << std::endl;
-  std::cout << "Device 1 accumulated time = " << kernel_time_acc[1]/ 1.0e+9 << " s" << std::endl;
-  std::cout << acc << std::endl;
-  
-
-   // -------- Kernel device bandwithd --------
-  // Create an event for measuring kernel execution time
-  cl_event kernel_local_bandwidth_event;
-
-  // Synchronize both devices
-  for (size_t dev = 0; dev < 2; ++dev) {
-      clFinish(command_queue[dev]);
-      err = clEnqueueMarkerWithWaitList(command_queue[dev], 0, NULL, &kernel_local_bandwidth_event);
-      cl_error(err, "Failed to enqueue marker for kernel event\n");
-      clWaitForEvents(1, &kernel_exectime_event_device[dev]);
+  if(standard_print){
+    std::cout << "Device 0 accumulated time = " << kernel_time_acc[0]/ 1.0e+9 << " s" << std::endl;
+    std::cout << "Device 1 accumulated time = " << kernel_time_acc[1]/ 1.0e+9 << " s" << std::endl;
+    std::cout << "Images processed = " << acc << std::endl;
   }
 
 
   
-  /*// First device
-  clFinish(command_queue[0]); // Make sure previous commands are finished before recording the kernel event
-  err = clEnqueueMarkerWithWaitList(command_queue[0], 0, NULL, &kernel_local_bandwidth_event);
-  cl_error(err, "Failed to enqueue marker for kernel event\n");
-
-  clWaitForEvents(1, &Kernel_exectime_event);
   clFinish(command_queue[0]);
-
-  // Second device
-  clFinish(command_queue[1]); // Make sure previous commands are finished before recording the kernel event
-  err = clEnqueueMarkerWithWaitList(command_queue[1], 0, NULL, &kernel_local_bandwidth_event);
-  cl_error(err, "Failed to enqueue marker for kernel event\n");
-
-  clWaitForEvents(1, &Kernel_exectime_event);
-  clFinish(command_queue[1]);*/
+  clFinish(command_queue[1]);
 
   // -------- Global READ bandwithd --------
 
@@ -479,14 +458,10 @@ int main(int argc, char** argv)
 
   // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
 
-  cl_ulong kernelStart, kernelEnd;
-  clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &kernelStart, NULL);
-  clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &kernelEnd, NULL);
-
+  double total_Kernel_exect_time = kernel_time_acc[0] + kernel_time_acc[1];
   // Calculate bandwidth
-  double kernelTime = (kernelEnd - kernelStart); // Convert nanoseconds to miliseconds
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height); // Adjust data size based on your specific kernel data requirements
-  double kernelBandwidth = dataSize_kernel / kernelTime; // in bytes per nanosecond
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on your specific kernel data requirements
+  double kernelBandwidth = dataSize_kernel / total_Kernel_exect_time; // in bytes per nanosecond
   
 
   // Print or use the bandwidth value as needed
@@ -498,7 +473,7 @@ int main(int argc, char** argv)
   // +++++ Work unbalance +++++
   // Calculate the workload imbalance ratio
   double unbalance_ratio = 0;
-  if(kernel_exectime_event_device[0] < kernel_exectime_event_device[1])
+  if(kernel_time_acc[0] < kernel_time_acc[1])
     unbalance_ratio = (kernel_time_acc[1]/ 1.0e+9)/((kernel_time_acc[1]+kernel_time_acc[0])/ 1.0e+9);
   else
     unbalance_ratio = (kernel_time_acc[0]/ 1.0e+9)/((kernel_time_acc[1]+kernel_time_acc[0])/ 1.0e+9);
