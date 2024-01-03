@@ -303,13 +303,19 @@ int main(int argc, char** argv)
 
   size_t global_size_device[2] = {static_cast<size_t>(img_width), static_cast<size_t>(img_height)}; // Each device does 1 full image
 
+  cl_ulong kernel_time_start[2];
+  cl_ulong kernel_time_end[2];
+
+  cl_ulong kernel_time_acc[2];
+  size_t acc = 0;
+
   // Launch Kernel for both devices
   for (size_t i = 0; i < n_images; ++i) {
       for (size_t dev = 0; dev < 2; ++dev) {
           // 8 Set the arguments to the kernel
-          err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[dev]);
+          err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[0]);
           cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
-          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[dev]);
+          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[0]);
           cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
           err = clSetKernelArg(kernel, 2, sizeof(img_width), &img_width);
           cl_error(err, "Failed to set argument 2 --> IMG width\n");
@@ -320,7 +326,21 @@ int main(int argc, char** argv)
           err = clEnqueueNDRangeKernel(command_queue[dev], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[dev]);
           cl_error(err, "Failed to launch kernel to the device\n");
       } 
+      clWaitForEvents(2, kernel_exectime_event_device);
+
+      for (size_t dev = 0; dev < 2; ++dev){
+      // Get starting and ending time of the event
+        clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start[dev], NULL);
+        clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end[dev], NULL);
+        kernel_time_acc[dev] += kernel_time_end[dev]-kernel_time_start[dev];
+        acc++;
+      }
   }
+
+  std::cout << "Device 0 accumulated time = " << kernel_time_acc[0] << std::endl;
+  std::cout << "Device 1 accumulated time = " << kernel_time_acc[1] << std::endl;
+  std::cout << acc << std::endl;
+  
 
    // -------- Kernel device bandwithd --------
   // Create an event for measuring kernel execution time
@@ -413,8 +433,8 @@ int main(int argc, char** argv)
 
   // +++++ Kernel Execution Time +++++
 
-  cl_ulong kernel_time_start[2];
-  cl_ulong kernel_time_end[2];
+  //cl_ulong kernel_time_start[2];
+  //cl_ulong kernel_time_end[2];
   double kernel_exec_time_ns[2];
 
   for (size_t dev = 0; dev < 2; ++dev){
