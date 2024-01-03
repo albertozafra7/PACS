@@ -337,15 +337,19 @@ int main(int argc, char** argv)
           cl_error(err, "Failed to launch kernel to the device\n");
       }
   }
+   // -------- Kernel device bandwithd --------
+  // Create an event for measuring kernel execution time
+  cl_event kernel_local_bandwidth_event;
 
   // Synchronize both devices
   for (size_t dev = 0; dev < 2; ++dev) {
       clFinish(command_queue[dev]);
+      err = clEnqueueMarkerWithWaitList(command_queue[dev], 0, NULL, &kernel_local_bandwidth_event);
+      cl_error(err, "Failed to enqueue marker for kernel event\n");
+      clWaitForEvents(1, &Kernel_exectime_event);
   }
 
- // -------- Kernel device bandwithd --------
-  // Create an event for measuring kernel execution time
-  cl_event kernel_local_bandwidth_event;
+
   
   /*// First device
   clFinish(command_queue[0]); // Make sure previous commands are finished before recording the kernel event
