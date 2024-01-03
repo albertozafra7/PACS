@@ -460,7 +460,7 @@ int main(int argc, char** argv)
 
   double total_Kernel_exect_time = kernel_time_acc[0] + kernel_time_acc[1];
   // Calculate bandwidth
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on your specific kernel data requirements
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * (n_images * 2); // Adjust data size based on your specific kernel data requirements
   double kernelBandwidth = dataSize_kernel / total_Kernel_exect_time; // in bytes per nanosecond
   
 
