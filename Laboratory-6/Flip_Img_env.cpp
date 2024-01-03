@@ -421,10 +421,10 @@ int main(int argc, char** argv)
     clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start[dev], NULL);
     clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end[dev], NULL);
     
-    std::cout << "Kernel starting time = " << kernel_time_start << std::endl;
-    std::cout << "Kernel ending time = " << kernel_time_end << std::endl;
+    std::cout << "Kernel starting time = " << kernel_time_start[dev] << std::endl;
+    std::cout << "Kernel ending time = " << kernel_time_end[dev] << std::endl;
 
-    kernel_exec_time_ns[dev] = kernel_time_end-kernel_time_start;   // Get the execution time of the kernel in nanoseconds
+    kernel_exec_time_ns[dev] = kernel_time_end[dev]-kernel_time_start[dev];   // Get the execution time of the kernel in nanoseconds
     //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
     if(standard_print)
       printf("The device %d has a Kernel Execution time of %0.10f seconds \n", dev, kernel_exec_time_ns[dev] / 1.0e+9);  // Print the execution time in seconds
