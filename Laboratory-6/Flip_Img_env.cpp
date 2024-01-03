@@ -266,11 +266,11 @@ int main(int argc, char** argv)
   cl_uchar3 outputImg[img_width*img_height];
 
   size_t n_images = 5000;
-  // We create an input and an output vector which will contain the replicated images
-  std::vector<cl_uchar3[img_width*img_height]> in_images;
-  std::vector<cl_uchar3[img_width*img_height]> out_images;
+  /*// We create an input and an output vector which will contain the replicated images
+  std::vector<std::vector<cl_uchar3>> in_images;
+  std::vector<std::vector<cl_uchar3>> out_images;
   for(size_t i = 0; i < n_images; ++i)
-    in_images.push_back(inputImg);
+    in_images.push_back(inputImg);*/
 
 
   // 6 Create OpenCL buffer visible to the OpenCl runtime
@@ -317,7 +317,7 @@ int main(int argc, char** argv)
   // -------- Kernel execution time --------
   cl_event Kernel_exectime_event;
 
-  size_t global_size_device[2] = {img_width, img_height}; // Each device does 1 full image
+  size_t global_size_device[2] = {static_cast<size_t>(img_width), static_cast<size_t>(img_height)}; // Each device does 1 full image
 
   // Launch Kernel for both devices
   for (size_t i = 0; i < n_images; ++i) {
