@@ -319,8 +319,9 @@ int main(int argc, char** argv)
           // 9 Enqueue kernel for the devices
           err = clEnqueueNDRangeKernel(command_queue[dev], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[dev]);
           cl_error(err, "Failed to launch kernel to the device\n");
-      }
+      } 
   }
+
    // -------- Kernel device bandwithd --------
   // Create an event for measuring kernel execution time
   cl_event kernel_local_bandwidth_event;
@@ -476,7 +477,7 @@ int main(int argc, char** argv)
   // Calculate the workload imbalance ratio
   double unbalance_ratio = 0;
   if(kernel_exectime_event_device[0] < kernel_exectime_event_device[1])
-    unbalance_ratio = ((((float)exec_time)/CLOCKS_PER_SEC)-(n_images*(kernel_exec_time_ns[0] / 1.0e+9)))/(((float)exec_time)/CLOCKS_PER_SEC);
+    unbalance_ratio = 
   else
     unbalance_ratio = ((((float)exec_time)/CLOCKS_PER_SEC)-(n_images*(kernel_exec_time_ns[1]/ 1.0e+9)))/(((float)exec_time)/CLOCKS_PER_SEC);
   
