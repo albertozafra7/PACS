@@ -326,6 +326,7 @@ int main(int argc, char** argv)
           err = clEnqueueNDRangeKernel(command_queue[dev], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[dev]);
           cl_error(err, "Failed to launch kernel to the device\n");
       } 
+      // Waits for the 2 events to be finished to get the kernel execution time in each device
       clWaitForEvents(2, kernel_exectime_event_device);
 
       for (size_t dev = 0; dev < 2; ++dev){
@@ -439,14 +440,15 @@ int main(int argc, char** argv)
 
   for (size_t dev = 0; dev < 2; ++dev){
     // Get starting and ending time of the event
-    clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start[dev], NULL);
-    clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end[dev], NULL);
+    // clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start[dev], NULL);
+    // clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end[dev], NULL);
     
     //std::cout << "Kernel starting time = " << kernel_time_start[dev] << std::endl;
     //std::cout << "Kernel ending time = " << kernel_time_end[dev] << std::endl;
 
-    kernel_exec_time_ns[dev] = kernel_time_end[dev]-kernel_time_start[dev];   // Get the execution time of the kernel in nanoseconds
+    //kernel_exec_time_ns[dev] = kernel_time_end[dev]-kernel_time_start[dev];   // Get the execution time of the kernel in nanoseconds
     //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
+    kernel_exec_time_ns[dev] = kernel_time_acc[dev]/n_images;
     if(standard_print)
       printf("The device %d has a Kernel Execution time of %0.10f seconds \n", dev, kernel_exec_time_ns[dev] / 1.0e+9);  // Print the execution time in seconds
   }
@@ -497,9 +499,9 @@ int main(int argc, char** argv)
   // Calculate the workload imbalance ratio
   double unbalance_ratio = 0;
   if(kernel_exectime_event_device[0] < kernel_exectime_event_device[1])
-    unbalance_ratio = 1;
+    unbalance_ratio = (kernel_time_acc[1]/ 1.0e+9)/((kernel_time_acc[1]+kernel_time_acc[0])/ 1.0e+9);
   else
-    unbalance_ratio = ((((float)exec_time)/CLOCKS_PER_SEC)-(n_images*(kernel_exec_time_ns[1]/ 1.0e+9)))/(((float)exec_time)/CLOCKS_PER_SEC);
+    unbalance_ratio = (kernel_time_acc[0]/ 1.0e+9)/((kernel_time_acc[1]+kernel_time_acc[0])/ 1.0e+9);
   
   std::cout << "Imbalance ratio = " << kernel_exec_time_ns[0]/kernel_exec_time_ns[1] << std::endl;
 
