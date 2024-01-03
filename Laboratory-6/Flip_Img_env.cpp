@@ -466,6 +466,21 @@ int main(int argc, char** argv)
   if(standard_print)
     printf("Kernel Bandwidth (Device access to local memory): %.4f MB/ns\n", kernelBandwidth / (1024 * 1024));
 
+
+
+  // +++++ Work unbalance +++++
+  // Calculate the workload imbalance ratio
+  double unbalance_ratio = 0;
+  if(kernel_exectime_event_device[0] < kernel_exectime_event_device[1])
+    unbalance_ratio = ((((float)exec_time)/CLOCKS_PER_SEC)-(kernel_exec_time_ns[0] / 1.0e+9))/(((float)exec_time)/CLOCKS_PER_SEC);
+  else
+    unbalance_ratio = ((((float)exec_time)/CLOCKS_PER_SEC)-(kernel_exec_time_ns[1] / 1.0e+9))/(((float)exec_time)/CLOCKS_PER_SEC);
+  
+
+  // Print or use the imbalance ratio as needed
+  if(standard_print)
+    printf("Workload unbalance: %.2f\n", unbalance_ratio);
+
   // **************** Measurement prints for further analyzing ****************
   // The output will be reduced to the following prints:
   // total execution time, kernel execution time, Host to device (Write) bandwidth, Host to device (Read) Bandwidth, Kernel bandwidth
