@@ -292,7 +292,7 @@ int main(int argc, char** argv)
       cl_error(err, "Failed to create memory buffer at device\n");
   }
 
-  // Replicate input images across devices
+  // 7 Replicate input images across devices
   for (size_t i = 0; i < n_images; ++i) {
       for (size_t dev = 0; dev < 2; ++dev) {
           // Copy inputImg to in_device_object[dev]
@@ -303,16 +303,6 @@ int main(int argc, char** argv)
 
 
   // -------- Global WRITE bandwithd --------
-
-  // 7 Write data into the memory object 
-  // First device
-  err = clEnqueueWriteBuffer(command_queue[0], in_device_object[0], CL_TRUE, 0, sizeof(cl_uchar3) *(img_width*img_height), inputImg, 0, NULL, &writeEvent);
-  cl_error(err, "Failed to enqueue a write command on first device\n");
-
-  // Second device
-  err = clEnqueueWriteBuffer(command_queue[1], in_device_object[1], CL_TRUE, 0, sizeof(cl_uchar3) *(img_width*img_height), inputImg, 0, NULL, &writeEvent);
-  cl_error(err, "Failed to enqueue a write command on second device\n");
-
 
   // -------- Kernel execution time --------
   cl_event Kernel_exectime_event;
