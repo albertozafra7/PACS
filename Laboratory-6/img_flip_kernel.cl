@@ -17,4 +17,5 @@ __kernel void img_flip(__global const uchar3 *input,
         // Copy pixel from input to output
         output[src_index] = input[dest_index];
     }
+    std::cout << "Kernel finished" << std::endl;
 }

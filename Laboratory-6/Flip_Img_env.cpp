@@ -477,7 +477,7 @@ int main(int argc, char** argv)
   // Calculate the workload imbalance ratio
   double unbalance_ratio = 0;
   if(kernel_exectime_event_device[0] < kernel_exectime_event_device[1])
-    unbalance_ratio = 
+    unbalance_ratio = 1;
   else
     unbalance_ratio = ((((float)exec_time)/CLOCKS_PER_SEC)-(n_images*(kernel_exec_time_ns[1]/ 1.0e+9)))/(((float)exec_time)/CLOCKS_PER_SEC);
   
