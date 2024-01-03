@@ -420,6 +420,10 @@ int main(int argc, char** argv)
     // Get starting and ending time of the event
     clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start[dev], NULL);
     clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end[dev], NULL);
+    
+    std::cout << "Kernel starting time = " << kernel_time_start << std::endl;
+    std::cout << "Kernel ending time = " << kernel_time_end << std::endl;
+
     kernel_exec_time_ns[dev] = kernel_time_end-kernel_time_start;   // Get the execution time of the kernel in nanoseconds
     //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
     if(standard_print)
@@ -472,9 +476,9 @@ int main(int argc, char** argv)
   // Calculate the workload imbalance ratio
   double unbalance_ratio = 0;
   if(kernel_exectime_event_device[0] < kernel_exectime_event_device[1])
-    unbalance_ratio = ((((float)exec_time)/CLOCKS_PER_SEC)-(kernel_exec_time_ns[0] / 1.0e+9))/(((float)exec_time)/CLOCKS_PER_SEC);
+    unbalance_ratio = ((((float)exec_time)/CLOCKS_PER_SEC)-(n_images*kernel_exec_time_ns[0] / 1.0e+9))/(((float)exec_time)/CLOCKS_PER_SEC);
   else
-    unbalance_ratio = ((((float)exec_time)/CLOCKS_PER_SEC)-(kernel_exec_time_ns[1] / 1.0e+9))/(((float)exec_time)/CLOCKS_PER_SEC);
+    unbalance_ratio = ((((float)exec_time)/CLOCKS_PER_SEC)-(n_images*kernel_exec_time_ns[1]/ 1.0e+9))/(((float)exec_time)/CLOCKS_PER_SEC);
   
 
   // Print or use the imbalance ratio as needed
