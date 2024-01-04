@@ -416,7 +416,7 @@ int main(int argc, char** argv)
       clGetEventProfilingInfo(readEvent[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart, NULL);
       clGetEventProfilingInfo(readEvent[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd, NULL);
       writeTime[dev] += (writeEnd - writeStart) * 1.0e-9;
-      readTime[dev] = (readEnd - readStart) * 1.0e-9;
+      readTime[dev] += (readEnd - readStart) * 1.0e-9;
     }
   }
 
