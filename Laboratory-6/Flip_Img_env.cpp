@@ -279,8 +279,8 @@ int main(int argc, char** argv)
   // Input and output buffers for each device
   cl_mem in_device_object[n_devices][n_images];
   cl_mem out_device_object[n_devices][n_images];
-  for (size_t dev = 0; dev < n_devices; ++dev) {
-    for (size_t i = 0; i < n_images; ++i) {
+  for (size_t i = 0; i < n_images; ++i) {
+    for (size_t dev = 0; dev < n_devices; ++dev) {
       in_device_object[dev][i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
 
@@ -322,25 +322,23 @@ int main(int argc, char** argv)
   }
 
 
-  // clFinish(command_queue[0]);
-  // clFinish(command_queue[1]);
+  clFinish(command_queue[0]);
+  clFinish(command_queue[1]);
 
   // -------- Global READ bandwithd --------
 
   // 10 Read data from device memory back to host memory
-  for (size_t dev = 0; dev < n_devices; ++dev) {
-    for (size_t i = 0; i < n_images; ++i) {
+  for (size_t i = 0; i < n_images; ++i) {
+      for (size_t dev = 0; dev < n_devices; ++dev) {
           err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
   }
 
-  
-
 
   // Wait for the commands to finish --> bandwidth
-  // clFinish(command_queue[0]);
-  // clFinish(command_queue[1]);
+  clFinish(command_queue[0]);
+  clFinish(command_queue[1]);
 
   // 11 Write code to check correctness of execution
   CImg<unsigned char> finalImg(originImg);
