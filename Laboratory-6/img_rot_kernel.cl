@@ -22,8 +22,7 @@ __kernel void img_rot(__global const uchar3 *input,
             const int dest_index = (j * width + i);
 
             // Copy pixel from input to output
-            for(int channel = 0; channel < 3; ++channel)
-                output[src_index] = input[dest_index];
+            output[src_index] = input[dest_index];
         }
     }
 }
