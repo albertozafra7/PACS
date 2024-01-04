@@ -291,6 +291,8 @@ int main(int argc, char** argv)
       // Copy inputImg to in_device_object[dev]
       err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
       cl_error(err, "Failed to enqueue a write command on device\n");
+
+      clWaitForEvents(1,&writeEvent[dev][i]);
     }
   }
 
