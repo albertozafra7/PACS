@@ -287,9 +287,9 @@ int main(int argc, char** argv)
       out_device_object[dev][i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
 
-  // 7 Replicate input images across devices
+      // 7 Replicate input images across devices
       // Copy inputImg to in_device_object[dev]
-      err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev][i], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
+      err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
       cl_error(err, "Failed to enqueue a write command on device\n");
     }
   }
@@ -330,7 +330,7 @@ int main(int argc, char** argv)
   // 10 Read data from device memory back to host memory
   for (size_t i = 0; i < n_images; ++i) {
       for (size_t dev = 0; dev < n_devices; ++dev) {
-          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev][i], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height) * n_images, outputImg, 0, NULL, &readEvent[dev][i]);
+          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
   }
