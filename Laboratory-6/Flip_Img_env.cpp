@@ -335,6 +335,8 @@ int main(int argc, char** argv)
       }
   }
 
+  clWaitForEvents(n_images, readEvent[1]);
+
 
   // Wait for the commands to finish --> bandwidth
   clFinish(command_queue[0]);
