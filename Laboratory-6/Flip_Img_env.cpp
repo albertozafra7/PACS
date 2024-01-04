@@ -360,7 +360,7 @@ int main(int argc, char** argv)
   // 10 Read data from device memory back to host memory
   for (size_t i = 0; i < n_images; ++i) {
       for (size_t dev = 0; dev < 2; ++dev) {
-          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
+          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
   }
@@ -445,10 +445,10 @@ int main(int argc, char** argv)
 
   double writeTime[2] = {0,0};
   double readTime[2] = {0,0};
+  cl_ulong writeStart, writeEnd, readStart, readEnd;
   for(size_t i = 0; i < n_images; ++i){
     for(size_t dev = 0; dev < 2; ++dev){
       // Calculate the time taken for write and read operations
-      cl_ulong writeStart, writeEnd, readStart, readEnd;
       clGetEventProfilingInfo(writeEvent[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart, NULL);
       clGetEventProfilingInfo(writeEvent[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
       clGetEventProfilingInfo(readEvent[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart, NULL);
