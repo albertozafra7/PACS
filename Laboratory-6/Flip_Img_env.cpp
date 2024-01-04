@@ -355,9 +355,10 @@ int main(int argc, char** argv)
   }
 
   if(standard_print){
+    std::cout << std::endl;
     std::cout << "Device 0 accumulated time = " << kernel_time_acc[0]/ 1.0e+9 << " s" << std::endl;
     std::cout << "Device 1 accumulated time = " << kernel_time_acc[1]/ 1.0e+9 << " s" << std::endl;
-    std::cout << "Images processed = " << acc << std::endl;
+    std::cout << "Images processed = " << acc << std::endl << std::endl;
   }
 
 
@@ -408,7 +409,7 @@ int main(int argc, char** argv)
  
   CImg<unsigned char> finalImg(originImg);
   fillImg(finalImg, outputImg);
-  
+
   // Save the image to a file (e.g., in PNG format)
   const char* filename = "output.png";
   finalImg.save(filename);
@@ -439,6 +440,10 @@ int main(int argc, char** argv)
   // +++++ Kernel Execution Time +++++
   double kernel_exec_time_ns[2];
 
+  if(standard_print)
+    std::cout << std::endl;
+
+
   for (size_t dev = 0; dev < 2; ++dev){
     kernel_exec_time_ns[dev] = kernel_time_acc[dev]/n_images;
     if(standard_print)
@@ -461,7 +466,7 @@ int main(int argc, char** argv)
 
     // Print or use the bandwidth values as needed
     if(standard_print){
-      printf("General Write Bandwidth (Host to device %d): %.2f MB/s\n", dev, writeBandwidth[dev] / (1024 * 1024));
+      printf("\n General Write Bandwidth (Host to device %d): %.2f MB/s\n", dev, writeBandwidth[dev] / (1024 * 1024));
       printf("General Read Bandwidth (Host to device %d): %.2f MB/s\n", dev, readBandwidth[dev] / (1024 * 1024));
     }
   }
@@ -479,7 +484,7 @@ int main(int argc, char** argv)
 
   // Print or use the bandwidth value as needed
   if(standard_print){
-    printf("Kernel Bandwidth (Device %d access to local memory): %.4f MB/ns\n", 0, kernelBandwidth[0] / (1024 * 1024));
+    printf("\n Kernel Bandwidth (Device %d access to local memory): %.4f MB/ns\n", 0, kernelBandwidth[0] / (1024 * 1024));
     printf("Kernel Bandwidth (Device %d access to local memory): %.4f MB/ns\n", 1, kernelBandwidth[1] / (1024 * 1024));
   }
 
@@ -492,7 +497,7 @@ int main(int argc, char** argv)
   else
     unbalance_ratio = (kernel_time_acc[0]/ 1.0e+9)/((kernel_time_acc[1]+kernel_time_acc[0])/ 1.0e+9);
   
-  std::cout << "Imbalance ratio = " << kernel_exec_time_ns[0]/kernel_exec_time_ns[1] << std::endl;
+  std::cout << std::endl << "Imbalance ratio = " << kernel_exec_time_ns[0]/kernel_exec_time_ns[1] << std::endl;
 
   // Print or use the imbalance ratio as needed
   if(standard_print)
