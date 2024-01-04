@@ -109,13 +109,17 @@ int main(int argc, char** argv)
   cl_uint n_platforms;						// effective number of platforms in use
   const cl_uint num_devices_ids = 10;				// max of allocatable devices
   cl_device_id devices_ids[num_platforms_ids][num_devices_ids];	// array of devices
-  cl_uint n_devices[num_platforms_ids];				// effective number of devices in use for each platform
+  cl_uint cl_n_devices[num_platforms_ids];				// effective number of devices in use for each platform
 	
   cl_device_id device_id;             				// compute device id 
   cl_context context;                 				// compute context
   cl_command_queue command_queue[2];     				// compute command queue
   cl_program program;                         // define a program
   cl_kernel kernel;                           // create a kernel
+
+  // Specific program variables
+  size_t n_images = 5000;
+  size_t n_devices = 2;
     
 
   // 1. Scan the available platforms:
@@ -154,12 +158,12 @@ int main(int argc, char** argv)
 	
   // 2. Scan for devices in each platform
   for (int i = 0; i < n_platforms; i++ ){
-    err = clGetDeviceIDs(platforms_ids[i], CL_DEVICE_TYPE_ALL, num_devices_ids, devices_ids[i], &(n_devices[i]));
+    err = clGetDeviceIDs(platforms_ids[i], CL_DEVICE_TYPE_ALL, num_devices_ids, devices_ids[i], &(cl_n_devices[i]));
     cl_error(err, "Error: Failed to Scan for Devices IDs");
     if(standard_print)
-      printf("\t[%d]-Platform. Number of available devices: %d\n", i, n_devices[i]);
+      printf("\t[%d]-Platform. Number of available devices: %d\n", i, cl_n_devices[i]);
 
-    for(int j = 0; j < n_devices[i]; j++){
+    for(int j = 0; j < cl_n_devices[i]; j++){
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_NAME, sizeof(str_buffer), str_buffer, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device name");
       if(standard_print)
@@ -201,12 +205,12 @@ int main(int argc, char** argv)
   
   // 3. Create a context, with a device
   cl_context_properties properties[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platforms_ids[0], 0}; 
-  context = clCreateContext(properties, 2 /*n_devices*/, devices_ids[0], NULL, NULL, &err);
+  context = clCreateContext(properties, n_devices, devices_ids[0], NULL, NULL, &err);
   cl_error(err, "Failed to create a compute context\n");
 
   // 4. Create a command queue
   cl_command_queue_properties proprt[] = { CL_QUEUE_PROPERTIES, CL_QUEUE_PROFILING_ENABLE, 0 };
-  for(size_t i = 0; i < 2 /*n_devices*/; ++i){
+  for(size_t i = 0; i < n_devices; ++i){
     command_queue[i] = clCreateCommandQueueWithProperties(context, devices_ids[0][i], proprt, &err);
     std::cout << "Creating command queue n" << i << std::endl;
     cl_error(err, "Failed to create a command queue\n");
@@ -230,7 +234,7 @@ int main(int argc, char** argv)
   free(sourceCode);
 
   // Build the executable and check errors
-  err = clBuildProgram(program, 2, *devices_ids, NULL, NULL, NULL);
+  err = clBuildProgram(program, n_devices, *devices_ids, NULL, NULL, NULL);
   if (err != CL_SUCCESS){
     size_t len;
     char buffer[2048];
@@ -265,20 +269,18 @@ int main(int argc, char** argv)
 
   cl_uchar3 outputImg[img_width*img_height];
 
-  size_t n_images = 5000;
-
   // 6 Create OpenCL buffer visible to the OpenCl runtime
 
   // -------- Memory Transfer time (data interchanged between host and device) --------
 
   // Create events for measuring memory transfer time
-  cl_event writeEvent[2][n_images], readEvent[2][n_images];
+  cl_event writeEvent[n_devices][n_images], readEvent[n_devices][n_images];
 
   // Input and output buffers for each device
-  cl_mem in_device_object[2];
-  cl_mem out_device_object[2];
+  cl_mem in_device_object[n_devices];
+  cl_mem out_device_object[n_devices];
 
-  for (size_t i = 0; i < 2; ++i) {
+  for (size_t i = 0; i < n_devices; ++i) {
       in_device_object[i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
 
@@ -288,7 +290,7 @@ int main(int argc, char** argv)
 
   // 7 Replicate input images across devices
   for (size_t i = 0; i < n_images; ++i) {
-      for (size_t dev = 0; dev < 2; ++dev) {
+      for (size_t dev = 0; dev < n_devices; ++dev) {
           // Copy inputImg to in_device_object[dev]
           err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
           cl_error(err, "Failed to enqueue a write command on device\n");
@@ -299,13 +301,13 @@ int main(int argc, char** argv)
   // -------- Global WRITE bandwithd --------
 
   // -------- Kernel execution time --------
-  cl_event kernel_exectime_event_device[2][n_images];
+  cl_event kernel_exectime_event_device[n_devices][n_images];
 
   size_t global_size_device[2] = {static_cast<size_t>(img_width), static_cast<size_t>(img_height)}; // Each device does 1 full image
 
   // Launch Kernel for both devices
   for (size_t i = 0; i < n_images; ++i) {
-      for (size_t dev = 0; dev < 2; ++dev) {
+      for (size_t dev = 0; dev < n_devices; ++dev) {
           // 8 Set the arguments to the kernel
           err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[dev]);
           cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
@@ -322,35 +324,6 @@ int main(int argc, char** argv)
       } 
   }
 
-   // -------- Kernel device bandwithd --------
-  // Create an event for measuring kernel execution time
-  // cl_event kernel_local_bandwidth_event;
-
-  // // Synchronize both devices
-  // for (size_t dev = 0; dev < 2; ++dev) {
-  //     clFinish(command_queue[dev]);
-  //     err = clEnqueueMarkerWithWaitList(command_queue[dev], 0, NULL, &kernel_local_bandwidth_event);
-  //     cl_error(err, "Failed to enqueue marker for kernel event\n");
-  //     clWaitForEvents(1, &kernel_exectime_event_device[dev]);
-  // }
-
-
-  
-  /*// First device
-  clFinish(command_queue[0]); // Make sure previous commands are finished before recording the kernel event
-  err = clEnqueueMarkerWithWaitList(command_queue[0], 0, NULL, &kernel_local_bandwidth_event);
-  cl_error(err, "Failed to enqueue marker for kernel event\n");
-
-  clWaitForEvents(1, &Kernel_exectime_event);
-  clFinish(command_queue[0]);
-
-  // Second device
-  clFinish(command_queue[1]); // Make sure previous commands are finished before recording the kernel event
-  err = clEnqueueMarkerWithWaitList(command_queue[1], 0, NULL, &kernel_local_bandwidth_event);
-  cl_error(err, "Failed to enqueue marker for kernel event\n");
-
-  clWaitForEvents(1, &Kernel_exectime_event);
-  clFinish(command_queue[1]);*/
 
   clFinish(command_queue[0]);
   clFinish(command_queue[1]);
@@ -359,25 +332,14 @@ int main(int argc, char** argv)
 
   // 10 Read data from device memory back to host memory
   for (size_t i = 0; i < n_images; ++i) {
-      for (size_t dev = 0; dev < 2; ++dev) {
+      for (size_t dev = 0; dev < n_devices; ++dev) {
           err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
   }
 
-  /*// First device
-  err = clEnqueueReadBuffer(command_queue[0], out_device_object[0], CL_TRUE, 0, sizeof(cl_uchar3)*(img_width*img_height), outputImg, 0, NULL, &readEvent);
-  cl_error(err, "Failed to enqueue a read command\n");
 
   // Wait for the commands to finish --> bandwidth
-  clFinish(command_queue[0]);
-
-  // Second device
-  err = clEnqueueReadBuffer(command_queue[1], out_device_object[1], CL_TRUE, 0, sizeof(cl_uchar3)*(img_width*img_height), outputImg, 0, NULL, &readEvent);
-  cl_error(err, "Failed to enqueue a read command\n");
-
-  // Wait for the commands to finish --> bandwidth
-  clFinish(command_queue[1]);*/
   clFinish(command_queue[0]);
   clFinish(command_queue[1]);
 
@@ -413,15 +375,15 @@ int main(int argc, char** argv)
 
   // +++++ Kernel Execution Time +++++
 
-  cl_ulong kernel_time_start[2];
-  cl_ulong kernel_time_end[2];
+  cl_ulong kernel_time_start[n_devices];
+  cl_ulong kernel_time_end[n_devices];
   double kernel_exec_time_acc_ns[2] = {0,0};
-  double kernel_exec_time_avg_ns[2];
+  double kernel_exec_time_avg_ns[n_devices];
 
 
 
   for(size_t i = 0; i < n_images; ++i){
-    for (size_t dev = 0; dev < 2; ++dev){
+    for (size_t dev = 0; dev < n_devices; ++dev){
       // Get starting and ending time of the event
       clGetEventProfilingInfo(kernel_exectime_event_device[dev][i], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start[dev], NULL);
       clGetEventProfilingInfo(kernel_exectime_event_device[dev][i], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end[dev], NULL);
@@ -434,7 +396,7 @@ int main(int argc, char** argv)
   }
 
   //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
-  for(size_t dev = 0; dev < 2; ++dev){
+  for(size_t dev = 0; dev < n_devices; ++dev){
     kernel_exec_time_avg_ns[dev] = kernel_exec_time_acc_ns[dev]/n_images;
     if(standard_print){
       printf("The device %d has an accumulated Kernel Execution time of %0.10f seconds \n", dev, kernel_exec_time_acc_ns[dev] / 1.0e+9);  // Print the execution time in seconds
@@ -447,7 +409,7 @@ int main(int argc, char** argv)
   double readTime[2] = {0,0};
   cl_ulong writeStart, writeEnd, readStart, readEnd;
   for(size_t i = 0; i < n_images; ++i){
-    for(size_t dev = 0; dev < 2; ++dev){
+    for(size_t dev = 0; dev < n_devices; ++dev){
       // Calculate the time taken for write and read operations
       clGetEventProfilingInfo(writeEvent[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart, NULL);
       clGetEventProfilingInfo(writeEvent[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
@@ -461,8 +423,8 @@ int main(int argc, char** argv)
   // Calculate bandwidth
   size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
 
-  double writeBandwidth[2], readBandwidth[2];
-  for(size_t dev = 0; dev < 2; ++dev){
+  double writeBandwidth[n_devices], readBandwidth[n_devices];
+  for(size_t dev = 0; dev < n_devices; ++dev){
     writeBandwidth[dev] = dataSize / writeTime[dev]; // in bytes per second
     readBandwidth[dev] = dataSize / readTime[dev];
 
@@ -478,9 +440,9 @@ int main(int argc, char** argv)
 
   // Calculate bandwidth
   size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on your specific kernel data requirements
-  double kernelBandwidth[2];
+  double kernelBandwidth[n_devices];
   
-  for(size_t dev = 0; dev < 2; ++dev){
+  for(size_t dev = 0; dev < n_devices; ++dev){
     kernelBandwidth[dev] = dataSize_kernel / kernel_exec_time_acc_ns[dev]; // in bytes per nanosecond
     
 
