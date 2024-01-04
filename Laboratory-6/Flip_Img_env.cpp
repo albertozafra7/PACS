@@ -352,6 +352,9 @@ int main(int argc, char** argv)
   clWaitForEvents(1, &Kernel_exectime_event);
   clFinish(command_queue[1]);*/
 
+  clFinish(command_queue[0]);
+  clFinish(command_queue[1]);
+
   // -------- Global READ bandwithd --------
 
   // 10 Read data from device memory back to host memory
@@ -375,7 +378,8 @@ int main(int argc, char** argv)
 
   // Wait for the commands to finish --> bandwidth
   clFinish(command_queue[1]);*/
-  
+  clFinish(command_queue[0]);
+  clFinish(command_queue[1]);
 
   // 11 Write code to check correctness of execution
   CImg<unsigned char> finalImg(originImg);
