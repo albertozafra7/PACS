@@ -399,7 +399,7 @@ int main(int argc, char** argv)
   for(size_t dev = 0; dev < n_devices; ++dev){
     kernel_exec_time_avg_ns[dev] = kernel_exec_time_acc_ns[dev]/n_images;
     if(standard_print){
-      printf("The device %d has an accumulated Kernel Execution time of %0.10f seconds \n", dev, kernel_exec_time_acc_ns[dev] / 1.0e+9);  // Print the execution time in seconds
+      printf("\nThe device %d has an accumulated Kernel Execution time of %0.10f seconds \n", dev, kernel_exec_time_acc_ns[dev] / 1.0e+9);  // Print the execution time in seconds
       printf("The device %d has an average Kernel Execution time of %0.10f seconds \n", dev, kernel_exec_time_avg_ns[dev] / 1.0e+9);  // Print the execution time in seconds
     }
   }
