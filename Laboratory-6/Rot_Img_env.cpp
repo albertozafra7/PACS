@@ -316,9 +316,9 @@ int main(int argc, char** argv)
   for (size_t i = 0; i < n_images; ++i) {
       for (size_t dev = 0; dev < n_devices; ++dev) {
           // 8 Set the arguments to the kernel
-          err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object);
+          err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[dev]);
           cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
-          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object);
+          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[dev]);
           cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
           err = clSetKernelArg(kernel, 2, sizeof(pivot_x), &pivot_x);
           cl_error(err, "Failed to set argument 2 --> Pivot in X\n");
