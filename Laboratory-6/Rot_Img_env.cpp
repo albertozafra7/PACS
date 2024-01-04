@@ -468,11 +468,12 @@ int main(int argc, char** argv)
 
   for(size_t dev = 0; dev < 2; ++dev){
     // Calculate bandwidth
-    double writeTime = writeTime_acc[dev] * 1.0e-9; // Convert nanoseconds to seconds
-    double readTime = readTime_acc[dev] * 1.0e-9;
+    double writeTime[2], readTime[2];
+    writeTime[dev] = writeTime_acc[dev] * 1.0e-9; // Convert nanoseconds to seconds
+    readTime[dev] = readTime_acc[dev] * 1.0e-9;
 
-    writeBandwidth[dev] = dataSize / writeTime; // in bytes per second
-    readBandwidth[dev] = dataSize / readTime;
+    writeBandwidth[dev] = dataSize / writeTime[dev]; // in bytes per second
+    readBandwidth[dev] = dataSize / readTime[dev];
 
     // Print or use the bandwidth values as needed
     if(standard_print){
