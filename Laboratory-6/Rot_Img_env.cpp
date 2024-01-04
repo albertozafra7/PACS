@@ -296,8 +296,8 @@ int main(int argc, char** argv)
   }
 
   // 7 Replicate input images across devices
-  for (size_t dev = 0; dev < n_devices; ++dev) {
-    for (size_t i = 0; i < n_images; ++i) {
+  for (size_t i = 0; i < n_images; ++i) {
+    for (size_t dev = 0; dev < n_devices; ++dev) {
           // Copy inputImg to in_device_object[dev]
           err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
           cl_error(err, "Failed to enqueue a write command on device\n");
@@ -338,8 +338,8 @@ int main(int argc, char** argv)
   }
 
 
-  clFinish(command_queue[0]);
-  clFinish(command_queue[1]);
+  //clFinish(command_queue[0]);
+  //clFinish(command_queue[1]);
 
   // -------- Global READ bandwithd --------
 
@@ -353,8 +353,8 @@ int main(int argc, char** argv)
 
 
   // Wait for the commands to finish --> bandwidth
-  clFinish(command_queue[0]);
-  clFinish(command_queue[1]);
+  //clFinish(command_queue[0]);
+  //clFinish(command_queue[1]);
 
   // 11 Write code to check correctness of execution
   CImg<unsigned char> finalImg(originImg);
