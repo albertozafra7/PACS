@@ -262,9 +262,9 @@ int main(int argc, char** argv)
 
 
   // 6 Create OpenCL buffer visible to the OpenCl runtime
-  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3)*(img_width * img_height), NULL, &err);
+  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3)*(img_width * img_height) * n_images, NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
-  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3)*(img_width * img_height), NULL, &err);
+  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3)*(img_width * img_height) * n_images, NULL, &err);
   cl_error(err, "Failed to create memory buffer at device\n");
   
   // -------- Memory Transfer time (data interchanged between host and device) --------
@@ -275,7 +275,7 @@ int main(int argc, char** argv)
   // -------- Global WRITE bandwithd --------
 
   // 7 Write date into the memory object 
-  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent);
+  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height) * n_images, inputImg, 0, NULL, &writeEvent);
   cl_error(err, "Failed to enqueue a write command\n");
   
   // 8 Set the arguments to the kernel
@@ -315,7 +315,7 @@ int main(int argc, char** argv)
   // -------- Global READ bandwithd --------
 
   // 10 Read data form device memory back to host memory
-  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(cl_uchar3)* (img_width * img_height), outputImg, 0, NULL, &readEvent);
+  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(cl_uchar3)* (img_width * img_height) * n_images, outputImg, 0, NULL, &readEvent);
   cl_error(err, "Failed to enqueue a read command\n");
 
   // Wait for the commands to finish --> bandwidth
