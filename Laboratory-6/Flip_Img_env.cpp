@@ -280,7 +280,7 @@ int main(int argc, char** argv)
   cl_mem in_device_object[n_devices][n_images];
   cl_mem out_device_object[n_devices][n_images];
   for (size_t i = 0; i < n_images; ++i) {
-    for (size_t dev = 1; dev >= 0; --dev) {
+    for (size_t dev = 0; dev < n_devices; ++dev) {
       in_device_object[dev][i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
 
@@ -438,7 +438,7 @@ int main(int argc, char** argv)
   // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
 
   // Calculate bandwidth
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on your specific kernel data requirements
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on specific kernel data requirements
   double kernelBandwidth[n_devices];
   
   for(size_t dev = 0; dev < n_devices; ++dev){
