@@ -353,9 +353,9 @@ int main(int argc, char** argv)
   // 12 Release all the OpenCL memory objects allocated along the program
   for(size_t i = 0; i < n_images; ++i){
     clReleaseMemObject(in_device_object[0][i]);
-    clReleaseMemObject(out_device_object[0]);
-    clReleaseMemObject(in_device_object[1]);
-    clReleaseMemObject(out_device_object[1]);
+    clReleaseMemObject(out_device_object[0][i]);
+    clReleaseMemObject(in_device_object[1][i]);
+    clReleaseMemObject(out_device_object[1][i]);
   }
   clReleaseProgram(program);
   clReleaseKernel(kernel);
