@@ -277,23 +277,24 @@ int main(int argc, char** argv)
   cl_event writeEvent[n_devices][n_images], readEvent[n_devices][n_images];
 
   // Input and output buffers for each device
-  cl_mem in_device_object[n_devices][n_images];
-  cl_mem out_device_object[n_devices][n_images];
+  cl_mem in_device_object[n_devices];
+  cl_mem out_device_object[n_devices];
 
-  for (size_t n = 0; n < n_images; ++n){
-    for (size_t i = 0; i < n_devices; ++i) {
-        in_device_object[i][n] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
-        cl_error(err, "Failed to create memory buffer at device\n");
+  for (size_t i = 0; i < n_devices; ++i) {
+      in_device_object[i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
+      cl_error(err, "Failed to create memory buffer at device\n");
 
-        out_device_object[i][n] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
-        cl_error(err, "Failed to create memory buffer at device\n");
-    
+      out_device_object[i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
+      cl_error(err, "Failed to create memory buffer at device\n");
+  }
 
-      // 7 Replicate input images across devices
-      // Copy inputImg to in_device_object[dev]
-      err = clEnqueueWriteBuffer(command_queue[i], in_device_object[i][n], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[i][n]);
-      cl_error(err, "Failed to enqueue a write command on device\n");
-    }
+  // 7 Replicate input images across devices
+  for (size_t i = 0; i < n_images; ++i) {
+      for (size_t dev = 0; dev < n_devices; ++dev) {
+          // Copy inputImg to in_device_object[dev]
+          err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
+          cl_error(err, "Failed to enqueue a write command on device\n");
+      }
   }
 
 
@@ -332,7 +333,7 @@ int main(int argc, char** argv)
   // 10 Read data from device memory back to host memory
   for (size_t i = 0; i < n_images; ++i) {
       for (size_t dev = 0; dev < n_devices; ++dev) {
-          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev][i], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
+          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
   }
@@ -353,10 +354,10 @@ int main(int argc, char** argv)
   std::cout << "Image saved to: " << filename << std::endl;
 
   // 12 Release all the OpenCL memory objects allocated along the program
-  // clReleaseMemObject(in_device_object[0]);
-  // clReleaseMemObject(out_device_object[0]);
-  // clReleaseMemObject(in_device_object[1]);
-  // clReleaseMemObject(out_device_object[1]);
+  clReleaseMemObject(in_device_object[0]);
+  clReleaseMemObject(out_device_object[0]);
+  clReleaseMemObject(in_device_object[1]);
+  clReleaseMemObject(out_device_object[1]);
   clReleaseProgram(program);
   clReleaseKernel(kernel);
   clReleaseCommandQueue(command_queue[0]);
