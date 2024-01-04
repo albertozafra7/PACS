@@ -303,8 +303,8 @@ int main(int argc, char** argv)
   size_t global_size_device[2] = {static_cast<size_t>(img_width), static_cast<size_t>(img_height)}; // Each device does 1 full image
 
   // Launch Kernel for both devices
-  for (size_t i = 0; i < n_images; ++i) {
-      for (size_t dev = 0; dev < n_devices; ++dev) {
+  for (size_t dev = 0; dev < n_devices; ++dev) {
+    for (size_t i = 0; i < n_images; ++i) {
           // 8 Set the arguments to the kernel
           err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[dev][i]);
           cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
@@ -322,14 +322,14 @@ int main(int argc, char** argv)
   }
 
 
-  clFinish(command_queue[0]);
-  clFinish(command_queue[1]);
+  // clFinish(command_queue[0]);
+  // clFinish(command_queue[1]);
 
   // -------- Global READ bandwithd --------
 
   // 10 Read data from device memory back to host memory
-  for (size_t i = 0; i < n_images; ++i) {
-      for (size_t dev = 0; dev < n_devices; ++dev) {
+  for (size_t dev = 0; dev < n_devices; ++dev) {
+    for (size_t i = 0; i < n_images; ++i) {
           err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
@@ -337,8 +337,8 @@ int main(int argc, char** argv)
 
 
   // Wait for the commands to finish --> bandwidth
-  clFinish(command_queue[0]);
-  clFinish(command_queue[1]);
+  // clFinish(command_queue[0]);
+  // clFinish(command_queue[1]);
 
   // 11 Write code to check correctness of execution
   CImg<unsigned char> finalImg(originImg);
