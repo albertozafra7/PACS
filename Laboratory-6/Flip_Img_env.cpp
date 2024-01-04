@@ -414,9 +414,12 @@ int main(int argc, char** argv)
       clGetEventProfilingInfo(writeEvent[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
       clGetEventProfilingInfo(readEvent[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart, NULL);
       clGetEventProfilingInfo(readEvent[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd, NULL);
+
+      std::cout << (writeEnd - writeStart) * 1.0e-9 << std::endl;
       writeTime[dev] += (writeEnd - writeStart) * 1.0e-9;
       readTime[dev] += (readEnd - readStart) * 1.0e-9;
     }
+    std::cout << "ERROR" << std::endl;
   }
 
   // Calculate bandwidth
