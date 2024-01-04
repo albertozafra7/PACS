@@ -303,10 +303,11 @@ int main(int argc, char** argv)
           // Copy inputImg to in_device_object[dev]
           err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev]);
           cl_error(err, "Failed to enqueue a write command on device\n");
+          clWaitForEvents(1, &writeEvent[dev]);
       }
 
       // Waits for the 2 events to be finished to get the kernel execution time in each device
-      clWaitForEvents(2, writeEvent);
+      //clWaitForEvents(2, writeEvent);
 
       for (size_t dev = 0; dev < 2; ++dev){
         clGetEventProfilingInfo(writeEvent[dev], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart[dev], NULL);
@@ -318,7 +319,7 @@ int main(int argc, char** argv)
 
   std::cout << "Write accumulator for device 0 =" << writeTime_acc[0] << std::endl;
   std::cout << "Write accumulator for device 1 =" << writeTime_acc[1] << std::endl;
-  
+
   // -------- Kernel execution time --------
   cl_event kernel_exectime_event_device[2];
 
