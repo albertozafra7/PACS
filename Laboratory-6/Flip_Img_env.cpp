@@ -272,7 +272,7 @@ int main(int argc, char** argv)
   // -------- Memory Transfer time (data interchanged between host and device) --------
 
   // Create events for measuring memory transfer time
-  cl_event writeEvent, readEvent;
+  cl_event writeEvent[2], readEvent[2];
 
   // Input and output buffers for each device
   cl_mem in_device_object[2];
@@ -286,17 +286,30 @@ int main(int argc, char** argv)
       cl_error(err, "Failed to create memory buffer at device\n");
   }
 
+  // -------- Global WRITE bandwithd --------
+  cl_ulong writeStart[2];
+  cl_ulong writeEnd[2];
+
+  cl_ulong writeTime_acc[2] = {0,0};
+
   // 7 Replicate input images across devices
   for (size_t i = 0; i < n_images; ++i) {
       for (size_t dev = 0; dev < 2; ++dev) {
           // Copy inputImg to in_device_object[dev]
-          err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent);
+          err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev]);
           cl_error(err, "Failed to enqueue a write command on device\n");
       }
+
+      // Waits for the 2 events to be finished to get the kernel execution time in each device
+      clWaitForEvents(2, writeEvent);
+
+      for (size_t dev = 0; dev < 2; ++dev){
+        clGetEventProfilingInfo(writeEvent[dev], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart[dev], NULL);
+        clGetEventProfilingInfo(writeEvent[dev], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd[dev], NULL);
+        writeTime_acc[dev] += (writeEnd[dev] - writeStart[dev]);
+      }
+
   }
-
-
-  // -------- Global WRITE bandwithd --------
 
   // -------- Kernel execution time --------
   cl_event kernel_exectime_event_device[2];
@@ -357,9 +370,34 @@ int main(int argc, char** argv)
   // 10 Read data from device memory back to host memory
   for (size_t i = 0; i < n_images; ++i) {
       for (size_t dev = 0; dev < 2; ++dev) {
-          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent);
+          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
+  }
+
+  // -------- Global WRITE bandwithd --------
+  cl_ulong readStart[2];
+  cl_ulong readEnd[2];
+
+  cl_ulong readTime_acc[2] = {0,0};
+
+  // 7 Replicate input images across devices
+  for (size_t i = 0; i < n_images; ++i) {
+      for (size_t dev = 0; dev < 2; ++dev) {
+          // Copy inputImg to in_device_object[dev]
+          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev]);
+          cl_error(err, "Failed to enqueue a read command\n");
+      }
+
+      // Waits for the 2 events to be finished to get the kernel execution time in each device
+      clWaitForEvents(2, readEvent);
+
+      for (size_t dev = 0; dev < 2; ++dev){
+        clGetEventProfilingInfo(readEvent[dev], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart[dev], NULL);
+        clGetEventProfilingInfo(readEvent[dev], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd[dev], NULL);
+        readTime_acc[dev] += (readEnd[dev] - readStart[dev]);
+      }
+
   }
 
   /*// First device
@@ -412,21 +450,9 @@ int main(int argc, char** argv)
 
 
   // +++++ Kernel Execution Time +++++
-
-  //cl_ulong kernel_time_start[2];
-  //cl_ulong kernel_time_end[2];
   double kernel_exec_time_ns[2];
 
   for (size_t dev = 0; dev < 2; ++dev){
-    // Get starting and ending time of the event
-    // clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start[dev], NULL);
-    // clGetEventProfilingInfo(kernel_exectime_event_device[dev], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end[dev], NULL);
-    
-    //std::cout << "Kernel starting time = " << kernel_time_start[dev] << std::endl;
-    //std::cout << "Kernel ending time = " << kernel_time_end[dev] << std::endl;
-
-    //kernel_exec_time_ns[dev] = kernel_time_end[dev]-kernel_time_start[dev];   // Get the execution time of the kernel in nanoseconds
-    //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
     kernel_exec_time_ns[dev] = kernel_time_acc[dev]/n_images;
     if(standard_print)
       printf("The device %d has a Kernel Execution time of %0.10f seconds \n", dev, kernel_exec_time_ns[dev] / 1.0e+9);  // Print the execution time in seconds
@@ -435,24 +461,22 @@ int main(int argc, char** argv)
   // +++++ Bandwidth --> HOST TO DEVICE +++++
 
   // Calculate the time taken for write and read operations
-  cl_ulong writeStart, writeEnd, readStart, readEnd;
-  clGetEventProfilingInfo(writeEvent, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart, NULL);
-  clGetEventProfilingInfo(writeEvent, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
-  clGetEventProfilingInfo(readEvent, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart, NULL);
-  clGetEventProfilingInfo(readEvent, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd, NULL);
+  double writeBandwidth[2], readBandwidth[2];
+  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
 
-  // Calculate bandwidth
-  double writeTime = (writeEnd - writeStart) * 1.0e-9; // Convert nanoseconds to seconds
-  double readTime = (readEnd - readStart) * 1.0e-9;
-  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height);
+  for(size_t dev = 0; dev < 2; ++dev){
+    // Calculate bandwidth
+    double writeTime = writeTime_acc[dev] * 1.0e-9; // Convert nanoseconds to seconds
+    double readTime = readTime_acc[dev] * 1.0e-9;
 
-  double writeBandwidth = dataSize / writeTime; // in bytes per second
-  double readBandwidth = dataSize / readTime;
+    writeBandwidth[dev] = dataSize / writeTime; // in bytes per second
+    readBandwidth[dev] = dataSize / readTime;
 
-  // Print or use the bandwidth values as needed
-  if(standard_print){
-    printf("General Write Bandwidth (Host to device): %.2f MB/s\n", writeBandwidth / (1024 * 1024));
-    printf("General Read Bandwidth (Host to device): %.2f MB/s\n", readBandwidth / (1024 * 1024));
+    // Print or use the bandwidth values as needed
+    if(standard_print){
+      printf("General Write Bandwidth (Host to device %d): %.2f MB/s\n", dev, writeBandwidth[dev] / (1024 * 1024));
+      printf("General Read Bandwidth (Host to device %d): %.2f MB/s\n", dev, readBandwidth[dev] / (1024 * 1024));
+    }
   }
 
 
@@ -460,7 +484,7 @@ int main(int argc, char** argv)
 
   
   // Calculate bandwidth
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * (n_images); // Adjust data size based on your specific kernel data requirements
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on your specific kernel data requirements
   double kernelBandwidth[2];
   for(size_t dev = 0; dev < 2; ++dev)
     kernelBandwidth[dev] = dataSize_kernel / kernel_time_acc[dev]; // in bytes per nanosecond
@@ -468,8 +492,8 @@ int main(int argc, char** argv)
 
   // Print or use the bandwidth value as needed
   if(standard_print){
-    printf("Kernel Bandwidth (Device access to local memory): %.4f MB/ns\n", kernelBandwidth[0] / (1024 * 1024));
-    printf("Kernel Bandwidth (Device access to local memory): %.4f MB/ns\n", kernelBandwidth[1] / (1024 * 1024));
+    printf("Kernel Bandwidth (Device %d access to local memory): %.4f MB/ns\n", 0, kernelBandwidth[0] / (1024 * 1024));
+    printf("Kernel Bandwidth (Device %d access to local memory): %.4f MB/ns\n", 1, kernelBandwidth[1] / (1024 * 1024));
   }
 
 
@@ -491,12 +515,14 @@ int main(int argc, char** argv)
   // The output will be reduced to the following prints:
   // total execution time, kernel execution time, Host to device (Write) bandwidth, Host to device (Read) Bandwidth, Kernel bandwidth
   if(!standard_print)
-    printf("%.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %10f\n", 
+    printf("%.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %10f\n", 
           ((float)exec_time)/CLOCKS_PER_SEC, 
           (kernel_exec_time_ns[0] / 1.0e+9), 
           (kernel_exec_time_ns[1] / 1.0e+9),
-          writeBandwidth / (1024 * 1024), 
-          readBandwidth / (1024 * 1024), 
+          writeBandwidth[0] / (1024 * 1024), 
+          writeBandwidth[1] / (1024 * 1024), 
+          readBandwidth[0] / (1024 * 1024), 
+          readBandwidth[1] / (1024 * 1024), 
           kernelBandwidth[0] / (1024 * 1024),
           kernelBandwidth[1] / (1024 * 1024));
   
