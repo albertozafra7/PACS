@@ -217,7 +217,7 @@ int main(int argc, char** argv)
   }
 
   // 2. Calculate size of the file
-  FILE *fileHandler = fopen("img_rot_kernel.cl.cl", "r"); //Open the kernel file
+  FILE *fileHandler = fopen("img_rot_kernel.cl", "r"); //Open the kernel file
   fseek(fileHandler, 0, SEEK_END); // Move the file pointer to the end of the file
   size_t fileSize = ftell(fileHandler);
   rewind(fileHandler);
