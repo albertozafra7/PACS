@@ -288,26 +288,27 @@ int main(int argc, char** argv)
       cl_error(err, "Failed to create memory buffer at device\n");
   }
 
+  cl_event kernel_exectime_event_device[n_devices][n_images];
+
+  size_t global_size_device[2] = {static_cast<size_t>(img_width), static_cast<size_t>(img_height)}; // Each device does 1 full image
+
   // 7 Replicate input images across devices
   for (size_t i = 0; i < n_images; ++i) {
       for (size_t dev = 0; dev < n_devices; ++dev) {
           // Copy inputImg to in_device_object[dev]
           err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
           cl_error(err, "Failed to enqueue a write command on device\n");
-      }
-  }
+  //     }
+  // }
 
 
   // -------- Global WRITE bandwithd --------
 
   // -------- Kernel execution time --------
-  cl_event kernel_exectime_event_device[n_devices][n_images];
-
-  size_t global_size_device[2] = {static_cast<size_t>(img_width), static_cast<size_t>(img_height)}; // Each device does 1 full image
 
   // Launch Kernel for both devices
-  for (size_t i = 0; i < n_images; ++i) {
-      for (size_t dev = 0; dev < n_devices; ++dev) {
+  // for (size_t i = 0; i < n_images; ++i) {
+  //     for (size_t dev = 0; dev < n_devices; ++dev) {
           // 8 Set the arguments to the kernel
           err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[dev]);
           cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
@@ -321,22 +322,22 @@ int main(int argc, char** argv)
           // 9 Enqueue kernel for the devices
           err = clEnqueueNDRangeKernel(command_queue[dev], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[dev][i]);
           cl_error(err, "Failed to launch kernel to the device\n");
-      } 
-  }
+      
 
 
-  clFinish(command_queue[0]);
-  clFinish(command_queue[1]);
+
+  // clFinish(command_queue[0]);
+  // clFinish(command_queue[1]);
 
   // -------- Global READ bandwithd --------
 
   // 10 Read data from device memory back to host memory
-  for (size_t i = 0; i < n_images; ++i) {
-      for (size_t dev = 0; dev < n_devices; ++dev) {
+  // for (size_t i = 0; i < n_images; ++i) {
+      // for (size_t dev = 0; dev < n_devices; ++dev) {
           err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
-  }
+   }
 
 
   // Wait for the commands to finish --> bandwidth
