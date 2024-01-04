@@ -295,6 +295,7 @@ int main(int argc, char** argv)
   cl_ulong writeEnd[2];
 
   cl_ulong writeTime_acc[2] = {0,0};
+  size_t write_acc = 0;
 
   // 7 Replicate input images across devices
   for (size_t i = 0; i < n_images; ++i) {
@@ -311,10 +312,12 @@ int main(int argc, char** argv)
         clGetEventProfilingInfo(writeEvent[dev], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart[dev], NULL);
         clGetEventProfilingInfo(writeEvent[dev], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd[dev], NULL);
         writeTime_acc[dev] += (writeEnd[dev] - writeStart[dev]);
+        write_acc++;
       }
 
   }
 
+  std::cout << write_acc << std::endl;
   // -------- Kernel execution time --------
   cl_event kernel_exectime_event_device[2];
 
