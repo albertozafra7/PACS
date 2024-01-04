@@ -400,28 +400,15 @@ int main(int argc, char** argv)
 
   }
 
-  /*// First device
-  err = clEnqueueReadBuffer(command_queue[0], out_device_object[0], CL_TRUE, 0, sizeof(cl_uchar3)*(img_width*img_height), outputImg, 0, NULL, &readEvent);
-  cl_error(err, "Failed to enqueue a read command\n");
-
   // Wait for the commands to finish --> bandwidth
   clFinish(command_queue[0]);
-
-  // Second device
-  err = clEnqueueReadBuffer(command_queue[1], out_device_object[1], CL_TRUE, 0, sizeof(cl_uchar3)*(img_width*img_height), outputImg, 0, NULL, &readEvent);
-  cl_error(err, "Failed to enqueue a read command\n");
-
-  // Wait for the commands to finish --> bandwidth
-  clFinish(command_queue[1]);*/
-  
-  CImg<unsigned char> finalImg(originImg);
-  fillImg(finalImg, outputImg);
+  clFinish(command_queue[1]);
 
   // 11 Write code to check correctness of execution
-  /*if(standard_print){
-    originImg.display("My first CImg code");  
-    finalImg.display("Flipped IMG");
-  }*/
+ 
+  CImg<unsigned char> finalImg(originImg);
+  fillImg(finalImg, outputImg);
+  
   // Save the image to a file (e.g., in PNG format)
   const char* filename = "output.png";
   finalImg.save(filename);
