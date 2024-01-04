@@ -296,8 +296,8 @@ int main(int argc, char** argv)
   }
 
   // 7 Replicate input images across devices
-  for (size_t i = 0; i < n_images; ++i) {
-      for (size_t dev = 0; dev < n_devices; ++dev) {
+  for (size_t dev = 0; dev < n_devices; ++dev) {
+    for (size_t i = 0; i < n_images; ++i) {
           // Copy inputImg to in_device_object[dev]
           err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
           cl_error(err, "Failed to enqueue a write command on device\n");
@@ -313,8 +313,8 @@ int main(int argc, char** argv)
   size_t global_size_device[2] = {static_cast<size_t>(img_width), static_cast<size_t>(img_height)}; // Each device does 1 full image
 
   // Launch Kernel for both devices
-  for (size_t i = 0; i < n_images; ++i) {
-      for (size_t dev = 0; dev < n_devices; ++dev) {
+  for (size_t dev = 0; dev < n_devices; ++dev) {
+    for (size_t i = 0; i < n_images; ++i) {
           // 8 Set the arguments to the kernel
           err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[dev]);
           cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
@@ -344,8 +344,8 @@ int main(int argc, char** argv)
   // -------- Global READ bandwithd --------
 
   // 10 Read data from device memory back to host memory
-  for (size_t i = 0; i < n_images; ++i) {
-      for (size_t dev = 0; dev < n_devices; ++dev) {
+  for (size_t dev = 0; dev < n_devices; ++dev) {
+    for (size_t i = 0; i < n_images; ++i) {
           err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }

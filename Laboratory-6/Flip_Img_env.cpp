@@ -322,8 +322,8 @@ int main(int argc, char** argv)
   }
 
 
-  clFinish(command_queue[0]);
-  clFinish(command_queue[1]);
+  //clFinish(command_queue[0]);
+  //clFinish(command_queue[1]);
 
   // -------- Global READ bandwithd --------
 
