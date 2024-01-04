@@ -312,12 +312,13 @@ int main(int argc, char** argv)
         clGetEventProfilingInfo(writeEvent[dev], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart[dev], NULL);
         clGetEventProfilingInfo(writeEvent[dev], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd[dev], NULL);
         writeTime_acc[dev] += (writeEnd[dev] - writeStart[dev]);
-        write_acc++;
       }
 
   }
 
-  std::cout << write_acc << std::endl;
+  std::cout << "Write accumulator for device 0 =" << writeTime_acc[0] << std::endl;
+  std::cout << "Write accumulator for device 1 =" << writeTime_acc[1] << std::endl;
+  
   // -------- Kernel execution time --------
   cl_event kernel_exectime_event_device[2];
 
