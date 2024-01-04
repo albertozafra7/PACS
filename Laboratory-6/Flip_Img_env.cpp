@@ -289,9 +289,8 @@ int main(int argc, char** argv)
 
       // 7 Replicate input images across devices
       // Copy inputImg to in_device_object[dev]
-      err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev][i], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
+      err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
       cl_error(err, "Failed to enqueue a write command on device\n");
-      clWaitForEvents(1,&writeEvent[dev][i]);
     }
   }
 
@@ -319,6 +318,8 @@ int main(int argc, char** argv)
           // 9 Enqueue kernel for the devices
           err = clEnqueueNDRangeKernel(command_queue[dev], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[dev][i]);
           cl_error(err, "Failed to launch kernel to the device\n");
+
+          clWaitForEvents(1,&kernel_exectime_event_device[dev][i]);
       } 
   }
 
