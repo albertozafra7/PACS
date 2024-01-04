@@ -253,6 +253,13 @@ int main(int argc, char** argv)
   // Create and initialize input array in host memory
   CImg<unsigned char> originImg("image.jpg");
 
+  // Set the pivot
+  int pivot_x = originImg.width()/2;
+  int pivot_y = originImg.height()/2;
+
+  // Set the angle in degrees
+  float angle = 3.14;
+
   // Set the width and the height
   int img_width = originImg.width();
   int img_height = originImg.height();
