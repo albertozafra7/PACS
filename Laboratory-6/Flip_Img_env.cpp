@@ -279,8 +279,8 @@ int main(int argc, char** argv)
   // Input and output buffers for each device
   cl_mem in_device_object[n_devices][n_images];
   cl_mem out_device_object[n_devices][n_images];
-  for (size_t i = 0; i < n_images; ++i) {
-    for (size_t dev = 0; dev < n_devices; ++dev) {
+  for (size_t dev = 0; dev < n_devices; ++dev) {
+    for (size_t i = 0; i < n_images; ++i) {
       in_device_object[dev][i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
 
@@ -318,8 +318,6 @@ int main(int argc, char** argv)
           // 9 Enqueue kernel for the devices
           err = clEnqueueNDRangeKernel(command_queue[dev], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[dev][i]);
           cl_error(err, "Failed to launch kernel to the device\n");
-
-          clWaitForEvents(1,&kernel_exectime_event_device[dev][i]);
       } 
   }
 
