@@ -322,8 +322,8 @@ int main(int argc, char** argv)
   }
 
 
-  clFinish(command_queue[0]);
-  clFinish(command_queue[1]);
+  // clFinish(command_queue[0]);
+  // clFinish(command_queue[1]);
 
   // -------- Global READ bandwithd --------
 
@@ -333,7 +333,6 @@ int main(int argc, char** argv)
           err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
-    clWaitForEvents(n_images, readEvent[dev]);
   }
 
   
