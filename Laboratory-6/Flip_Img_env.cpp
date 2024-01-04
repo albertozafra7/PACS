@@ -458,16 +458,19 @@ int main(int argc, char** argv)
 
   // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
 
-  double total_Kernel_exect_time = kernel_time_acc[0] + kernel_time_acc[1];
+  
   // Calculate bandwidth
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * (n_images * 2); // Adjust data size based on your specific kernel data requirements
-  double kernelBandwidth = dataSize_kernel / total_Kernel_exect_time; // in bytes per nanosecond
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * (n_images); // Adjust data size based on your specific kernel data requirements
+  double kernelBandwidth[2];
+  for(size_t dev = 0; dev < 2; ++dev)
+    kernelBandwidth[dev] = dataSize_kernel / kernel_time_acc[dev]; // in bytes per nanosecond
   
 
   // Print or use the bandwidth value as needed
-  if(standard_print)
-    printf("Kernel Bandwidth (Device access to local memory): %.4f MB/ns\n", kernelBandwidth / (1024 * 1024));
-
+  if(standard_print){
+    printf("Kernel Bandwidth (Device access to local memory): %.4f MB/ns\n", kernelBandwidth[0] / (1024 * 1024));
+    printf("Kernel Bandwidth (Device access to local memory): %.4f MB/ns\n", kernelBandwidth[1] / (1024 * 1024));
+  }
 
 
   // +++++ Work unbalance +++++
@@ -488,13 +491,14 @@ int main(int argc, char** argv)
   // The output will be reduced to the following prints:
   // total execution time, kernel execution time, Host to device (Write) bandwidth, Host to device (Read) Bandwidth, Kernel bandwidth
   if(!standard_print)
-    printf("%.10f, %.10f, %.10f, %.10f, %.10f, %.10f\n", 
+    printf("%.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %10f\n", 
           ((float)exec_time)/CLOCKS_PER_SEC, 
           (kernel_exec_time_ns[0] / 1.0e+9), 
           (kernel_exec_time_ns[1] / 1.0e+9),
           writeBandwidth / (1024 * 1024), 
           readBandwidth / (1024 * 1024), 
-          kernelBandwidth / (1024 * 1024));
+          kernelBandwidth[0] / (1024 * 1024),
+          kernelBandwidth[1] / (1024 * 1024));
   
   return 0;
 }
