@@ -465,10 +465,10 @@ int main(int argc, char** argv)
   // Calculate the time taken for write and read operations
   double writeBandwidth[2], readBandwidth[2];
   size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
+  double writeTime[2], readTime[2];
 
   for(size_t dev = 0; dev < 2; ++dev){
     // Calculate bandwidth
-    double writeTime[2], readTime[2];
     writeTime[dev] = writeTime_acc[dev] * 1.0e-9; // Convert nanoseconds to seconds
     readTime[dev] = readTime_acc[dev] * 1.0e-9;
 
@@ -477,7 +477,7 @@ int main(int argc, char** argv)
 
     // Print or use the bandwidth values as needed
     if(standard_print){
-      printf("General Write Bandwidth (Host to device %d): %.2f MB/s\n", dev, writeBandwidth[dev] / (1024 * 1024));
+      printf("\nGeneral Write Bandwidth (Host to device %d): %.2f MB/s\n", dev, writeBandwidth[dev] / (1024 * 1024));
       printf("General Read Bandwidth (Host to device %d): %.2f MB/s\n", dev, readBandwidth[dev] / (1024 * 1024));
     }
   }
@@ -495,7 +495,7 @@ int main(int argc, char** argv)
 
   // Print or use the bandwidth value as needed
   if(standard_print){
-    printf("Kernel Bandwidth (Device %d access to local memory): %.4f MB/ns\n", 0, kernelBandwidth[0] / (1024 * 1024));
+    printf("\nKernel Bandwidth (Device %d access to local memory): %.4f MB/ns\n", 0, kernelBandwidth[0] / (1024 * 1024));
     printf("Kernel Bandwidth (Device %d access to local memory): %.4f MB/ns\n", 1, kernelBandwidth[1] / (1024 * 1024));
   }
 
