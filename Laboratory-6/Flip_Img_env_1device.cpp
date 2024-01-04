@@ -327,7 +327,7 @@ int main(int argc, char** argv)
   fillImg(finalImg, outputImg);
 
   // Save the image to a file (e.g., in PNG format)
-  const char* filename = "outputimg_1_dev.png";
+  const char* filename = "outputimg_1_dev_flip.png";
   finalImg.save(filename);
 
   // Display the saved image filename
