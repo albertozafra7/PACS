@@ -118,7 +118,7 @@ int main(int argc, char** argv)
   cl_kernel kernel;                           // create a kernel
 
   // Specific program variables
-  size_t n_images = 5000;
+  size_t n_images = 2500;
   size_t n_devices = 2;
     
 
@@ -257,19 +257,16 @@ int main(int argc, char** argv)
   // Create and initialize input array in host memory
   CImg<unsigned char> originImg("image.jpg");
 
-  // Create and initialize output array in host memory
-  //CImg<unsigned char> outputImg(inputImg);
-
-  // Set the width and the height
-  int img_width = originImg.width();
-  int img_height = originImg.height();
-
   // Set the pivot
   int pivot_x = originImg.width()/2;
   int pivot_y = originImg.height()/2;
 
   // Set the angle in degrees
   float angle = 3.14;
+
+  // Set the width and the height
+  int img_width = originImg.width();
+  int img_height = originImg.height();
 
   cl_uchar3 inputImg[img_width*img_height];
   fillImg(inputImg, originImg);
@@ -284,24 +281,21 @@ int main(int argc, char** argv)
   cl_event writeEvent[n_devices][n_images], readEvent[n_devices][n_images];
 
   // Input and output buffers for each device
-  cl_mem in_device_object[n_devices];
-  cl_mem out_device_object[n_devices];
-
-  for (size_t i = 0; i < n_devices; ++i) {
-      in_device_object[i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
+  cl_mem in_device_object[n_devices][n_images];
+  cl_mem out_device_object[n_devices][n_images];
+  for (size_t dev = 0; dev < n_devices; ++dev) {
+    for (size_t i = 0; i < n_images; ++i) {
+      in_device_object[dev][i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
 
-      out_device_object[i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
+      out_device_object[dev][i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
-  }
 
-  // 7 Replicate input images across devices
-  for (size_t i = 0; i < n_images; ++i) {
-    for (size_t dev = 0; dev < n_devices; ++dev) {
-          // Copy inputImg to in_device_object[dev]
-          err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
-          cl_error(err, "Failed to enqueue a write command on device\n");
-      }
+      // 7 Replicate input images across devices
+      // Copy inputImg to in_device_object[dev]
+      err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
+      cl_error(err, "Failed to enqueue a write command on device\n");
+    }
   }
 
 
@@ -316,9 +310,9 @@ int main(int argc, char** argv)
   for (size_t dev = 0; dev < n_devices; ++dev) {
     for (size_t i = 0; i < n_images; ++i) {
           // 8 Set the arguments to the kernel
-          err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[dev]);
+          err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[dev][i]);
           cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
-          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[dev]);
+          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[dev][i]);
           cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
           err = clSetKernelArg(kernel, 2, sizeof(pivot_x), &pivot_x);
           cl_error(err, "Failed to set argument 2 --> Pivot in X\n");
@@ -330,6 +324,7 @@ int main(int argc, char** argv)
           cl_error(err, "Failed to set argument 5 --> IMG width\n");
           err = clSetKernelArg(kernel, 6, sizeof(img_height), &img_height);
           cl_error(err, "Failed to set argument 6 --> IMG height\n");
+          
 
           // 9 Enqueue kernel for the devices
           err = clEnqueueNDRangeKernel(command_queue[dev], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[dev][i]);
@@ -338,23 +333,23 @@ int main(int argc, char** argv)
   }
 
 
-  //clFinish(command_queue[0]);
-  //clFinish(command_queue[1]);
+  // clFinish(command_queue[0]);
+  // clFinish(command_queue[1]);
 
   // -------- Global READ bandwithd --------
 
   // 10 Read data from device memory back to host memory
   for (size_t dev = 0; dev < n_devices; ++dev) {
     for (size_t i = 0; i < n_images; ++i) {
-          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev], CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
+          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
   }
 
 
   // Wait for the commands to finish --> bandwidth
-  //clFinish(command_queue[0]);
-  //clFinish(command_queue[1]);
+  // clFinish(command_queue[0]);
+  // clFinish(command_queue[1]);
 
   // 11 Write code to check correctness of execution
   CImg<unsigned char> finalImg(originImg);
@@ -367,10 +362,12 @@ int main(int argc, char** argv)
   std::cout << "Image saved to: " << filename << std::endl;
 
   // 12 Release all the OpenCL memory objects allocated along the program
-  clReleaseMemObject(in_device_object[0]);
-  clReleaseMemObject(out_device_object[0]);
-  clReleaseMemObject(in_device_object[1]);
-  clReleaseMemObject(out_device_object[1]);
+  for(size_t i = 0; i < n_images; ++i){
+    clReleaseMemObject(in_device_object[0][i]);
+    clReleaseMemObject(out_device_object[0][i]);
+    clReleaseMemObject(in_device_object[1][i]);
+    clReleaseMemObject(out_device_object[1][i]);
+  }
   clReleaseProgram(program);
   clReleaseKernel(kernel);
   clReleaseCommandQueue(command_queue[0]);
@@ -428,6 +425,7 @@ int main(int argc, char** argv)
       clGetEventProfilingInfo(writeEvent[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
       clGetEventProfilingInfo(readEvent[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart, NULL);
       clGetEventProfilingInfo(readEvent[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd, NULL);
+
       writeTime[dev] += (writeEnd - writeStart) * 1.0e-9;
       readTime[dev] += (readEnd - readStart) * 1.0e-9;
     }
@@ -452,7 +450,7 @@ int main(int argc, char** argv)
   // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
 
   // Calculate bandwidth
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on your specific kernel data requirements
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on specific kernel data requirements
   double kernelBandwidth[n_devices];
   
   for(size_t dev = 0; dev < n_devices; ++dev){
@@ -493,4 +491,3 @@ int main(int argc, char** argv)
   
   return 0;
 }
-
