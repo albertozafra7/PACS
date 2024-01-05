@@ -29,8 +29,6 @@ using namespace cimg_library;
 #include <iostream>
 #include <chrono>
 #include <string>
-  
-// check error, in such a case, it exits
 
 #include <vector>
 #include <algorithm>

@@ -207,7 +207,7 @@ int main(int argc, char** argv)
 
   // 4. Create a command queue
   cl_command_queue_properties proprt[] = { CL_QUEUE_PROPERTIES, CL_QUEUE_PROFILING_ENABLE, 0 };
-  command_queue = clCreateCommandQueueWithProperties(context, devices_ids[0][0], proprt, &err);
+  command_queue = clCreateCommandQueueWithProperties(context, devices_ids[0][1], proprt, &err);
   cl_error(err, "Failed to create a command queue\n");
 
 

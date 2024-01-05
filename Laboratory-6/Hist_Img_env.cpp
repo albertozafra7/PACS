@@ -29,6 +29,9 @@ using namespace cimg_library;
 #include <iostream>
 #include <chrono>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <fstream>
   
 // check error, in such a case, it exits
 
@@ -274,7 +277,7 @@ int main(int argc, char** argv)
   }
 
   // 2. Calculate size of the file
-  FILE *fileHandler = fopen("img_rot_kernel.cl", "r"); //Open the kernel file
+  FILE *fileHandler = fopen("img_hist_kernel.cl", "r"); //Open the kernel file
   fseek(fileHandler, 0, SEEK_END); // Move the file pointer to the end of the file
   size_t fileSize = ftell(fileHandler);
   rewind(fileHandler);
@@ -303,7 +306,7 @@ int main(int argc, char** argv)
   }
 
   // Create a compute kernel with the program we want to run
-  kernel = clCreateKernel(program, "img_rot", &err);
+  kernel = clCreateKernel(program, "img_histogram", &err);
   cl_error(err, "Failed to create kernel from the program\n");
 
 
@@ -314,12 +317,6 @@ int main(int argc, char** argv)
   // Create and initialize input array in host memory
   CImg<unsigned char> originImg("image.jpg");
 
-  // Set the pivot
-  int pivot_x = originImg.width()/2;
-  int pivot_y = originImg.height()/2;
-
-  // Set the angle in degrees
-  float angle = 3.14;
 
   // Set the width and the height
   int img_width = originImg.width();
@@ -328,7 +325,13 @@ int main(int argc, char** argv)
   cl_uchar3 inputImg[img_width*img_height];
   fillImg(inputImg, originImg);
 
-  cl_uchar3 outputImg[img_width*img_height];
+  int arraySize = 255;
+
+  // Create and initialize output array in host memory
+  unsigned int* histogramRed = (unsigned int *)malloc(arraySize * sizeof(unsigned int));
+  unsigned int* histogramGreen = (unsigned int *)malloc(arraySize * sizeof(unsigned int));
+  unsigned int* histogramBlue = (unsigned int *)malloc(arraySize * sizeof(unsigned int));
+
 
   // 6 Create OpenCL buffer visible to the OpenCl runtime
 
@@ -339,15 +342,20 @@ int main(int argc, char** argv)
 
   // Input and output buffers for each device
   cl_mem in_device_object[n_devices][n_images];
-  cl_mem out_device_object[n_devices][n_images];
+  cl_mem out_device_object_hRed[n_devices][n_images];
+  cl_mem out_device_object_hGreen[n_devices][n_images];
+  cl_mem out_device_object_hBlue[n_devices][n_images];
   for (size_t dev = 0; dev < n_devices; ++dev) {
     for (size_t i = 0; i < n_images; ++i) {
       in_device_object[dev][i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
 
-      out_device_object[dev][i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
+      out_device_object_hRed[dev][i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uint)*arraySize, NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
-
+      out_device_object_hGreen[dev][i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uint)*arraySize, NULL, &err);
+      cl_error(err, "Failed to create memory buffer at device\n");
+      out_device_object_hBlue[dev][i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uint)*arraySize, NULL, &err);
+      cl_error(err, "Failed to create memory buffer at device\n");
       // 7 Replicate input images across devices
       // Copy inputImg to in_device_object[dev]
       err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
@@ -369,14 +377,12 @@ int main(int argc, char** argv)
           // 8 Set the arguments to the kernel
           err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[dev][i]);
           cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
-          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[dev][i]);
+          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object_hRed[dev][i]);
           cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
-          err = clSetKernelArg(kernel, 2, sizeof(pivot_x), &pivot_x);
-          cl_error(err, "Failed to set argument 2 --> Pivot in X\n");
-          err = clSetKernelArg(kernel, 3, sizeof(pivot_y), &pivot_y);
-          cl_error(err, "Failed to set argument 3 --> Pivot in Y\n");
-          err = clSetKernelArg(kernel, 4, sizeof(angle), &angle);
-          cl_error(err, "Failed to set argument 4 --> Rotation angle\n");
+          err = clSetKernelArg(kernel, 2, sizeof(cl_mem), &out_device_object_hGreen[dev][i]);
+          cl_error(err, "Failed to set argument 2 --> Input buffer (image)\n");
+          err = clSetKernelArg(kernel, 3, sizeof(cl_mem), &out_device_object_hBlue[dev][i]);
+          cl_error(err, "Failed to set argument 3 --> Input buffer (image)\n");
           err = clSetKernelArg(kernel, 5, sizeof(img_width), &img_width);
           cl_error(err, "Failed to set argument 5 --> IMG width\n");
           err = clSetKernelArg(kernel, 6, sizeof(img_height), &img_height);
