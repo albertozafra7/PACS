@@ -29,6 +29,9 @@ using namespace cimg_library;
 #include <iostream>
 #include <chrono>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <fstream>
   
 // check error, in such a case, it exits
 
@@ -76,6 +79,62 @@ void fillImg(CImg<unsigned char> &destImg, cl_uchar3 *fillerImg){
     }
 }
 
+void plotHistogram(const unsigned int* data, size_t arraySize) {
+    // Find the maximum value in the data
+    unsigned int maxVal = *std::max_element(data, data + arraySize);
+
+    // Set the number of bins for the histogram
+    const int numBins = 255;
+
+    // Calculate the width of each bin
+    double binWidth = static_cast<double>(maxVal) / numBins;
+
+    // Initialize a histogram vector
+    std::vector<unsigned int> histogram(numBins, 0);
+
+    // Fill the histogram
+    for (size_t i = 0; i < arraySize; ++i) {
+        int binIndex = static_cast<int>(data[i] / binWidth);
+        if (binIndex == numBins) {
+            binIndex--; // Adjust for the last bin
+        }
+        histogram[binIndex]++;
+    }
+
+    // Normalize the histogram for better visualization
+    unsigned int maxBinHeight = *std::max_element(histogram.begin(), histogram.end());
+    for (unsigned int& binHeight : histogram) {
+        binHeight = static_cast<unsigned int>((static_cast<double>(binHeight) / maxBinHeight) * 50); // Normalize to a maximum height of 50
+    }
+
+    // Plot the histogram
+    for (int i = 0; i < numBins; ++i) {
+        std::cout << i * binWidth << " - " << (i + 1) * binWidth << " | ";
+        for (unsigned int j = 0; j < histogram[i]; ++j) {
+            std::cout << "*";
+        }
+        std::cout << std::endl;
+    }
+}
+
+void writeHistogramValuesToFile(const unsigned int* histogramRed, const unsigned int* histogramGreen, const unsigned int* histogramBlue, size_t arraySize, const std::string& fileName) {
+    // Open the file for writing
+    std::ofstream outFile(fileName);
+    if (!outFile.is_open()) {
+        std::cerr << "Error: Unable to open file for writing: " << fileName << std::endl;
+        return;
+    }
+
+    // Write histogram values to the file
+    for (size_t i = 0; i < arraySize; ++i) {
+        outFile << i << "," << histogramRed[i] << "," << histogramGreen[i] << "," << histogramBlue[i] << std::endl;
+    }
+
+    // Close the file
+    outFile.close();
+
+    std::cout << "Histogram values written to: " << fileName << std::endl;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -110,13 +169,17 @@ int main(int argc, char** argv)
   cl_uint n_platforms;						// effective number of platforms in use
   const cl_uint num_devices_ids = 10;				// max of allocatable devices
   cl_device_id devices_ids[num_platforms_ids][num_devices_ids];	// array of devices
-  cl_uint n_devices[num_platforms_ids];				// effective number of devices in use for each platform
+  cl_uint cl_n_devices[num_platforms_ids];				// effective number of devices in use for each platform
 	
   cl_device_id device_id;             				// compute device id 
   cl_context context;                 				// compute context
   cl_command_queue command_queue;     				// compute command queue
   cl_program program;                         // define a program
   cl_kernel kernel;                           // create a kernel
+
+  // Specific program variables
+  size_t n_images = 5000;
+  size_t n_devices = 1;
     
 
   // 1. Scan the available platforms:
@@ -155,12 +218,12 @@ int main(int argc, char** argv)
 	
   // 2. Scan for devices in each platform
   for (int i = 0; i < n_platforms; i++ ){
-    err = clGetDeviceIDs(platforms_ids[i], CL_DEVICE_TYPE_ALL, num_devices_ids, devices_ids[i], &(n_devices[i]));
+    err = clGetDeviceIDs(platforms_ids[i], CL_DEVICE_TYPE_ALL, num_devices_ids, devices_ids[i], &(cl_n_devices[i]));
     cl_error(err, "Error: Failed to Scan for Devices IDs");
     if(standard_print)
-      printf("\t[%d]-Platform. Number of available devices: %d\n", i, n_devices[i]);
+      printf("\t[%d]-Platform. Number of available devices: %d\n", i, cl_n_devices[i]);
 
-    for(int j = 0; j < n_devices[i]; j++){
+    for(int j = 0; j < cl_n_devices[i]; j++){
       err = clGetDeviceInfo(devices_ids[i][j], CL_DEVICE_NAME, sizeof(str_buffer), str_buffer, NULL);
       cl_error(err, "clGetDeviceInfo: Getting device name");
       if(standard_print)
@@ -202,12 +265,13 @@ int main(int argc, char** argv)
   
   // 3. Create a context, with a device
   cl_context_properties properties[] = { CL_CONTEXT_PLATFORM, (cl_context_properties)platforms_ids[0], 0}; 
-  context = clCreateContext(properties, n_devices[0], devices_ids[0], NULL, NULL, &err);
+  context = clCreateContext(properties, n_devices, devices_ids[0], NULL, NULL, &err);
   cl_error(err, "Failed to create a compute context\n");
 
   // 4. Create a command queue
   cl_command_queue_properties proprt[] = { CL_QUEUE_PROPERTIES, CL_QUEUE_PROFILING_ENABLE, 0 };
-  command_queue = clCreateCommandQueueWithProperties(context, devices_ids[0][0], proprt, &err);//assuming we're taking 1st platform...
+  command_queue = clCreateCommandQueueWithProperties(context, devices_ids[0][0], proprt, &err);
+  std::cout << "Creating command queue" << std::endl;
   cl_error(err, "Failed to create a command queue\n");
 
   // 2. Calculate size of the file
@@ -228,7 +292,7 @@ int main(int argc, char** argv)
   free(sourceCode);
 
   // Build the executable and check errors
-  err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+  err = clBuildProgram(program, n_devices, *devices_ids, NULL, NULL, NULL);
   if (err != CL_SUCCESS){
     size_t len;
     char buffer[2048];
@@ -240,21 +304,17 @@ int main(int argc, char** argv)
   }
 
   // Create a compute kernel with the program we want to run
-  kernel = clCreateKernel(program, "img_hist", &err); //Is this pointer right?
+  kernel = clCreateKernel(program, "img_histogram", &err);
   cl_error(err, "Failed to create kernel from the program\n");
 
+
+  //+++++++++++++++++++++
 
   // 5 Set the input and output vars
 
   // Create and initialize input array in host memory
   CImg<unsigned char> originImg("image.jpg");
 
-  // Set the pivot
-  int pivot_x = originImg.width()/2;
-  int pivot_y = originImg.height()/2;
-
-  // Set the angle in degrees
-  float angle = 3.14;
 
   // Set the width and the height
   int img_width = originImg.width();
@@ -263,97 +323,127 @@ int main(int argc, char** argv)
   cl_uchar3 inputImg[img_width*img_height];
   fillImg(inputImg, originImg);
 
-  cl_uchar3 outputImg[img_width*img_height];
+  int arraySize = 255;
 
-  size_t n_images = 5000;
+  // Create and initialize output array in host memory
+  unsigned int* histogramRed = (unsigned int *)malloc(arraySize * sizeof(unsigned int));
+  unsigned int* histogramGreen = (unsigned int *)malloc(arraySize * sizeof(unsigned int));
+  unsigned int* histogramBlue = (unsigned int *)malloc(arraySize * sizeof(unsigned int));
 
 
   // 6 Create OpenCL buffer visible to the OpenCl runtime
-  cl_mem in_device_object  = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3)*(img_width * img_height), NULL, &err);
-  cl_error(err, "Failed to create memory buffer at device\n");
-  cl_mem out_device_object = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3)*(img_width * img_height), NULL, &err);
-  cl_error(err, "Failed to create memory buffer at device\n");
-  
+
   // -------- Memory Transfer time (data interchanged between host and device) --------
 
   // Create events for measuring memory transfer time
-  cl_event writeEvent, readEvent;
+  cl_event writeEvent[n_images], readEvent_hred[n_images], readEvent_hblue[n_images], readEvent_hgreen[n_images];
+
+  // Input and output buffers for each device
+  cl_mem in_device_object[n_images];
+  cl_mem out_device_object_hRed[n_images];
+  cl_mem out_device_object_hGreen[n_images];
+  cl_mem out_device_object_hBlue[n_images];
+  
+  for (size_t i = 0; i < n_images; ++i) {
+    in_device_object[i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
+    cl_error(err, "Failed to create memory buffer at device\n");
+
+    out_device_object_hRed[i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uint)*arraySize, NULL, &err);
+    cl_error(err, "Failed to create memory buffer at device\n");
+    out_device_object_hGreen[i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uint)*arraySize, NULL, &err);
+    cl_error(err, "Failed to create memory buffer at device\n");
+    out_device_object_hBlue[i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uint)*arraySize, NULL, &err);
+    cl_error(err, "Failed to create memory buffer at device\n");
+    // 7 Replicate input images across devices
+    // Copy inputImg to in_device_object
+    err = clEnqueueWriteBuffer(command_queue, in_device_object[i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[i]);
+    cl_error(err, "Failed to enqueue a write command on device\n");
+  }
+
 
   // -------- Global WRITE bandwithd --------
 
-  // 7 Write date into the memory object 
-  err = clEnqueueWriteBuffer(command_queue, in_device_object, CL_TRUE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent);
-  cl_error(err, "Failed to enqueue a write command\n");
-  
-  // 8 Set the arguments to the kernel
-  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object);
-  cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
-  err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object);
-  cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
-  err = clSetKernelArg(kernel, 2, sizeof(pivot_x), &pivot_x);
-  cl_error(err, "Failed to set argument 2 --> Pivot in X\n");
-  err = clSetKernelArg(kernel, 3, sizeof(pivot_y), &pivot_y);
-  cl_error(err, "Failed to set argument 3 --> Pivot in Y\n");
-  err = clSetKernelArg(kernel, 4, sizeof(angle), &angle);
-  cl_error(err, "Failed to set argument 4 --> Rotation angle\n");
-  err = clSetKernelArg(kernel, 5, sizeof(img_width), &img_width);
-  cl_error(err, "Failed to set argument 5 --> IMG width\n");
-  err = clSetKernelArg(kernel, 6, sizeof(img_height), &img_height);
-  cl_error(err, "Failed to set argument 6 --> IMG height\n");
-
-  // 9 Launch Kernel
-  local_size[0] = 128;
-  local_size[1] = 128;
-
-  global_size[0] = img_width; // N of work items que quieres
-  global_size[1] = img_height; // N of work items que quieres
-
   // -------- Kernel execution time --------
-  cl_event Kernel_exectime_event;
+  cl_event kernel_exectime_event_device[n_images];
 
-  err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event);
-  cl_error(err, "Failed to launch kernel to the device\n");
+  size_t global_size_device[2] = {static_cast<size_t>(img_width), static_cast<size_t>(img_height)}; // Each device does 1 full image
 
- // -------- Kernel device bandwithd --------
-  // Create an event for measuring kernel execution time
-  cl_event kernel_local_bandwidth_event;
+  // Launch Kernel for both devices
+  
+  for (size_t i = 0; i < n_images; ++i) {
+        // 8 Set the arguments to the kernel
+        err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[i]);
+        cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
+        err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object_hRed[i]);
+        cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
+        err = clSetKernelArg(kernel, 2, sizeof(cl_mem), &out_device_object_hGreen[i]);
+        cl_error(err, "Failed to set argument 2 --> Input buffer (image)\n");
+        err = clSetKernelArg(kernel, 3, sizeof(cl_mem), &out_device_object_hBlue[i]);
+        cl_error(err, "Failed to set argument 3 --> Input buffer (image)\n");
+        err = clSetKernelArg(kernel, 4, sizeof(img_width), &img_width);
+        cl_error(err, "Failed to set argument 4 --> IMG width\n");
+        err = clSetKernelArg(kernel, 5, sizeof(img_height), &img_height);
+        cl_error(err, "Failed to set argument 5 --> IMG height\n");
+        
 
-  clFinish(command_queue); // Make sure previous commands are finished before recording the kernel event
-  err = clEnqueueMarkerWithWaitList(command_queue, 0, NULL, &kernel_local_bandwidth_event);
-  cl_error(err, "Failed to enqueue marker for kernel event\n");
+        // 9 Enqueue kernel for the devices
+        err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[i]);
+        cl_error(err, "Failed to launch kernel to the device\n");
+    } 
 
-  clWaitForEvents(1, &Kernel_exectime_event);
-  clFinish(command_queue);
+
+  // clFinish(command_queue[0]);
+  // clFinish(command_queue[1]);
 
   // -------- Global READ bandwithd --------
 
-  // 10 Read data form device memory back to host memory
-  err = clEnqueueReadBuffer(command_queue, out_device_object, CL_TRUE, 0, sizeof(cl_uchar3)* (img_width * img_height), outputImg, 0, NULL, &readEvent);
-  cl_error(err, "Failed to enqueue a read command\n");
+  // 10 Read data from device memory back to host memory
+  
+  for (size_t i = 0; i < n_images; ++i) {
+    err = clEnqueueReadBuffer(command_queue, out_device_object_hRed[i], CL_FALSE, 0, sizeof(cl_uint)*arraySize, histogramRed, 0, NULL, &readEvent_hred[i]);
+    cl_error(err, "Failed to enqueue a read command\n");
+    err = clEnqueueReadBuffer(command_queue, out_device_object_hBlue[i], CL_FALSE, 0, sizeof(cl_uint)*arraySize, histogramBlue, 0, NULL, &readEvent_hblue[i]);
+    cl_error(err, "Failed to enqueue a read command\n");
+    err = clEnqueueReadBuffer(command_queue, out_device_object_hGreen[i], CL_FALSE, 0, sizeof(cl_uint)*arraySize, histogramGreen, 0, NULL, &readEvent_hgreen[i]);
+    cl_error(err, "Failed to enqueue a read command\n");
+  }
+
 
   // Wait for the commands to finish --> bandwidth
-  clFinish(command_queue);
-  
+  // clFinish(command_queue[0]);
+  // clFinish(command_queue[1]);
 
   // 11 Write code to check correctness of execution
-  CImg<unsigned char> finalImg(originImg);
-  fillImg(finalImg, outputImg);
+ if(standard_print){
+    // originImg.display("My first CImg code");
 
-  // Save the image to a file (e.g., in PNG format)
-  const char* filename = "outputimg_1_dev_rot.png";
-  finalImg.save(filename);
+    // printf("Plotting Histogram Red\n");
+    // plotHistogram(histogramRed, arraySize);
 
-  // Display the saved image filename
-  if(standard_print)
-    std::cout << "Image saved to: " << filename << std::endl;
+    // printf("Plotting Histogram Green\n");
+    // plotHistogram(histogramGreen, arraySize);
+
+    // printf("Plotting Histogram Blue\n");
+    // plotHistogram(histogramBlue, arraySize);
+
+    writeHistogramValuesToFile(histogramRed, histogramGreen, histogramBlue, arraySize, "histogram_values.txt");
+  }
 
   // 12 Release all the OpenCL memory objects allocated along the program
-  clReleaseMemObject(in_device_object);
-  clReleaseMemObject(out_device_object);
+  for(size_t i = 0; i < n_images; ++i){
+    clReleaseMemObject(in_device_object[i]);
+    clReleaseMemObject(out_device_object_hRed[i]);
+    clReleaseMemObject(out_device_object_hGreen[i]);
+    clReleaseMemObject(out_device_object_hBlue[i]);
+  }
   clReleaseProgram(program);
   clReleaseKernel(kernel);
   clReleaseCommandQueue(command_queue);
   clReleaseContext(context);
+
+  free(histogramRed);
+  free(histogramBlue);
+  free(histogramGreen);
 
 // **************** Measurement calculations ****************
 
@@ -368,66 +458,98 @@ int main(int argc, char** argv)
 
   cl_ulong kernel_time_start;
   cl_ulong kernel_time_end;
-  // Get starting and ending time of the event
-  clGetEventProfilingInfo(Kernel_exectime_event, CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start, NULL);
-  clGetEventProfilingInfo(Kernel_exectime_event, CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end, NULL);
-  double kernel_exec_time_ns = kernel_time_end-kernel_time_start;   // Get the execution time of the kernel in nanoseconds
-  //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
-  if(standard_print)
-    printf("Kernel Execution time %0.10f seconds \n", kernel_exec_time_ns / 1.0e+9);  // Print the execution time in seconds
+  double kernel_exec_time_acc_ns = 0;
+  double kernel_exec_time_avg_ns;
 
 
+
+  for(size_t i = 0; i < n_images; ++i){
+    
+    // Get starting and ending time of the event
+    clGetEventProfilingInfo(kernel_exectime_event_device[i], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start, NULL);
+    clGetEventProfilingInfo(kernel_exectime_event_device[i], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end, NULL);
+    
+    //std::cout << "Kernel starting time = " << kernel_time_start << std::endl;
+    //std::cout << "Kernel ending time = " << kernel_time_end << std::endl;
+
+    kernel_exec_time_acc_ns += kernel_time_end-kernel_time_start;   // Get the execution time of the kernel in nanoseconds
+
+    //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
+
+    kernel_exec_time_avg_ns = kernel_exec_time_acc_ns/n_images;
+    if(standard_print){
+      printf("\nThe device has an accumulated Kernel Execution time of %0.10f seconds \n", kernel_exec_time_acc_ns / 1.0e+9);  // Print the execution time in seconds
+      printf("The device has an average Kernel Execution time of %0.10f seconds \n", kernel_exec_time_avg_ns / 1.0e+9);  // Print the execution time in seconds
+    }
+  }
   // +++++ Bandwidth --> HOST TO DEVICE +++++
 
-  // Calculate the time taken for write and read operations
-  cl_ulong writeStart, writeEnd, readStart, readEnd;
-  clGetEventProfilingInfo(writeEvent, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart, NULL);
-  clGetEventProfilingInfo(writeEvent, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
-  clGetEventProfilingInfo(readEvent, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart, NULL);
-  clGetEventProfilingInfo(readEvent, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd, NULL);
+  double writeTime = 0;
+  double readTime_hred = 0;
+  double readTime_hgreen = 0;
+  double readTime_hblue = 0;
+  cl_ulong writeStart, writeEnd, readStart_hred, readEnd_hred, readStart_hgreen, readEnd_hgreen, readStart_hblue, readEnd_hblue;
+  for(size_t i = 0; i < n_images; ++i){
+    
+    // Calculate the time taken for write and read operations
+    clGetEventProfilingInfo(writeEvent[i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart, NULL);
+    clGetEventProfilingInfo(writeEvent[i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
+    clGetEventProfilingInfo(readEvent_hred[i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart_hred, NULL);
+    clGetEventProfilingInfo(readEvent_hred[i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd_hred, NULL);
+    clGetEventProfilingInfo(readEvent_hgreen[i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart_hgreen, NULL);
+    clGetEventProfilingInfo(readEvent_hgreen[i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd_hgreen, NULL);
+    clGetEventProfilingInfo(readEvent_hblue[i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart_hblue, NULL);
+    clGetEventProfilingInfo(readEvent_hblue[i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd_hblue, NULL);
+
+    writeTime += (writeEnd - writeStart) * 1.0e-9;
+    readTime_hred += (readEnd_hred - readStart_hred) * 1.0e-9;
+    readTime_hgreen += (readEnd_hgreen - readStart_hgreen) * 1.0e-9;
+    readTime_hblue += (readEnd_hblue - readStart_hblue) * 1.0e-9;
+  }
 
   // Calculate bandwidth
-  double writeTime = (writeEnd - writeStart) * 1.0e-9; // Convert nanoseconds to seconds
-  double readTime = (readEnd - readStart) * 1.0e-9;
-  size_t dataSize = sizeof(cl_uchar3) * sizeof(inputImg);
+  size_t dataSizeRead = sizeof(unsigned int) * arraySize * 3 * n_images; // *3 because we have 3 arrays
+  size_t dataSizeWrite = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
 
-  double writeBandwidth = dataSize / writeTime; // in bytes per second
-  double readBandwidth = dataSize / readTime;
+  double writeBandwidth, readBandwidth;
+  
+  writeBandwidth = dataSizeWrite / writeTime; // in bytes per second
+  readBandwidth = dataSizeRead / (readTime_hred + readTime_hgreen + readTime_hblue);
 
-  // Print or use the bandwidth values as needed
+  // We print the bandwidths
   if(standard_print){
-    printf("General Write Bandwidth (Host to device): %.2f MB/s\n", writeBandwidth / (1024 * 1024));
+    printf("\nGeneral Write Bandwidth (Host to device): %.2f MB/s\n", writeBandwidth / (1024 * 1024));
     printf("General Read Bandwidth (Host to device): %.2f MB/s\n", readBandwidth / (1024 * 1024));
   }
 
 
   // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
 
-  cl_ulong kernelStart, kernelEnd;
-  clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &kernelStart, NULL);
-  clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &kernelEnd, NULL);
-
   // Calculate bandwidth
-  double kernelTime = (kernelEnd - kernelStart); // Convert nanoseconds to miliseconds
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width * img_height); // Adjust data size based on your specific kernel data requirements
-  double kernelBandwidth = dataSize_kernel / kernelTime; // in bytes per nanosecond
+  size_t dataSize_kernel = (sizeof(cl_uchar3)*img_width*img_height + 3*arraySize*sizeof(uint)) * n_images; // Adjust data size based on specific kernel data requirements
+  double kernelBandwidth;
+  
+  
+  kernelBandwidth = dataSize_kernel / kernel_exec_time_acc_ns; // in bytes per nanosecond
   
 
   // Print or use the bandwidth value as needed
   if(standard_print)
-    printf("Kernel Bandwidth (Device access to local memory): %.4f MB/ns\n", kernelBandwidth / (1024 * 1024));
+    printf("\nKernel Bandwidth (Device access to local memory): %.10f MB/ns\n", kernelBandwidth / (1024 * 1024));
+
+
 
   // **************** Measurement prints for further analyzing ****************
   // The output will be reduced to the following prints:
   // total execution time, kernel execution time, Host to device (Write) bandwidth, Host to device (Read) Bandwidth, Kernel bandwidth
-  if(!standard_print)
-    printf("%.10f, %.10f, %.10f, %.10f, %.10f\n", 
-          ((float)exec_time)/CLOCKS_PER_SEC, 
-          (kernel_exec_time_ns / 1.0e+9), 
-          writeBandwidth / (1024 * 1024), 
-          readBandwidth / (1024 * 1024), 
-          kernelBandwidth / (1024 * 1024));
+  // if(!standard_print)
+  //   printf("%.10f, %.10f, %.10f, %.10f, %.10f, %.10f\n", 
+  //         ((float)exec_time)/CLOCKS_PER_SEC, 
+  //         (kernel_exec_time_ns[0] / 1.0e+9), 
+  //         (kernel_exec_time_ns[1] / 1.0e+9),
+  //         writeBandwidth / (1024 * 1024), 
+  //         readBandwidth / (1024 * 1024), 
+  //         kernelBandwidth / (1024 * 1024));
   
   return 0;
 }
-
