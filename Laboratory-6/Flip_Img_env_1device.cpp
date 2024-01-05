@@ -288,8 +288,7 @@ int main(int argc, char** argv)
   // -------- Kernel execution time --------
   cl_event Kernel_exectime_event[n_images];
 
-  global_size[0] = img_width; // N of work items que quieres
-  global_size[1] = img_height; // N of work items que quieres
+  size_t global_size_device[2] = {static_cast<size_t>(img_width), static_cast<size_t>(img_height)}; // 1 full image
 
   
   // 8 Set the arguments to the kernel
@@ -303,7 +302,7 @@ int main(int argc, char** argv)
     err = clSetKernelArg(kernel, 3, sizeof(img_height), &img_height);
     cl_error(err, "Failed to set argument 3 --> IMG height\n");
 
-    err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event[i]);
+    err = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global_size_device, NULL/*local_size*/, 0, NULL, &Kernel_exectime_event[i]);
     cl_error(err, "Failed to launch kernel to the device\n");
   }
 
