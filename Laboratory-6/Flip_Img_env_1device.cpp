@@ -369,11 +369,15 @@ int main(int argc, char** argv)
     clGetEventProfilingInfo(Kernel_exectime_event[i], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end, NULL);
     kernel_exec_time_ns += kernel_time_end - kernel_time_start;   // Get the execution time of the kernel in nanoseconds
     //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
-    if(standard_print)
-      printf("Kernel Execution time %0.10f seconds \n", kernel_exec_time_ns / 1.0e+9);  // Print the execution time in seconds
   }
-
+  if(standard_print){
+      printf("Kernel Execution time accumulated %0.10f seconds \n", kernel_exec_time_ns / 1.0e+9);  // Print the execution time in seconds
+      printf("Kernel Execution time average %0.10f seconds \n", (kernel_exec_time_ns / 1.0e+9)/ n_images);  // Print the execution time in seconds
+  }
   // +++++ Bandwidth --> HOST TO DEVICE +++++
+
+  double writeTime = 0;
+  double readTime = 0;
 
   // Calculate the time taken for write and read operations
   cl_ulong writeStart, writeEnd, readStart, readEnd;
@@ -382,12 +386,13 @@ int main(int argc, char** argv)
     clGetEventProfilingInfo(writeEvent[i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
     clGetEventProfilingInfo(readEvent[i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart, NULL);
     clGetEventProfilingInfo(readEvent[i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd, NULL);
+  
+    // Calculate bandwidth
+    writeTime += (writeEnd - writeStart) * 1.0e-9; // Convert nanoseconds to seconds
+    readTime += (readEnd - readStart) * 1.0e-9;
   }
-  // Calculate bandwidth
-  double writeTime = (writeEnd - writeStart) * 1.0e-9; // Convert nanoseconds to seconds
-  double readTime = (readEnd - readStart) * 1.0e-9;
-  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
 
+  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
   double writeBandwidth = dataSize / writeTime; // in bytes per second
   double readBandwidth = dataSize / readTime;
 
