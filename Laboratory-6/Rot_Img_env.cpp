@@ -432,7 +432,7 @@ int main(int argc, char** argv)
   }
 
   // Calculate bandwidth
-  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images * 2;
+  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
 
   double writeBandwidth[n_devices], readBandwidth[n_devices];
   for(size_t dev = 0; dev < n_devices; ++dev){
@@ -450,7 +450,7 @@ int main(int argc, char** argv)
   // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
 
   // Calculate bandwidth
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on specific kernel data requirements
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images * 2; // Adjust data size based on specific kernel data requirements
   double kernelBandwidth[n_devices];
   
   for(size_t dev = 0; dev < n_devices; ++dev){
@@ -459,7 +459,7 @@ int main(int argc, char** argv)
 
     // Print or use the bandwidth value as needed
     if(standard_print)
-      printf("\nKernel Bandwidth (Device %d access to local memory): %.4f MB/ns\n", dev, kernelBandwidth[dev] / (1024 * 1024));
+      printf("\nKernel Bandwidth (Device %d access to local memory): %.10f MB/ns\n", dev, kernelBandwidth[dev] / (1024 * 1024));
   }
 
 

@@ -405,7 +405,7 @@ int main(int argc, char** argv)
     readTime += (readEnd - readStart) * 1.0e-9;
   }
 
-  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images * 2;
+  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
   double writeBandwidth = dataSize / writeTime; // in bytes per second
   double readBandwidth = dataSize / readTime;
 
@@ -424,13 +424,13 @@ int main(int argc, char** argv)
 
   // // Calculate bandwidth
   // double kernelTime = (kernelEnd - kernelStart); // Convert nanoseconds to miliseconds
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on specific kernel data requirements
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images * 2; // Adjust data size based on specific kernel data requirements
   double kernelBandwidth = dataSize_kernel / kernel_exec_time_ns; // in bytes per nanosecond
   
 
   // Print or use the bandwidth value as needed
   if(standard_print)
-    printf("Kernel Bandwidth (Device access to local memory): %.4f MB/ns\n", kernelBandwidth / (1024 * 1024));
+    printf("Kernel Bandwidth (Device access to local memory): %.10f MB/ns\n", kernelBandwidth / (1024 * 1024));
 
   // **************** Measurement prints for further analyzing ****************
   // The output will be reduced to the following prints:
