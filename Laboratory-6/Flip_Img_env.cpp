@@ -118,7 +118,7 @@ int main(int argc, char** argv)
   cl_kernel kernel;                           // create a kernel
 
   // Specific program variables
-  size_t n_images = 5000;
+  size_t n_images = 2500;
   size_t n_devices = 2;
     
 
