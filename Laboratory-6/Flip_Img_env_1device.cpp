@@ -370,7 +370,7 @@ int main(int argc, char** argv)
     // Get starting and ending time of the event
     clGetEventProfilingInfo(Kernel_exectime_event[i], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start, NULL);
     clGetEventProfilingInfo(Kernel_exectime_event[i], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end, NULL);
-    double kernel_exec_time_ns += kernel_time_end - kernel_time_start;   // Get the execution time of the kernel in nanoseconds
+    kernel_exec_time_ns += kernel_time_end - kernel_time_start;   // Get the execution time of the kernel in nanoseconds
     //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
     if(standard_print)
       printf("Kernel Execution time %0.10f seconds \n", kernel_exec_time_ns / 1.0e+9);  // Print the execution time in seconds
