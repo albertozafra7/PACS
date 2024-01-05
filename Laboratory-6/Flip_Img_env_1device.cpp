@@ -98,7 +98,7 @@ int main(int argc, char** argv)
   // Start of the program
 
   int err;                            	// error code returned from api calls
-  size_t t_buf = 1000;			// size of str_buffer
+  size_t t_buf = 100;			// size of str_buffer
   char str_buffer[t_buf];		// auxiliary buffer	
   size_t e_buf;				// effective size of str_buffer in use
 	    
