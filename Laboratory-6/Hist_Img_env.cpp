@@ -549,7 +549,7 @@ int main(int argc, char** argv)
 
     // Print or use the bandwidth value as needed
     if(standard_print)
-      printf("\nKernel Bandwidth (Device %d access to local memory): %.4f MB/ns\n", dev, kernelBandwidth[dev] / (1024 * 1024));
+      printf("\nKernel Bandwidth (Device %d access to local memory): %.10f MB/ns\n", dev, kernelBandwidth[dev] / (1024 * 1024));
   }
 
 
