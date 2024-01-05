@@ -404,11 +404,11 @@ int main(int argc, char** argv)
   // 10 Read data from device memory back to host memory
   for (size_t dev = 0; dev < n_devices; ++dev) {
     for (size_t i = 0; i < n_images; ++i) {
-      err = clEnqueueReadBuffer(command_queue[dev], out_device_object_hRed[dev][i], CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramRed, 0, NULL, &readEvent_hred[dev][i]);
+      err = clEnqueueReadBuffer(command_queue[dev], out_device_object_hRed[dev][i], CL_FALSE, 0, sizeof(cl_uint)*arraySize, histogramRed, 0, NULL, &readEvent_hred[dev][i]);
       cl_error(err, "Failed to enqueue a read command\n");
-      err = clEnqueueReadBuffer(command_queue[dev], out_device_object_hBlue[dev][i], CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramBlue, 0, NULL, &readEvent_hblue[dev][i]);
+      err = clEnqueueReadBuffer(command_queue[dev], out_device_object_hBlue[dev][i], CL_FALSE, 0, sizeof(cl_uint)*arraySize, histogramBlue, 0, NULL, &readEvent_hblue[dev][i]);
       cl_error(err, "Failed to enqueue a read command\n");
-      err = clEnqueueReadBuffer(command_queue[dev], out_device_object_hGreen[dev][i], CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramGreen, 0, NULL, &readEvent_hgreen[dev][i]);
+      err = clEnqueueReadBuffer(command_queue[dev], out_device_object_hGreen[dev][i], CL_FALSE, 0, sizeof(cl_uint)*arraySize, histogramGreen, 0, NULL, &readEvent_hgreen[dev][i]);
       cl_error(err, "Failed to enqueue a read command\n");
     }
   }
