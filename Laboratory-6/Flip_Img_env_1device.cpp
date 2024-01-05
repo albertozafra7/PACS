@@ -342,9 +342,6 @@ int main(int argc, char** argv)
   for(size_t i = 0; i < n_images; ++i){
     clReleaseMemObject(in_device_object[i]);
     clReleaseMemObject(out_device_object[i]);
-    clReleaseEvent(writeEvent[i]);
-    clReleaseEvent(readEvent[i]);
-    clReleaseEvent(Kernel_exectime_event[i]);
   }
   clReleaseProgram(program);
   clReleaseKernel(kernel);
