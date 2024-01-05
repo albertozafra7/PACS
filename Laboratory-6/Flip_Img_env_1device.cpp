@@ -259,7 +259,7 @@ int main(int argc, char** argv)
 
   cl_uchar3 outputImg[img_width*img_height];
 
-  size_t n_images = 10000;
+  size_t n_images = 5000;
 
   // Create events for measuring memory transfer time
   cl_event writeEvent[n_images], readEvent[n_images];
