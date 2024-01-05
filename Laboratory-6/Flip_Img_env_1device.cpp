@@ -290,12 +290,13 @@ int main(int argc, char** argv)
 
   size_t global_size_device[2] = {static_cast<size_t>(img_width), static_cast<size_t>(img_height)}; // 1 full image
 
+
   
   // 8 Set the arguments to the kernel
   for (size_t i = 0; i < n_images; ++i){
-    err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[i]);
+    err = clSetKernelArg(kernel, 0, sizeof(int), &in_device_object[i]);
     cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
-    err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[i]);
+    err = clSetKernelArg(kernel, 1, sizeof(int), &out_device_object[i]);
     cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
     err = clSetKernelArg(kernel, 2, sizeof(img_width), &img_width);
     cl_error(err, "Failed to set argument 2 --> IMG width\n");
