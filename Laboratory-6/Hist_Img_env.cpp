@@ -383,10 +383,10 @@ int main(int argc, char** argv)
           cl_error(err, "Failed to set argument 2 --> Input buffer (image)\n");
           err = clSetKernelArg(kernel, 3, sizeof(cl_mem), &out_device_object_hBlue[dev][i]);
           cl_error(err, "Failed to set argument 3 --> Input buffer (image)\n");
-          err = clSetKernelArg(kernel, 5, sizeof(img_width), &img_width);
-          cl_error(err, "Failed to set argument 5 --> IMG width\n");
-          err = clSetKernelArg(kernel, 6, sizeof(img_height), &img_height);
-          cl_error(err, "Failed to set argument 6 --> IMG height\n");
+          err = clSetKernelArg(kernel, 4, sizeof(img_width), &img_width);
+          cl_error(err, "Failed to set argument 4 --> IMG width\n");
+          err = clSetKernelArg(kernel, 5, sizeof(img_height), &img_height);
+          cl_error(err, "Failed to set argument 5 --> IMG height\n");
           
 
           // 9 Enqueue kernel for the devices
