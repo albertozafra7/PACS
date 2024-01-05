@@ -477,10 +477,11 @@ int main(int argc, char** argv)
     //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
 
     kernel_exec_time_avg_ns = kernel_exec_time_acc_ns/n_images;
-    if(standard_print){
-      printf("\nThe device has an accumulated Kernel Execution time of %0.10f seconds \n", kernel_exec_time_acc_ns / 1.0e+9);  // Print the execution time in seconds
-      printf("The device has an average Kernel Execution time of %0.10f seconds \n", kernel_exec_time_avg_ns / 1.0e+9);  // Print the execution time in seconds
-    }
+  }
+
+  if(standard_print){
+    printf("\nThe device has an accumulated Kernel Execution time of %0.10f seconds \n", kernel_exec_time_acc_ns / 1.0e+9);  // Print the execution time in seconds
+    printf("The device has an average Kernel Execution time of %0.10f seconds \n", kernel_exec_time_avg_ns / 1.0e+9);  // Print the execution time in seconds
   }
   // +++++ Bandwidth --> HOST TO DEVICE +++++
 
