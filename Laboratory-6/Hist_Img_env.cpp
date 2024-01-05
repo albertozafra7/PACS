@@ -420,16 +420,16 @@ int main(int argc, char** argv)
 
   // 11 Write code to check correctness of execution
  if(standard_print){
-    originImg.display("My first CImg code");
+    // originImg.display("My first CImg code");
 
-    printf("Plotting Histogram Red\n");
-    plotHistogram(histogramRed, arraySize);
+    // printf("Plotting Histogram Red\n");
+    // plotHistogram(histogramRed, arraySize);
 
-    printf("Plotting Histogram Green\n");
-    plotHistogram(histogramGreen, arraySize);
+    // printf("Plotting Histogram Green\n");
+    // plotHistogram(histogramGreen, arraySize);
 
-    printf("Plotting Histogram Blue\n");
-    plotHistogram(histogramBlue, arraySize);
+    // printf("Plotting Histogram Blue\n");
+    // plotHistogram(histogramBlue, arraySize);
 
     writeHistogramValuesToFile(histogramRed, histogramGreen, histogramBlue, arraySize, "histogram_values.txt");
   }
