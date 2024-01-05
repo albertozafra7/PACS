@@ -432,7 +432,7 @@ int main(int argc, char** argv)
   }
 
   // Calculate bandwidth
-  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
+  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images * 2;
 
   double writeBandwidth[n_devices], readBandwidth[n_devices];
   for(size_t dev = 0; dev < n_devices; ++dev){

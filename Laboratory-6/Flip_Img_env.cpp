@@ -439,7 +439,7 @@ int main(int argc, char** argv)
   // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
 
   // Calculate bandwidth
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on specific kernel data requirements
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images * 2; // Adjust data size based on specific kernel data requirements
   double kernelBandwidth[n_devices];
   
   for(size_t dev = 0; dev < n_devices; ++dev){

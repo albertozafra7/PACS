@@ -338,7 +338,7 @@ int main(int argc, char** argv)
   // -------- Memory Transfer time (data interchanged between host and device) --------
 
   // Create events for measuring memory transfer time
-  cl_event writeEvent[n_devices][n_images], readEvent[n_devices][n_images];
+  cl_event writeEvent[n_devices][n_images], readEvent_hred[n_devices][n_images], readEvent_hblue[n_devices][n_images], readEvent_hgreen[n_devices][n_images];
 
   // Input and output buffers for each device
   cl_mem in_device_object[n_devices][n_images];
@@ -404,9 +404,13 @@ int main(int argc, char** argv)
   // 10 Read data from device memory back to host memory
   for (size_t dev = 0; dev < n_devices; ++dev) {
     for (size_t i = 0; i < n_images; ++i) {
-          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
-          cl_error(err, "Failed to enqueue a read command\n");
-      }
+      err = clEnqueueReadBuffer(command_queue[dev], out_device_object_hRed[dev][i], CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramRed, 0, NULL, &readEvent_hred[dev][i]);
+      cl_error(err, "Failed to enqueue a read command\n");
+      err = clEnqueueReadBuffer(command_queue[dev], out_device_object_hBlue[dev][i], CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramBlue, 0, NULL, &readEvent_hblue[dev][i]);
+      cl_error(err, "Failed to enqueue a read command\n");
+      err = clEnqueueReadBuffer(command_queue[dev], out_device_object_hGreen[dev][i], CL_TRUE, 0, sizeof(cl_uint)*arraySize, histogramGreen, 0, NULL, &readEvent_hgreen[dev][i]);
+      cl_error(err, "Failed to enqueue a read command\n");
+    }
   }
 
 
@@ -415,27 +419,41 @@ int main(int argc, char** argv)
   // clFinish(command_queue[1]);
 
   // 11 Write code to check correctness of execution
-  CImg<unsigned char> finalImg(originImg);
-  fillImg(finalImg, outputImg);
-  // Save the image to a file (e.g., in PNG format)
-  const char* filename = "output_rot.png";
-  finalImg.save(filename);
+ if(standard_print){
+    originImg.display("My first CImg code");
 
-  // Display the saved image filename
-  std::cout << "Image saved to: " << filename << std::endl;
+    printf("Plotting Histogram Red\n");
+    plotHistogram(histogramRed, arraySize);
+
+    printf("Plotting Histogram Green\n");
+    plotHistogram(histogramGreen, arraySize);
+
+    printf("Plotting Histogram Blue\n");
+    plotHistogram(histogramBlue, arraySize);
+
+    writeHistogramValuesToFile(histogramRed, histogramGreen, histogramBlue, arraySize, "histogram_values.txt");
+  }
 
   // 12 Release all the OpenCL memory objects allocated along the program
   for(size_t i = 0; i < n_images; ++i){
     clReleaseMemObject(in_device_object[0][i]);
-    clReleaseMemObject(out_device_object[0][i]);
+    clReleaseMemObject(out_device_object_hRed[0][i]);
+    clReleaseMemObject(out_device_object_hGreen[0][i]);
+    clReleaseMemObject(out_device_object_hBlue[0][i]);
     clReleaseMemObject(in_device_object[1][i]);
-    clReleaseMemObject(out_device_object[1][i]);
+    clReleaseMemObject(out_device_object_hRed[1][i]);
+    clReleaseMemObject(out_device_object_hGreen[1][i]);
+    clReleaseMemObject(out_device_object_hBlue[1][i]);
   }
   clReleaseProgram(program);
   clReleaseKernel(kernel);
   clReleaseCommandQueue(command_queue[0]);
   clReleaseCommandQueue(command_queue[1]);
   clReleaseContext(context);
+
+  free(histogramRed);
+  free(histogramBlue);
+  free(histogramGreen);
 
 // **************** Measurement calculations ****************
 
@@ -479,28 +497,37 @@ int main(int argc, char** argv)
   // +++++ Bandwidth --> HOST TO DEVICE +++++
 
   double writeTime[2] = {0,0};
-  double readTime[2] = {0,0};
-  cl_ulong writeStart, writeEnd, readStart, readEnd;
+  double readTime_hred[2] = {0,0};
+  double readTime_hgreen[2] = {0,0};
+  double readTime_hblue[2] = {0,0};
+  cl_ulong writeStart, writeEnd, readStart_hred, readEnd_hred, readStart_hgreen, readEnd_hgreen, readStart_hblue, readEnd_hblue;
   for(size_t i = 0; i < n_images; ++i){
     for(size_t dev = 0; dev < n_devices; ++dev){
       // Calculate the time taken for write and read operations
       clGetEventProfilingInfo(writeEvent[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &writeStart, NULL);
       clGetEventProfilingInfo(writeEvent[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &writeEnd, NULL);
-      clGetEventProfilingInfo(readEvent[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart, NULL);
-      clGetEventProfilingInfo(readEvent[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd, NULL);
+      clGetEventProfilingInfo(readEvent_hred[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart_hred, NULL);
+      clGetEventProfilingInfo(readEvent_hred[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd_hred, NULL);
+      clGetEventProfilingInfo(readEvent_hgreen[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart_hgreen, NULL);
+      clGetEventProfilingInfo(readEvent_hgreen[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd_hgreen, NULL);
+      clGetEventProfilingInfo(readEvent_hblue[dev][i], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &readStart_hblue, NULL);
+      clGetEventProfilingInfo(readEvent_hblue[dev][i], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &readEnd_hblue, NULL);
 
       writeTime[dev] += (writeEnd - writeStart) * 1.0e-9;
-      readTime[dev] += (readEnd - readStart) * 1.0e-9;
+      readTime_hred[dev] += (readEnd_hred - readStart_hred) * 1.0e-9;
+      readTime_hgreen[dev] += (readEnd_hgreen - readStart_hgreen) * 1.0e-9;
+      readTime_hblue[dev] += (readEnd_hblue - readStart_hblue) * 1.0e-9;
     }
   }
 
   // Calculate bandwidth
-  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
+  size_t dataSizeRead = sizeof(unsigned int) * arraySize * 3 * n_images; // *3 because we have 3 arrays
+  size_t dataSizeWrite = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
 
   double writeBandwidth[n_devices], readBandwidth[n_devices];
   for(size_t dev = 0; dev < n_devices; ++dev){
-    writeBandwidth[dev] = dataSize / writeTime[dev]; // in bytes per second
-    readBandwidth[dev] = dataSize / readTime[dev];
+    writeBandwidth[dev] = dataSizeWrite / writeTime[dev]; // in bytes per second
+    readBandwidth[dev] = dataSizeRead / (readTime_hred[dev] + readTime_hgreen[dev] + readTime_hblue[dev]);
 
     // We print the bandwidths
     if(standard_print){
@@ -513,7 +540,7 @@ int main(int argc, char** argv)
   // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
 
   // Calculate bandwidth
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on specific kernel data requirements
+  size_t dataSize_kernel = (sizeof(cl_uchar3)*img_width*img_height + 3*arraySize*sizeof(uint)) * n_images; // Adjust data size based on specific kernel data requirements
   double kernelBandwidth[n_devices];
   
   for(size_t dev = 0; dev < n_devices; ++dev){

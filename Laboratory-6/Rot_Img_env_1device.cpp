@@ -405,7 +405,7 @@ int main(int argc, char** argv)
     readTime += (readEnd - readStart) * 1.0e-9;
   }
 
-  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images;
+  size_t dataSize = sizeof(cl_uchar3) * (img_width*img_height) * n_images * 2;
   double writeBandwidth = dataSize / writeTime; // in bytes per second
   double readBandwidth = dataSize / readTime;
 

@@ -411,7 +411,7 @@ int main(int argc, char** argv)
 
   // // Calculate bandwidth
   // double kernelTime = (kernelEnd - kernelStart); // Convert nanoseconds to miliseconds
-  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on specific kernel data requirements
+  size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images * 2; // Adjust data size based on specific kernel data requirements
   double kernelBandwidth = dataSize_kernel / kernel_exec_time_ns; // in bytes per nanosecond
   
 
