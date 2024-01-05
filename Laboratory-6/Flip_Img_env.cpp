@@ -279,19 +279,28 @@ int main(int argc, char** argv)
   // Input and output buffers for each device
   cl_mem in_device_object[n_devices][n_images];
   cl_mem out_device_object[n_devices][n_images];
-  for (size_t dev = 0; dev < n_devices; ++dev) {
+  //for (size_t dev = 0; dev < n_devices; ++dev) {
     for (size_t i = 0; i < n_images; ++i) {
-      in_device_object[dev][i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
+      // First device
+      in_device_object[0][i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
+      cl_error(err, "Failed to create memory buffer at device\n");
+      out_device_object[0][i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
 
-      out_device_object[dev][i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
+      // Second device
+      in_device_object[1][i] = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
+      cl_error(err, "Failed to create memory buffer at device\n");
+      out_device_object[1][i] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_uchar3) * (img_width * img_height), NULL, &err);
       cl_error(err, "Failed to create memory buffer at device\n");
 
       // 7 Replicate input images across devices
       // Copy inputImg to in_device_object[dev]
-      err = clEnqueueWriteBuffer(command_queue[dev], in_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[dev][i]);
+      err = clEnqueueWriteBuffer(command_queue[0], in_device_object[0][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[0][i]);
       cl_error(err, "Failed to enqueue a write command on device\n");
-    }
+      err = clEnqueueWriteBuffer(command_queue[1], in_device_object[1][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), inputImg, 0, NULL, &writeEvent[1][i]);
+      cl_error(err, "Failed to enqueue a write command on device\n");
+
+   // }
   }
 
 
@@ -304,11 +313,15 @@ int main(int argc, char** argv)
 
   // Launch Kernel for both devices
   for (size_t i = 0; i < n_images; ++i) {
-    for (size_t dev = 0; dev < n_devices; ++dev) {
+    //for (size_t dev = 0; dev < n_devices; ++dev) {
           // 8 Set the arguments to the kernel
-          err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[dev][i]);
+          err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[0][i]);
           cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
-          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[dev][i]);
+          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[0][i]);
+          cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
+          err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &in_device_object[1][i]);
+          cl_error(err, "Failed to set argument 0 --> Input buffer (image)\n");
+          err = clSetKernelArg(kernel, 1, sizeof(cl_mem), &out_device_object[1][i]);
           cl_error(err, "Failed to set argument 1 --> Output buffer (image)\n");
           err = clSetKernelArg(kernel, 2, sizeof(img_width), &img_width);
           cl_error(err, "Failed to set argument 2 --> IMG width\n");
@@ -316,9 +329,11 @@ int main(int argc, char** argv)
           cl_error(err, "Failed to set argument 3 --> IMG height\n");
 
           // 9 Enqueue kernel for the devices
-          err = clEnqueueNDRangeKernel(command_queue[dev], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[dev][i]);
+          err = clEnqueueNDRangeKernel(command_queue[0], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[0][i]);
           cl_error(err, "Failed to launch kernel to the device\n");
-      } 
+          err = clEnqueueNDRangeKernel(command_queue[1], kernel, 2, NULL, global_size_device, NULL /*local_size*/, 0, NULL, &kernel_exectime_event_device[1][i]);
+          cl_error(err, "Failed to launch kernel to the device\n");
+      //} 
   }
 
 
@@ -328,12 +343,14 @@ int main(int argc, char** argv)
   // -------- Global READ bandwithd --------
 
   // 10 Read data from device memory back to host memory
-  for (size_t dev = 0; dev < n_devices; ++dev) {
+  //for (size_t dev = 0; dev < n_devices; ++dev) {
     for (size_t i = 0; i < n_images; ++i) {
-          err = clEnqueueReadBuffer(command_queue[dev], out_device_object[dev][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[dev][i]);
+          err = clEnqueueReadBuffer(command_queue[0], out_device_object[0][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[0][i]);
+          cl_error(err, "Failed to enqueue a read command\n");
+          err = clEnqueueReadBuffer(command_queue[1], out_device_object[1][i], CL_FALSE, 0, sizeof(cl_uchar3) * (img_width * img_height), outputImg, 0, NULL, &readEvent[1][i]);
           cl_error(err, "Failed to enqueue a read command\n");
       }
-  }
+  //}
 
 
   // Wait for the commands to finish --> bandwidth
@@ -382,16 +399,24 @@ int main(int argc, char** argv)
 
 
   for(size_t i = 0; i < n_images; ++i){
-    for (size_t dev = 0; dev < n_devices; ++dev){
+    //for (size_t dev = 0; dev < n_devices; ++dev){
       // Get starting and ending time of the event
-      clGetEventProfilingInfo(kernel_exectime_event_device[dev][i], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start[dev], NULL);
-      clGetEventProfilingInfo(kernel_exectime_event_device[dev][i], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end[dev], NULL);
+      clGetEventProfilingInfo(kernel_exectime_event_device[0][i], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start[0], NULL);
+      clGetEventProfilingInfo(kernel_exectime_event_device[0][i], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end[0], NULL);
       
       //std::cout << "Kernel starting time = " << kernel_time_start[dev] << std::endl;
       //std::cout << "Kernel ending time = " << kernel_time_end[dev] << std::endl;
 
-      kernel_exec_time_acc_ns[dev] += kernel_time_end[dev]-kernel_time_start[dev];   // Get the execution time of the kernel in nanoseconds
-    }
+      kernel_exec_time_acc_ns[0] += kernel_time_end[0]-kernel_time_start[0];   // Get the execution time of the kernel in nanoseconds
+
+      clGetEventProfilingInfo(kernel_exectime_event_device[1][i], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start[1], NULL);
+      clGetEventProfilingInfo(kernel_exectime_event_device[1][i], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end[1], NULL);
+      
+      //std::cout << "Kernel starting time = " << kernel_time_start[dev] << std::endl;
+      //std::cout << "Kernel ending time = " << kernel_time_end[dev] << std::endl;
+
+      kernel_exec_time_acc_ns[1] += kernel_time_end[1]-kernel_time_start[1]; 
+    //}
   }
 
   //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
