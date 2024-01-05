@@ -405,14 +405,14 @@ int main(int argc, char** argv)
 
   // +++++ Bandwidth --> DEVICE TO LOCAL MEMORY +++++
 
-  cl_ulong kernelStart, kernelEnd;
-  clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &kernelStart, NULL);
-  clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &kernelEnd, NULL);
+  // cl_ulong kernelStart, kernelEnd;
+  // clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &kernelStart, NULL);
+  // clGetEventProfilingInfo(kernel_local_bandwidth_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &kernelEnd, NULL);
 
-  // Calculate bandwidth
-  double kernelTime = (kernelEnd - kernelStart); // Convert nanoseconds to miliseconds
+  // // Calculate bandwidth
+  // double kernelTime = (kernelEnd - kernelStart); // Convert nanoseconds to miliseconds
   size_t dataSize_kernel = sizeof(cl_uchar3) * (img_width*img_height) * n_images; // Adjust data size based on specific kernel data requirements
-  double kernelBandwidth = dataSize_kernel / kernelTime; // in bytes per nanosecond
+  double kernelBandwidth = dataSize_kernel / kernel_exec_time_ns; // in bytes per nanosecond
   
 
   // Print or use the bandwidth value as needed
