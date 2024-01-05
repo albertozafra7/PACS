@@ -207,8 +207,9 @@ int main(int argc, char** argv)
 
   // 4. Create a command queue
   cl_command_queue_properties proprt[] = { CL_QUEUE_PROPERTIES, CL_QUEUE_PROFILING_ENABLE, 0 };
-  command_queue = clCreateCommandQueueWithProperties(context, devices_ids[0][0], proprt, &err);//assuming we're taking 1st platform...
+  command_queue = clCreateCommandQueueWithProperties(context, devices_ids[0][0], proprt, &err);
   cl_error(err, "Failed to create a command queue\n");
+
 
   // 2. Calculate size of the file
   FILE *fileHandler = fopen("img_flip_kernel.cl", "r"); //Open the kernel file
@@ -282,9 +283,6 @@ int main(int argc, char** argv)
   
   // -------- Memory Transfer time (data interchanged between host and device) --------
 
-  // Create events for measuring memory transfer time
-  cl_event writeEvent[n_images], readEvent[n_images];
-
   // -------- Global WRITE bandwithd --------
 
   // -------- Kernel execution time --------
@@ -344,6 +342,9 @@ int main(int argc, char** argv)
   for(size_t i = 0; i < n_images; ++i){
     clReleaseMemObject(in_device_object[i]);
     clReleaseMemObject(out_device_object[i]);
+    clReleaseEvent(writeEvent[i]);
+    clReleaseEvent(readEvent[i]);
+    clReleaseEvent(Kernel_exectime_event[i]);
   }
   clReleaseProgram(program);
   clReleaseKernel(kernel);
@@ -363,13 +364,13 @@ int main(int argc, char** argv)
 
   cl_ulong kernel_time_start;
   cl_ulong kernel_time_end;
-  double kernel_exec_time_ns;
+  double kernel_exec_time_ns = 0.0;
 
   for(size_t i = 0; i < n_images; ++i){
     // Get starting and ending time of the event
     clGetEventProfilingInfo(Kernel_exectime_event[i], CL_PROFILING_COMMAND_START, sizeof(kernel_time_start), &kernel_time_start, NULL);
     clGetEventProfilingInfo(Kernel_exectime_event[i], CL_PROFILING_COMMAND_END, sizeof(kernel_time_end), &kernel_time_end, NULL);
-    double kernel_exec_time_ns += kernel_time_end-kernel_time_start;   // Get the execution time of the kernel in nanoseconds
+    double kernel_exec_time_ns += kernel_time_end - kernel_time_start;   // Get the execution time of the kernel in nanoseconds
     //printf("Kernel Execution time: %0.3f milliseconds \n",kernel_exec_time_ns / 1000000.0);
     if(standard_print)
       printf("Kernel Execution time %0.10f seconds \n", kernel_exec_time_ns / 1.0e+9);  // Print the execution time in seconds
